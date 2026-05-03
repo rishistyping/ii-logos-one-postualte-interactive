@@ -1908,6 +1908,7 @@ input[type="range"].l-slider::-moz-range-thumb{
   margin-bottom:24px;
   overflow:hidden;
   background:var(--surface);
+  position:relative;
 }
 .cell__header{
   display:flex; align-items:baseline; gap:14px;
@@ -2205,6 +2206,63 @@ input[type="range"].l-slider::-moz-range-thumb{
   border:1px solid var(--rule-strong);
   border-radius:var(--r-sm);
   flex-wrap:wrap;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  --run-progress:0%;
+  --run-spark-opacity:0;
+  transition:
+    border-color .28s ease,
+    background-color .28s ease,
+    box-shadow .35s ease,
+    transform .35s var(--motion-spring);
+}
+.nb-runall::before,
+.nb-runall::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .35s ease;
+  z-index:0;
+}
+.nb-runall::before{
+  background:
+    radial-gradient(circle at var(--run-progress) 50%, var(--diagram-accent-strong), transparent 34%),
+    linear-gradient(120deg, transparent 0 24%, var(--diagram-accent-wash) 42%, transparent 62%);
+  filter:saturate(120%);
+}
+.nb-runall::after{
+  background:
+    repeating-linear-gradient(90deg, transparent 0 28px, var(--rule) 28px 29px),
+    repeating-linear-gradient(0deg, transparent 0 18px, var(--rule) 18px 19px);
+  mix-blend-mode:multiply;
+}
+html[data-theme="dark"] .nb-runall::after{ mix-blend-mode:screen; }
+.nb-runall > *{
+  position:relative;
+  z-index:1;
+}
+.nb-runall.is-priming,
+.nb-runall.is-running{
+  border-color:var(--accent);
+  box-shadow:
+    0 18px 54px -36px var(--accent),
+    inset 0 0 0 1px var(--diagram-accent-strong);
+}
+.nb-runall.is-priming::before,
+.nb-runall.is-running::before,
+.nb-runall.is-success::before,
+.nb-runall.is-fail::before{ opacity:1; }
+.nb-runall.is-running::after{ opacity:.26; animation:proof-grid-drift 1.6s linear infinite; }
+.nb-runall.is-success{
+  border-color:var(--accent);
+  box-shadow:0 18px 60px -40px var(--accent);
+}
+.nb-runall.is-fail{
+  border-color:var(--danger);
+  box-shadow:0 18px 60px -42px var(--danger);
 }
 .nb-runall__btn{
   font-family:var(--sans);
@@ -2213,19 +2271,109 @@ input[type="range"].l-slider::-moz-range-thumb{
   padding:9px 16px; border-radius:99px;
   border:1px solid transparent;
   background:var(--primary); color:var(--inverse);
-  cursor:pointer; transition:transform .12s ease, background .25s ease;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  isolation:isolate;
+  transition:
+    transform .18s ease,
+    background .25s ease,
+    box-shadow .25s ease,
+    color .25s ease,
+    border-color .25s ease;
+}
+.nb-runall__btn::before,
+.nb-runall__btn::after{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  z-index:-1;
+}
+.nb-runall__btn::before{
+  inset:-60% -18%;
+  background:
+    conic-gradient(from 90deg, transparent, var(--accent), var(--gold), transparent 64%);
+  opacity:0;
+  filter:blur(7px);
+  transform:rotate(0deg);
+}
+.nb-runall__btn::after{
+  inset:2px;
+  border-radius:inherit;
+  background:linear-gradient(90deg, transparent, rgba(242,238,226,.22), transparent);
+  transform:translateX(-125%);
+  opacity:0;
 }
 .nb-runall__btn:hover{ transform:translateY(-1px); background:var(--primary-hover); }
-.nb-runall__btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+.nb-runall__btn:disabled{ cursor:not-allowed; transform:none; }
+.nb-runall.is-running .nb-runall__btn,
+.nb-runall.is-priming .nb-runall__btn{
+  background:linear-gradient(135deg, var(--primary), var(--accent) 58%, var(--gold));
+  color:var(--inverse);
+  box-shadow:0 10px 30px -16px var(--accent);
+}
+.nb-runall.is-running .nb-runall__btn::before{
+  opacity:.7;
+  animation:proof-btn-orbit 1.45s linear infinite;
+}
+.nb-runall.is-running .nb-runall__btn::after{
+  opacity:1;
+  animation:proof-btn-scan 1.05s cubic-bezier(.22,1,.36,1) infinite;
+}
+.nb-runall.is-success .nb-runall__btn{
+  background:var(--accent);
+  color:var(--inverse);
+  box-shadow:0 10px 30px -18px var(--accent);
+}
+.nb-runall.is-fail .nb-runall__btn{
+  background:var(--danger);
+  color:var(--inverse);
+  box-shadow:0 10px 30px -18px var(--danger);
+}
 .nb-runall__progress{
   flex:1; min-width:200px;
-  height:4px; background:var(--rule); border-radius:99px;
-  overflow:hidden; position:relative;
+  height:8px; background:var(--rule); border-radius:99px;
+  overflow:visible; position:relative;
+  box-shadow:inset 0 0 0 1px var(--rule);
 }
 .nb-runall__progress-bar{
   height:100%; width:0%;
-  background:linear-gradient(90deg, var(--accent), var(--gold));
-  transition:width .3s ease;
+  background:
+    linear-gradient(90deg, var(--accent), var(--gold), var(--accent));
+  background-size:220% 100%;
+  transition:width .44s cubic-bezier(.22, 1, .36, 1);
+  box-shadow:0 0 18px var(--diagram-accent-strong);
+}
+.nb-runall.is-running .nb-runall__progress-bar{
+  animation:proof-track-flow 1.1s linear infinite;
+}
+.nb-runall__spark{
+  position:absolute;
+  left:var(--run-progress);
+  top:50%;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--gold) 18%, transparent),
+    0 0 24px var(--gold),
+    0 0 42px var(--accent);
+  transform:translate(-50%, -50%) scale(.72);
+  opacity:var(--run-spark-opacity);
+  z-index:3;
+  transition:
+    left .44s cubic-bezier(.22, 1, .36, 1),
+    opacity .22s ease,
+    transform .22s ease;
+}
+.nb-runall.is-running .nb-runall__spark{
+  transform:translate(-50%, -50%) scale(1);
+  animation:proof-spark-breathe .92s ease-in-out infinite;
 }
 .nb-runall__status{
   font-family:var(--serif-body);
@@ -2234,6 +2382,81 @@ input[type="range"].l-slider::-moz-range-thumb{
   font-style:italic;
   white-space:nowrap;
 }
+.nb-runall__spine{
+  flex:0 0 100%;
+  display:grid;
+  grid-template-columns:repeat(7, minmax(18px, 1fr));
+  gap:0;
+  align-items:center;
+  padding:7px 2px 0;
+  position:relative;
+}
+.nb-runall__spine::before{
+  content:"";
+  position:absolute;
+  left:12px;
+  right:12px;
+  top:17px;
+  height:1px;
+  background:
+    linear-gradient(90deg, var(--accent) 0 var(--run-progress), var(--rule-strong) var(--run-progress) 100%);
+  box-shadow:0 0 18px var(--diagram-accent-strong);
+  transition:background .44s cubic-bezier(.22, 1, .36, 1);
+}
+.nb-runall__node{
+  width:20px;
+  height:20px;
+  margin:0 auto;
+  border-radius:50%;
+  border:1px solid var(--rule-strong);
+  background:var(--surface);
+  position:relative;
+  z-index:1;
+  box-shadow:0 0 0 4px var(--surface-elevated);
+  transition:
+    background-color .24s ease,
+    border-color .24s ease,
+    transform .34s var(--motion-spring),
+    box-shadow .34s ease;
+}
+.nb-runall__node::after{
+  content:attr(data-step);
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font:600 9px/1 var(--sans);
+  color:var(--secondary);
+  transition:color .24s ease;
+}
+.nb-runall__node.is-active{
+  background:var(--gold);
+  border-color:var(--gold);
+  transform:scale(1.22);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--gold) 18%, transparent),
+    0 0 26px color-mix(in srgb, var(--gold) 58%, transparent);
+  animation:proof-node-active .72s ease-in-out infinite;
+}
+.nb-runall__node.is-active::after{ color:var(--primary); }
+.nb-runall__node.is-done{
+  background:var(--accent);
+  border-color:var(--accent);
+  transform:scale(1.06);
+  box-shadow:
+    0 0 0 4px var(--diagram-accent-strong),
+    0 0 20px color-mix(in srgb, var(--accent) 42%, transparent);
+}
+.nb-runall__node.is-done::after{ color:var(--inverse); }
+.nb-runall__node.is-fail{
+  background:var(--danger);
+  border-color:var(--danger);
+  transform:scale(1.12);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--danger) 22%, transparent),
+    0 0 24px color-mix(in srgb, var(--danger) 50%, transparent);
+}
+.nb-runall__node.is-fail::after{ color:var(--inverse); }
 
 /* Per-cell status badge (live, ok, fail) */
 .cell__num{
@@ -2248,9 +2471,50 @@ input[type="range"].l-slider::-moz-range-thumb{
 .cell.is-ok .cell__num::after{ background:var(--accent); box-shadow:0 0 0 3px var(--diagram-accent-strong); }
 .cell.is-fail .cell__num::after{ background:var(--danger); box-shadow:0 0 0 3px color-mix(in srgb, var(--danger) 24%, transparent); }
 .cell.is-running .cell__num::after{ background:var(--gold); animation:pulse 1s infinite; }
+.cell.is-proof-current{
+  border-color:var(--gold);
+  box-shadow:
+    0 22px 70px -48px var(--gold),
+    inset 0 0 0 1px color-mix(in srgb, var(--gold) 26%, transparent);
+  transform:translateY(-1px);
+}
+.cell.is-proof-current::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 18%, transparent), transparent);
+  transform:translateX(-120%);
+  animation:proof-cell-sweep 1.05s cubic-bezier(.22, 1, .36, 1) infinite;
+}
 @keyframes pulse{
   0%,100%{ opacity:1; }
   50%{ opacity:.4; }
+}
+@keyframes proof-btn-orbit{
+  to{ transform:rotate(1turn); }
+}
+@keyframes proof-btn-scan{
+  0%{ transform:translateX(-125%); }
+  58%,100%{ transform:translateX(125%); }
+}
+@keyframes proof-grid-drift{
+  to{ transform:translateX(29px); }
+}
+@keyframes proof-track-flow{
+  to{ background-position:220% 0; }
+}
+@keyframes proof-spark-breathe{
+  0%,100%{ filter:brightness(1); }
+  50%{ filter:brightness(1.28); }
+}
+@keyframes proof-node-active{
+  0%,100%{ box-shadow:0 0 0 5px color-mix(in srgb, var(--gold) 18%, transparent), 0 0 26px color-mix(in srgb, var(--gold) 58%, transparent); }
+  50%{ box-shadow:0 0 0 9px color-mix(in srgb, var(--gold) 8%, transparent), 0 0 38px color-mix(in srgb, var(--gold) 72%, transparent); }
+}
+@keyframes proof-cell-sweep{
+  to{ transform:translateX(120%); }
 }
 
 /* Killing-form mini visual after Cell 3 */
@@ -3226,8 +3490,15 @@ html[data-theme="dark"] .cursor-dot{
   .cell__btn .spin,
   .cell.is-running .cell__num::after,
   .nb-runall__progress-bar,
+  .nb-runall::after,
+  .nb-runall__btn::before,
+  .nb-runall__btn::after,
+  .nb-runall__spark,
+  .nb-runall__node.is-active,
+  .cell.is-proof-current::before,
   #read-progress,
   .conclusion::before { animation: none !important; }
+  .cell.is-proof-current::before{ display:none !important; }
 }
 
 /* ---- Mobile hero responsive tightening ---- */
@@ -4642,8 +4913,18 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <button class="nb-runall__btn" id="runAllBtn" type="button">▶ Run the proof spine</button>
         <div class="nb-runall__progress" aria-hidden="true">
           <div class="nb-runall__progress-bar" id="runAllBar"></div>
+          <span class="nb-runall__spark" id="runAllSpark"></span>
         </div>
         <div class="nb-runall__status" id="runAllStatus">Ready to execute all seven cells.</div>
+        <div class="nb-runall__spine" id="runAllSpine" aria-hidden="true">
+          <span class="nb-runall__node" data-step="1"></span>
+          <span class="nb-runall__node" data-step="2"></span>
+          <span class="nb-runall__node" data-step="3"></span>
+          <span class="nb-runall__node" data-step="4"></span>
+          <span class="nb-runall__node" data-step="5"></span>
+          <span class="nb-runall__node" data-step="6"></span>
+          <span class="nb-runall__node" data-step="7"></span>
+        </div>
       </div>
 
       <!-- ============ CELL 1 ============ -->
@@ -6479,9 +6760,9 @@ document.querySelectorAll('.cell').forEach(cell => {
 ================================================================== */
 async function runCellWithStatus(cellEl, options = {}){
   cellEl.classList.remove('is-ok','is-fail');
-  cellEl.classList.add('is-running');
+  cellEl.classList.add('is-running','is-proof-current');
   await runCell(cellEl, options);
-  cellEl.classList.remove('is-running');
+  cellEl.classList.remove('is-running','is-proof-current');
 
   const out = cellEl.querySelector('.cell__output');
   const hasErr = out && Array.from(out.querySelectorAll('.out-label'))
@@ -6743,38 +7024,79 @@ function buildKfMiniCells(){
    RUN-ALL button — execute all cells sequentially with progress
 ================================================================== */
 (function wireRunAll(){
+  const wrap  = document.getElementById('nbRunAll');
   const btn   = document.getElementById('runAllBtn');
   const bar   = document.getElementById('runAllBar');
   const stat  = document.getElementById('runAllStatus');
+  const nodes = Array.from(document.querySelectorAll('#runAllSpine .nb-runall__node'));
   if (!btn) return;
+
+  function setRunState(state){
+    if (!wrap) return;
+    wrap.classList.remove('is-priming','is-running','is-success','is-fail');
+    if (state) wrap.classList.add(`is-${state}`);
+  }
+
+  function setRunProgress(done, total){
+    const pct = total ? Math.max(0, Math.min(100, (done / total) * 100)) : 0;
+    const value = `${pct}%`;
+    bar.style.width = value;
+    wrap && wrap.style.setProperty('--run-progress', value);
+  }
+
+  function setSpark(active){
+    wrap && wrap.style.setProperty('--run-spark-opacity', active ? '1' : '0');
+  }
+
+  function paintSpine(activeIndex, doneCount, failedIndex = -1){
+    nodes.forEach((node, index) => {
+      node.classList.toggle('is-active', index === activeIndex);
+      node.classList.toggle('is-done', index < doneCount && index !== failedIndex);
+      node.classList.toggle('is-fail', index === failedIndex);
+    });
+  }
 
   btn.addEventListener('click', async () => {
     const cells = Array.from(document.querySelectorAll('.notebook .cell'));
     const total = cells.length;
     btn.disabled = true;
-    btn.textContent = '◜ Running…';
-    bar.style.width = '0%';
-    bar.style.background = 'linear-gradient(90deg, var(--accent), var(--gold))';
-    swapTextWithTransition(stat, 'Preparing the proof spine.');
+    btn.textContent = '◜ Tracing spine…';
+    setRunState('priming');
+    setRunProgress(0, total);
+    setSpark(true);
+    paintSpine(-1, 0);
+    cells.forEach(cell => cell.classList.remove('is-ok','is-fail','is-running','is-proof-current'));
+    swapTextWithTransition(stat, 'The proof spine is waking.');
+    await new Promise(resolve => setTimeout(resolve, reduceMotion() ? 0 : 180));
+    setRunState('running');
 
     for (let i = 0; i < total; i++){
       const cell = cells[i];
       const num  = cell.dataset.cell || (i+1);
-      swapTextWithTransition(stat, `Running cell ${num} of ${total}...`);
+      setRunProgress(i, total);
+      paintSpine(i, i);
+      swapTextWithTransition(stat, `Tracing cell ${num} of ${total}.`);
       await runCellWithStatus(cell, { withPrereqs:false });
-      bar.style.width = ((i+1)/total*100) + '%';
+      setRunProgress(i + 1, total);
       if (cell.classList.contains('is-fail')){
-        swapTextWithTransition(stat, `Cell ${num} threw an error. See its output.`);
-        bar.style.background = 'linear-gradient(90deg, var(--danger), var(--gold))';
+        setRunState('fail');
+        setSpark(false);
+        paintSpine(-1, i, i);
+        swapTextWithTransition(stat, `Cell ${num} broke the spine. See its output.`);
         btn.disabled = false;
-        btn.textContent = '▶ Re-run the proof spine';
+        btn.textContent = '▶ Rebuild the proof spine';
         return;
       }
+      paintSpine(-1, i + 1);
+      if (nodes[i]) window.iiMotion && window.iiMotion.microPulse(nodes[i]);
     }
 
-    swapTextWithTransition(stat, `All ${total} cells executed. The argument is live in your browser.`);
-    window.iiMotion && window.iiMotion.microPulse(document.getElementById('nbRunAll'));
-    btn.textContent = '✓ Re-run the proof spine';
+    setRunState('success');
+    setSpark(false);
+    paintSpine(-1, total);
+    swapTextWithTransition(stat, `All ${total} cells held. The spine is lit.`);
+    window.iiMotion && window.iiMotion.microPulse(wrap);
+    btn.textContent = '✓ Trace the proof again';
     btn.disabled = false;
   });
 })();
