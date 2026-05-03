@@ -467,6 +467,7 @@ body{
     filter:saturate(118%);
     transition:opacity .18s ease;
   }
+  html.is-hero-pointer body::after{ opacity:0; }
   html[data-theme="dark"] body::after{ mix-blend-mode:screen; }
 }
 a{ color:inherit; text-decoration:none; }
@@ -804,6 +805,10 @@ section + section{ border-top:1px solid var(--rule); }
    Hero
    ------------------------------------------------------------------ */
 .hero{
+  --hero-pointer-x:68%;
+  --hero-pointer-y:34%;
+  --hero-pointer-presence:0;
+  --hero-pointer-lines:0;
   padding-top:160px; padding-bottom:80px;
   position:relative; overflow:hidden;
   background:
@@ -811,6 +816,47 @@ section + section{ border-top:1px solid var(--rule); }
     radial-gradient(700px 500px at 8% 88%, rgba(47,149,166,.10), transparent 65%),
     var(--surface);
   isolation:isolate;
+}
+.hero::before,
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:-16%;
+  z-index:1;
+  pointer-events:none;
+  opacity:0;
+  transform:translateZ(0);
+  will-change:opacity, background;
+}
+.hero::before{
+  opacity:var(--hero-pointer-presence);
+  background:
+    radial-gradient(circle 9px at var(--hero-pointer-x) var(--hero-pointer-y), var(--cursor-core), transparent 82%),
+    radial-gradient(circle 165px at var(--hero-pointer-x) var(--hero-pointer-y), var(--cursor-field), transparent 66%),
+    radial-gradient(circle 390px at var(--hero-pointer-x) var(--hero-pointer-y), var(--cursor-field-gold), transparent 74%);
+  filter:saturate(128%) blur(.2px);
+  mix-blend-mode:multiply;
+  transition:opacity .18s ease;
+}
+.hero::after{
+  inset:-22%;
+  opacity:var(--hero-pointer-lines);
+  background:
+    repeating-conic-gradient(
+      from 0deg at var(--hero-pointer-x) var(--hero-pointer-y),
+      transparent 0deg 9deg,
+      var(--cursor-ring) 9deg 9.45deg,
+      transparent 9.45deg 18deg
+    );
+  mask-image:radial-gradient(circle 280px at var(--hero-pointer-x) var(--hero-pointer-y), #000 0%, rgba(0,0,0,.78) 34%, transparent 72%);
+  -webkit-mask-image:radial-gradient(circle 280px at var(--hero-pointer-x) var(--hero-pointer-y), #000 0%, rgba(0,0,0,.78) 34%, transparent 72%);
+  mix-blend-mode:multiply;
+  filter:blur(.4px);
+  transition:opacity .2s ease;
+}
+html[data-theme="dark"] .hero::before,
+html[data-theme="dark"] .hero::after{
+  mix-blend-mode:screen;
 }
 .hero .shell{ position:relative; z-index:2; }
 .hero__inner{
@@ -2927,6 +2973,34 @@ a:focus-visible{ border-radius:2px; }
   --cursor-ring-opacity:.68;
 }
 
+/* homepage — cursor dissolves into the hero field */
+.cursor-dot.s-home {
+  z-index:2;
+  width: 6px; height: 6px;
+  background: transparent;
+  border-color: transparent;
+  box-shadow:none;
+  opacity:.66;
+  mix-blend-mode:multiply;
+  --cursor-aura-size:190px;
+  --cursor-ring-size:112px;
+  --cursor-aura-opacity:.26;
+  --cursor-ring-opacity:.24;
+}
+.cursor-dot.s-home::before{
+  filter:blur(18px);
+  background:
+    radial-gradient(circle, var(--cursor-aura) 0 16%, transparent 70%);
+}
+.cursor-dot.s-home::after{
+  border-style:dashed;
+  box-shadow:0 0 42px var(--cursor-aura);
+}
+html[data-theme="dark"] .cursor-dot.s-home{
+  opacity:.78;
+  mix-blend-mode:screen;
+}
+
 /* press / mousedown — squish */
 .cursor-dot.s-down {
   width: 8px; height: 8px;
@@ -3438,6 +3512,13 @@ html[data-theme="dark"] .cursor-dot{
   border-radius:0;
 }
 .ascii-scene[data-ascii-variant="hero"]::before{ opacity:.36; }
+html.is-hero-pointer .hero .ascii-scene[data-ascii-variant="hero"]{
+  --ascii-opacity:.68;
+}
+html.is-hero-pointer .hero .ascii-scene[data-ascii-variant="hero"]::after{
+  opacity:.48;
+  filter:blur(12px);
+}
 .ascii-scene[data-ascii-variant="panel"]{
   --ascii-opacity:.26;
   mask-image:linear-gradient(135deg, #000 0%, rgba(0,0,0,.82) 42%, transparent 82%);
@@ -6162,7 +6243,7 @@ async function ensurePyodide(){
   // Pyodide versions, and ensures we always get a real JS string back.
   let ver = '';
   try {
-    const raw = py.runPython([
+    const raw = runPythonShared(py, [
       'import sys, sympy',
       'f"Python {sys.version_info.major}.{sys.version_info.minor} \\u00b7 sympy {sympy.__version__}"'
     ].join('\n'));
@@ -6171,6 +6252,41 @@ async function ensurePyodide(){
   } catch(_) { ver = ''; }
   setNbStatus('ready', '<strong style="color:var(--primary)">Ready.</strong> SymPy is live. Edit a cell or run the spine.', ver);
   return py;
+}
+
+function runPythonShared(py, code){
+  return (py && py.globals)
+    ? py.runPython(code, { globals: py.globals })
+    : py.runPython(code);
+}
+
+function notebookCells(){
+  return Array.from(document.querySelectorAll('.notebook .cell'))
+    .sort((a, b) => cellNumber(a) - cellNumber(b));
+}
+
+function cellNumber(cellEl){
+  return Number.parseInt(cellEl && cellEl.dataset ? cellEl.dataset.cell : '', 10) || 0;
+}
+
+function prepareCellPrerequisites(py, cellEl){
+  const current = cellNumber(cellEl);
+  if (current <= 1) return;
+
+  for (const dep of notebookCells()){
+    const depNum = cellNumber(dep);
+    if (!depNum || depNum >= current) break;
+    const pre = dep.querySelector('.cell__code pre');
+    if (!pre) continue;
+    runPythonShared(py, extractCode(pre));
+  }
+
+  runPythonShared(py, [
+    'try:',
+    '    reset_outputs()',
+    'except NameError:',
+    '    _outputs = []'
+  ].join('\n'));
 }
 
 function clearOutput(outEl){
@@ -6262,7 +6378,7 @@ function extractCode(preEl){
   return clone.textContent;
 }
 
-async function runCell(cellEl){
+async function runCell(cellEl, options = {}){
   const codeEl = cellEl.querySelector('.cell__code pre');
   const outEl  = cellEl.querySelector('.cell__output');
   const runBtn = cellEl.querySelector('.cell__btn--run');
@@ -6289,13 +6405,14 @@ async function runCell(cellEl){
   try {
     const py = await ensurePyodide();
     const code = extractCode(codeEl);
+    if (options.withPrereqs !== false) prepareCellPrerequisites(py, cellEl);
 
     // Run user code. Any Python exception becomes a JS PythonError.
-    py.runPython(code);
+    runPythonShared(py, code);
 
     // Pull structured outputs. Defend against _outputs being missing
     // (e.g. setup script didn't run) by recreating it on demand.
-    const outputsJson = py.runPython([
+    const outputsJson = runPythonShared(py, [
       'import json',
       'try:',
       '    _outs_payload = json.dumps(_outputs)',
@@ -6360,10 +6477,10 @@ document.querySelectorAll('.cell').forEach(cell => {
    (runCell already swallows its own errors and renders them inline,
     so we infer status from the rendered output rather than try/catch.)
 ================================================================== */
-async function runCellWithStatus(cellEl){
+async function runCellWithStatus(cellEl, options = {}){
   cellEl.classList.remove('is-ok','is-fail');
   cellEl.classList.add('is-running');
-  await runCell(cellEl);
+  await runCell(cellEl, options);
   cellEl.classList.remove('is-running');
 
   const out = cellEl.querySelector('.cell__output');
@@ -6644,7 +6761,7 @@ function buildKfMiniCells(){
       const cell = cells[i];
       const num  = cell.dataset.cell || (i+1);
       swapTextWithTransition(stat, `Running cell ${num} of ${total}...`);
-      await runCellWithStatus(cell);
+      await runCellWithStatus(cell, { withPrereqs:false });
       bar.style.width = ((i+1)/total*100) + '%';
       if (cell.classList.contains('is-fail')){
         swapTextWithTransition(stat, `Cell ${num} threw an error. See its output.`);
@@ -6930,10 +7047,12 @@ function buildKfMiniCells(){
   if (!dot) return;
 
   const root = document.documentElement;
+  const hero = document.querySelector('.hero');
   let mx = -300, my = -300;  /* raw mouse */
   let cx = -300, cy = -300;  /* current dot position (lerp) */
   let curState = '';
   let visible = false;
+  let pressing = false;
 
   const LERP = 0.58;
 
@@ -6946,9 +7065,10 @@ function buildKfMiniCells(){
     ['.k-stage, .minkowski, .universe__diagram, .kgrid',   'lab'   ],
     ['.universe, a[href]',                                 'link'  ],
     ['.prose p, .abstract__body, .verdict__body, .s-head__sub, .hero__lede, .pullquote__text', 'text'],
+    ['.hero',                                              'home'  ],
   ];
 
-  const ALL = ['s-link','s-btn','s-gold','s-text','s-grab','s-lab','s-kappa','s-down'];
+  const ALL = ['s-link','s-btn','s-gold','s-text','s-grab','s-lab','s-kappa','s-home','s-down'];
 
   function detectState(el) {
     for (const [sel, st] of STATES) {
@@ -6970,6 +7090,22 @@ function buildKfMiniCells(){
     root.style.setProperty('--cursor-presence', next ? '.92' : '0');
   }
 
+  function updateHeroField(x, y){
+    if (!hero) return;
+    const rect = hero.getBoundingClientRect();
+    const inHero = visible && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    root.classList.toggle('is-hero-pointer', inHero);
+    if (!inHero) {
+      hero.style.setProperty('--hero-pointer-presence', '0');
+      hero.style.setProperty('--hero-pointer-lines', '0');
+      return;
+    }
+    hero.style.setProperty('--hero-pointer-x', `${Math.round(x - rect.left)}px`);
+    hero.style.setProperty('--hero-pointer-y', `${Math.round(y - rect.top)}px`);
+    hero.style.setProperty('--hero-pointer-presence', pressing ? '.92' : '.72');
+    hero.style.setProperty('--hero-pointer-lines', pressing ? '.26' : '.16');
+  }
+
   /* RAF loop — lerp position */
   function tick() {
     requestAnimationFrame(tick);
@@ -6978,6 +7114,7 @@ function buildKfMiniCells(){
     dot.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
     root.style.setProperty('--cursor-x', `${Math.round(cx)}px`);
     root.style.setProperty('--cursor-y', `${Math.round(cy)}px`);
+    updateHeroField(cx, cy);
   }
   requestAnimationFrame(tick);
 
@@ -6996,6 +7133,7 @@ function buildKfMiniCells(){
   document.addEventListener('mouseleave', () => {
     dot.classList.add('cur-hidden');
     setVisible(false);
+    updateHeroField(cx, cy);
   });
   document.addEventListener('mouseenter', () => {
     dot.classList.remove('cur-hidden');
@@ -7006,12 +7144,15 @@ function buildKfMiniCells(){
   document.addEventListener('mousedown', e => {
     mx = e.clientX;
     my = e.clientY;
+    pressing = true;
     dot.classList.add('s-down');
     root.style.setProperty('--cursor-presence', '1');
     root.style.setProperty('--cursor-press', '1');
     setVisible(true);
+    updateHeroField(mx, my);
   });
   document.addEventListener('mouseup',   () => {
+    pressing = false;
     dot.classList.remove('s-down');
     root.style.setProperty('--cursor-press', '0');
     setVisible(true);
