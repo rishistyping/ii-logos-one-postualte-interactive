@@ -7,4 +7,3 @@ link https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geis
 link https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css
 script https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js
 script https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js
-script https://replit-cdn.com/replit-pill/replit-pill.global.js

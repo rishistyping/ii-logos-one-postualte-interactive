@@ -16,6 +16,6 @@ This folder contains the public browser source that the deployed site exposes.
 Notes:
 
 - No first-party external JavaScript or CSS bundles were linked by the page.
-- The page references Google Fonts, KaTeX, Pyodide, and the Replit pill script from CDNs.
+- The page references Google Fonts, KaTeX, and Pyodide from CDNs.
 - The self-contained variant removes linked `<script src>` and `<link href>` tags, but font files referenced inside Google Fonts CSS and Pyodide's dynamic WASM/package downloads still require network access.
 - This extraction cannot include private server-side Replit files unless those files are publicly served by the deployed app.

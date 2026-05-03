@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>One Postulate — Intelligent Internet</title>
 <meta name="description" content="Einstein built special relativity on two postulates. He needed only one. A research note from Intelligent Internet by Emad Mostaque, April 2026." />
+<script>
+(function(){
+  const KEY = 'ii-theme';
+  const root = document.documentElement;
+  const isValid = value => value === 'light' || value === 'dark';
+  let saved = null;
+  try { saved = localStorage.getItem(KEY); } catch(_) {}
+  const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = isValid(saved) ? saved : (systemDark ? 'dark' : 'light');
+  root.dataset.theme = theme;
+  root.style.colorScheme = theme;
+})();
+</script>
 
 <!-- Fonts: Libre Caslon Text (op.ii.inc display face), Cormorant Garamond (display), Source Serif 4 (body/labels), Geist Sans (utility) -->
 <!-- Preload the display font used above-the-fold -->
@@ -230,6 +243,35 @@ var module = undefined, exports = undefined, define = undefined;
 
   --rule:rgba(15,35,63,.10);
   --rule-strong:rgba(15,35,63,.22);
+  --deep-surface:#0F233F;
+  --deep-surface-soft:#12335A;
+  --deep-ink:#F2EEE2;
+  --deep-muted:rgba(242,238,226,.78);
+  --deep-muted-soft:rgba(242,238,226,.55);
+  --deep-rule:rgba(242,238,226,.18);
+  --nav-bg:rgba(242,238,226,0);
+  --nav-bg-pinned:rgba(242,238,226,.78);
+  --theme-toggle-bg:rgba(15,35,63,.055);
+  --theme-toggle-border:rgba(15,35,63,.24);
+  --theme-toggle-fg:var(--secondary);
+  --theme-toggle-active-bg:var(--primary);
+  --theme-toggle-active-fg:var(--inverse);
+  --diagram-accent-wash:rgba(47,149,166,.04);
+  --diagram-accent-strong:rgba(47,149,166,.18);
+  --diagram-tertiary-wash:rgba(131,161,204,.07);
+  --diagram-muted-wash:rgba(81,96,113,.05);
+  --diagram-grid-dot:rgba(15,35,63,.18);
+  --diagram-axis-soft:rgba(15,35,63,.40);
+  --diagram-muted-line:rgba(81,96,113,.55);
+  --focus-ring:rgba(47,149,166,.36);
+  --code-surface:#FBF8EE;
+  --code-toolbar:rgba(15,35,63,.03);
+  --token-keyword:#7A4EAB;
+  --token-builtin:#0F233F;
+  --token-number:#2F95A6;
+  --token-string:#5E7B3A;
+  --danger:#a4453a;
+  color-scheme:light;
 
   --serif-caslon:"Libre Caslon Text", "Cormorant Garamond", ui-serif, Georgia, serif;
   --serif-display:"Cormorant Garamond", ui-serif, Georgia, serif;
@@ -297,6 +339,55 @@ var module = undefined, exports = undefined, define = undefined;
   --icon-swap-ease:ease-in-out;
 }
 
+html[data-theme="dark"]{
+  --primary:#F2EEE2;
+  --primary-hover:#FFFFFF;
+  --secondary:#AEB8C7;
+  --tertiary:#A9BFEA;
+  --accent:#74C9D3;
+  --gold:#D8B875;
+  --sky:#BEE6ED;
+  --slate:#A0ADBE;
+  --neutral:#071527;
+  --neutral-soft:#0B1B30;
+  --surface:#071527;
+  --surface-elevated:#0D2138;
+  --on-surface:#F6F0E6;
+  --border:#7C8BA0;
+  --inverse:#071527;
+  --rule:rgba(242,238,226,.12);
+  --rule-strong:rgba(242,238,226,.26);
+  --deep-surface:#071527;
+  --deep-surface-soft:#0D2138;
+  --deep-ink:#F2EEE2;
+  --deep-muted:rgba(242,238,226,.78);
+  --deep-muted-soft:rgba(242,238,226,.55);
+  --deep-rule:rgba(242,238,226,.18);
+  --nav-bg:rgba(7,21,39,0);
+  --nav-bg-pinned:rgba(7,21,39,.84);
+  --theme-toggle-bg:rgba(242,238,226,.08);
+  --theme-toggle-border:rgba(242,238,226,.22);
+  --theme-toggle-fg:rgba(242,238,226,.68);
+  --theme-toggle-active-bg:#F2EEE2;
+  --theme-toggle-active-fg:#071527;
+  --diagram-accent-wash:rgba(116,201,211,.11);
+  --diagram-accent-strong:rgba(116,201,211,.24);
+  --diagram-tertiary-wash:rgba(169,191,234,.11);
+  --diagram-muted-wash:rgba(174,184,199,.10);
+  --diagram-grid-dot:rgba(242,238,226,.18);
+  --diagram-axis-soft:rgba(242,238,226,.42);
+  --diagram-muted-line:rgba(174,184,199,.58);
+  --focus-ring:rgba(116,201,211,.42);
+  --code-surface:#0A182A;
+  --code-toolbar:rgba(242,238,226,.055);
+  --token-keyword:#BFA9F2;
+  --token-builtin:#F2EEE2;
+  --token-number:#74C9D3;
+  --token-string:#B8D991;
+  --danger:#F09A8B;
+  color-scheme:dark;
+}
+
 @media (min-width:1100px){ :root{ --gutter:80px; } }
 
 /* ------------------------------------------------------------------
@@ -315,10 +406,11 @@ body{
   text-rendering:optimizeLegibility;
   font-feature-settings:"kern","liga","onum";
   overflow-x:hidden;
+  transition:background-color .28s ease, color .28s ease;
 }
 a{ color:inherit; text-decoration:none; }
 img,svg{ display:block; max-width:100%; }
-::selection{ background:var(--primary); color:var(--neutral); }
+::selection{ background:var(--primary); color:var(--inverse); }
 
 h1,h2,h3,h4{
   font-family:var(--serif-display);
@@ -433,12 +525,12 @@ section + section{ border-top:1px solid var(--rule); }
   background:var(--primary); color:var(--inverse);
   height:44px;
 }
-.btn--primary:hover{ background:var(--primary-hover); transform:translateY(-1px); box-shadow:0 8px 24px -12px rgba(15,35,63,.45); }
+.btn--primary:hover{ background:var(--primary-hover); transform:translateY(-1px); box-shadow:0 8px 24px -12px var(--rule-strong); }
 .btn--secondary{
   background:transparent; color:var(--primary);
-  border-color:rgba(15,35,63,.32); height:44px;
+  border-color:var(--rule-strong); height:44px;
 }
-.btn--secondary:hover{ background:rgba(15,35,63,.05); }
+.btn--secondary:hover{ background:var(--surface-elevated); }
 .btn--gold{
   background:var(--gold); color:var(--primary);
   height:48px; padding:14px 22px;
@@ -456,12 +548,12 @@ section + section{ border-top:1px solid var(--rule); }
   z-index:50;
   height:80px;
   display:flex; align-items:center;
-  background:rgba(242,238,226,0);
-  transition:background .35s ease, backdrop-filter .35s ease, border-color .35s ease;
+  background:var(--nav-bg);
+  transition:background .35s ease, backdrop-filter .35s ease, border-color .35s ease, color .28s ease;
   border-bottom:1px solid transparent;
 }
 .nav.is-pinned{
-  background:rgba(242,238,226,.78);
+  background:var(--nav-bg-pinned);
   backdrop-filter:saturate(140%) blur(14px);
   -webkit-backdrop-filter:saturate(140%) blur(14px);
   border-bottom:1px solid var(--rule);
@@ -523,6 +615,82 @@ section + section{ border-top:1px solid var(--rule); }
 }
 .nav__links a:hover::after{ transform:scaleX(1); }
 @media (max-width:880px){ .nav__links{ display:none; } }
+.nav__actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.theme-toggle{
+  --theme-toggle-height:36px;
+  appearance:none;
+  border:1px solid var(--theme-toggle-border);
+  border-radius:var(--r-full);
+  background:var(--theme-toggle-bg);
+  color:var(--theme-toggle-fg);
+  height:var(--theme-toggle-height);
+  padding:0;
+  font:600 10px/1 var(--sans);
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:background-color .24s ease, border-color .24s ease, color .24s ease, transform .2s ease;
+}
+.theme-toggle:hover{ transform:translateY(-1px); }
+.theme-toggle:focus-visible{
+  outline:2px solid var(--focus-ring);
+  outline-offset:3px;
+}
+.theme-toggle__track{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  width:116px;
+  height:100%;
+  padding:3px;
+  isolation:isolate;
+}
+.theme-toggle__track::before{
+  content:"";
+  position:absolute;
+  top:3px; bottom:3px; left:3px;
+  width:calc(50% - 3px);
+  border-radius:var(--r-full);
+  background:var(--theme-toggle-active-bg);
+  box-shadow:0 8px 18px -12px var(--rule-strong);
+  transform:translate3d(0,0,0);
+  transition:transform .24s var(--resize-ease), background-color .24s ease;
+  will-change:transform;
+}
+.theme-toggle[data-theme-state="dark"] .theme-toggle__track::before{
+  transform:translate3d(100%,0,0);
+}
+.theme-toggle__option{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+  color:var(--theme-toggle-fg);
+  transition:color .2s ease;
+}
+.theme-toggle[data-theme-state="light"] .theme-toggle__option--light,
+.theme-toggle[data-theme-state="dark"] .theme-toggle__option--dark{
+  color:var(--theme-toggle-active-fg);
+}
+.mobile-nav .theme-toggle{
+  --theme-toggle-bg:rgba(242,238,226,.08);
+  --theme-toggle-border:rgba(242,238,226,.18);
+  --theme-toggle-fg:rgba(242,238,226,.72);
+  --theme-toggle-active-bg:var(--deep-ink);
+  --theme-toggle-active-fg:var(--deep-surface);
+  height:48px;
+}
+.mobile-nav .theme-toggle__track{ width:132px; }
+@media (max-width:520px){
+  .nav__actions .theme-toggle{ display:none; }
+}
 
 /* ------------------------------------------------------------------
    Corner-cross frame — the engineered motif
@@ -633,8 +801,8 @@ section + section{ border-top:1px solid var(--rule); }
   font-size: clamp(120px, 18vw, 280px);
   line-height:1;
   color:transparent;
-  -webkit-text-stroke: 1px rgba(15,35,63,.16);
-  text-stroke: 1px rgba(15,35,63,.16);
+  -webkit-text-stroke: 1px var(--rule-strong);
+  text-stroke: 1px var(--rule-strong);
   pointer-events:none;
   user-select:none;
   font-weight:300;
@@ -966,7 +1134,7 @@ table.compare{
 .compare td{ color:var(--primary); }
 .compare td.win{ color:var(--accent); font-weight:500; }
 .compare td.fail{ color:var(--secondary); }
-.col-win{ background:rgba(47,149,166,.04); }
+.col-win{ background:var(--diagram-accent-wash); }
 @media (max-width:780px){
   .compare th, .compare td{ padding:12px 14px; font-size:14px; }
   .compare tbody th{ width:38%; }
@@ -1031,8 +1199,8 @@ table.compare{
    Conclusion section — dark ceremonial
    ------------------------------------------------------------------ */
 .conclusion{
-  background:var(--primary);
-  color:var(--inverse);
+  background:var(--deep-surface);
+  color:var(--deep-ink);
   padding: 140px 0 160px;
   position:relative; overflow:hidden;
   border-top:none;
@@ -1061,14 +1229,14 @@ table.compare{
   opacity:.7;
 }
 .conclusion .shell{ position:relative; z-index:1; }
-.conclusion .eyebrow{ color:rgba(242,238,226,.55); }
+.conclusion .eyebrow{ color:var(--deep-muted-soft); }
 .conclusion .eyebrow .dot{ background:var(--gold); }
 .conclusion .eyebrow .num{ color:var(--gold); }
 .conclusion h2{
   font-family:var(--serif-display); font-weight:300;
   font-size: clamp(48px, 7vw, 96px);
   line-height:1.04; letter-spacing:-0.025em;
-  color:var(--inverse);
+  color:var(--deep-ink);
   max-width:18ch;
   margin-bottom:32px;
 }
@@ -1076,13 +1244,13 @@ table.compare{
 .conclusion .lead{
   font-family:var(--serif-body);
   font-size:20px; line-height:1.6;
-  color:rgba(242,238,226,.78);
+  color:var(--deep-muted);
   max-width:58ch;
 }
 .conclusion__final{
   margin-top:80px;
   padding-top:48px;
-  border-top:1px solid rgba(242,238,226,.18);
+  border-top:1px solid var(--deep-rule);
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:48px;
@@ -1101,7 +1269,7 @@ table.compare{
 .conclusion__sub{
   font-family:var(--serif-body);
   font-size:17px; line-height:1.55;
-  color:rgba(242,238,226,.75);
+  color:var(--deep-muted);
   max-width:42ch;
 }
 .conclusion__cta{ margin-top:32px; }
@@ -1143,8 +1311,8 @@ table.compare{
    Footer — op.ii.inc-style dark colophon
    ------------------------------------------------------------------ */
 footer.foot{
-  background:var(--primary);
-  color:var(--neutral);
+  background:var(--deep-surface);
+  color:var(--deep-ink);
   padding:64px 0 32px;
   font-family:var(--serif-body);
   font-size:13px;
@@ -1159,7 +1327,7 @@ footer.foot{
   margin-bottom:48px;
   opacity:.4;
 }
-.foot__rule .line{ flex:1; height:1px; background:var(--neutral); }
+.foot__rule .line{ flex:1; height:1px; background:var(--deep-ink); }
 .foot__rule svg{ flex-shrink:0; }
 .foot__cols{
   display:grid;
@@ -1203,7 +1371,7 @@ footer.foot{
   display:block;
   font-family:var(--serif-body);
   font-size:13.5px;
-  color:var(--neutral);
+  color:var(--deep-ink);
   text-decoration:none;
   opacity:.72;
   padding:2px 0;
@@ -1217,7 +1385,7 @@ footer.foot{
   flex-wrap:wrap;
   gap:18px;
   padding-top:22px;
-  border-top:1px solid rgba(242,238,226,.15);
+  border-top:1px solid var(--deep-rule);
 }
 .foot__copy{
   font-family:var(--serif-body);
@@ -1227,29 +1395,6 @@ footer.foot{
 }
 .foot__copy a{ color:inherit; text-decoration:none; }
 .foot__copy a:hover{ opacity:1; color:var(--sky); }
-.madeby{
-  display:inline-flex; align-items:center; gap:10px;
-  padding:8px 16px;
-  border:1px solid rgba(242,238,226,.18);
-  border-radius:8px;
-  text-decoration:none;
-  background:rgba(242,238,226,.04);
-  transition:all .25s ease;
-  opacity:.85;
-}
-.madeby:hover{ background:rgba(190,230,237,.08); border-color:var(--sky); opacity:1; }
-.madeby__mark{
-  width:24px; height:24px;
-  flex-shrink:0;
-}
-.madeby__text{
-  font-family:var(--serif-caslon);
-  font-size:14px;
-  color:var(--neutral);
-  line-height:1;
-  letter-spacing:0;
-}
-
 /* op.ii.inc-style diamond divider — drop into the page between major beats */
 .ornament{
   display:flex; align-items:center; gap:14px;
@@ -1362,7 +1507,7 @@ footer.foot{
   background:var(--primary); color:var(--inverse);
   border-color:var(--primary);
 }
-.kappa-dial button.active .name{ color:rgba(242,238,226,.7); }
+.kappa-dial button.active .name{ color:var(--inverse); opacity:.72; }
 .kappa-dial button.active.win{
   background:var(--accent); border-color:var(--accent);
 }
@@ -1548,18 +1693,18 @@ input[type="range"].l-slider::-moz-range-thumb{
 .kgrid .lbl-K{ color:var(--accent); }
 .kgrid .cell-k{
   display:flex; align-items:center; justify-content:center;
-  background:rgba(15,35,63,.04);
+  background:var(--diagram-muted-wash);
   border-radius:3px;
   transition: all .35s cubic-bezier(.2,.7,.2,1);
   position:relative;
   font-size:15px;
 }
 .kgrid .cell-k.diag{
-  background:rgba(15,35,63,.08);
+  background:var(--surface-elevated);
 }
 .kgrid .cell-k.filled.zero{ color:var(--secondary); font-size:14px; opacity:.55; }
-.kgrid .cell-k.filled.rot{ color:var(--primary); background:rgba(15,35,63,.10); font-weight:500; }
-.kgrid .cell-k.filled.boost{ color:var(--accent); background:rgba(47,149,166,.18); font-weight:500; }
+.kgrid .cell-k.filled.rot{ color:var(--primary); background:var(--diagram-muted-wash); font-weight:500; }
+.kgrid .cell-k.filled.boost{ color:var(--accent); background:var(--diagram-accent-strong); font-weight:500; }
 .kgrid .cell-k.computing{
   background:var(--gold); color:var(--primary);
   transform:scale(1.08);
@@ -1581,7 +1726,7 @@ input[type="range"].l-slider::-moz-range-thumb{
   padding:14px 18px;
   border:1px dashed var(--rule-strong);
   border-radius:var(--r-sm);
-  background:rgba(47,149,166,.03);
+  background:var(--diagram-accent-wash);
 }
 .nb-status .led{
   width:8px; height:8px; border-radius:50%;
@@ -1590,8 +1735,8 @@ input[type="range"].l-slider::-moz-range-thumb{
   transition:background .3s ease, box-shadow .3s ease;
 }
 .nb-status.is-loading .led{ background:var(--gold); box-shadow:0 0 0 4px rgba(201,169,110,.15); animation:pulse 1.4s ease-in-out infinite; }
-.nb-status.is-ready   .led{ background:var(--accent); box-shadow:0 0 0 4px rgba(47,149,166,.15); }
-.nb-status.is-error   .led{ background:#a4453a; }
+.nb-status.is-ready   .led{ background:var(--accent); box-shadow:0 0 0 4px var(--diagram-accent-strong); }
+.nb-status.is-error   .led{ background:var(--danger); }
 @keyframes pulse{
   0%,100%{ box-shadow:0 0 0 0 rgba(201,169,110,.45); }
   50%{ box-shadow:0 0 0 8px rgba(201,169,110,0); }
@@ -1639,7 +1784,7 @@ input[type="range"].l-slider::-moz-range-thumb{
 }
 .cell__code{
   position:relative;
-  background: #FBF8EE;
+  background:var(--code-surface);
   border-top:1px solid var(--rule);
   border-bottom:1px solid var(--rule);
 }
@@ -1647,7 +1792,7 @@ input[type="range"].l-slider::-moz-range-thumb{
   display:flex; justify-content:space-between; align-items:center;
   padding:10px 18px;
   border-bottom:1px solid var(--rule);
-  background:rgba(15,35,63,.03);
+  background:var(--code-toolbar);
 }
 .cell__code-toolbar .lang{
   font-family:"Geist Mono", monospace;
@@ -1688,15 +1833,15 @@ input[type="range"].l-slider::-moz-range-thumb{
 }
 .cell__code pre[contenteditable="true"]:focus{
   outline:none;
-  background:rgba(47,149,166,.04);
+  background:var(--diagram-accent-wash);
 }
 /* simple syntax tinting via spans */
-.tok-kw{ color:#7A4EAB; }
-.tok-builtin{ color:#0F233F; font-weight:500; }
-.tok-num{ color:#2F95A6; }
-.tok-str{ color:#5E7B3A; }
+.tok-kw{ color:var(--token-keyword); }
+.tok-builtin{ color:var(--token-builtin); font-weight:500; }
+.tok-num{ color:var(--token-number); }
+.tok-str{ color:var(--token-string); }
 .tok-com{ color:var(--secondary); font-style:italic; }
-.tok-fn{ color:#0F233F; }
+.tok-fn{ color:var(--token-builtin); }
 
 .cell__output{
   padding:22px 24px;
@@ -1818,7 +1963,7 @@ input[type="range"].l-slider::-moz-range-thumb{
   width:100%;
   height:3px;
   border-radius:99px;
-  background:rgba(15,35,63,.18);
+  background:var(--rule-strong);
   cursor:pointer;
   outline:none;
 }
@@ -1920,7 +2065,7 @@ input[type="range"].l-slider::-moz-range-thumb{
 .nb-runall__btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
 .nb-runall__progress{
   flex:1; min-width:200px;
-  height:4px; background:rgba(15,35,63,.10); border-radius:99px;
+  height:4px; background:var(--rule); border-radius:99px;
   overflow:hidden; position:relative;
 }
 .nb-runall__progress-bar{
@@ -1946,8 +2091,8 @@ input[type="range"].l-slider::-moz-range-thumb{
   background:var(--rule-strong);
   margin-left:4px;
 }
-.cell.is-ok .cell__num::after{ background:var(--accent); box-shadow:0 0 0 3px rgba(47,149,166,.15); }
-.cell.is-fail .cell__num::after{ background:#a4453a; box-shadow:0 0 0 3px rgba(164,69,58,.18); }
+.cell.is-ok .cell__num::after{ background:var(--accent); box-shadow:0 0 0 3px var(--diagram-accent-strong); }
+.cell.is-fail .cell__num::after{ background:var(--danger); box-shadow:0 0 0 3px color-mix(in srgb, var(--danger) 24%, transparent); }
 .cell.is-running .cell__num::after{ background:var(--gold); animation:pulse 1s infinite; }
 @keyframes pulse{
   0%,100%{ opacity:1; }
@@ -1972,15 +2117,15 @@ input[type="range"].l-slider::-moz-range-thumb{
   font-family:"Geist Mono", ui-monospace, monospace;
   font-size:10px; font-weight:500;
   color:var(--secondary);
-  background:rgba(15,35,63,.04);
+  background:var(--diagram-muted-wash);
   border-radius:3px;
 }
 .kf-mini__cell.rot{
-  background:rgba(15,35,63,.16);
+  background:var(--surface-elevated);
   color:var(--primary);
 }
 .kf-mini__cell.boost{
-  background:rgba(47,149,166,.22);
+  background:var(--diagram-accent-strong);
   color:var(--accent);
 }
 .kf-mini__caption{
@@ -2059,7 +2204,7 @@ input[type="range"].l-slider::-moz-range-thumb{
   background:rgba(255,255,255,.22);
   pointer-events:none;
 }
-.btn--secondary .ripple-wave{ background:rgba(15,35,63,.08); }
+.btn--secondary .ripple-wave{ background:var(--rule); }
 @keyframes ripple-expand{
   to{ transform:scale(4); opacity:0; }
 }
@@ -2137,10 +2282,10 @@ input[type="range"].l-slider::-moz-range-thumb{
 }
 .compare tbody tr:hover td,
 .compare tbody tr:hover th{
-  background:rgba(47,149,166,.06);
+  background:var(--diagram-accent-wash);
 }
 .compare .col-win{
-  background:rgba(47,149,166,.06);
+  background:var(--diagram-accent-wash);
   transition:background .2s ease;
 }
 
@@ -2329,7 +2474,7 @@ a:focus-visible{ border-radius:2px; }
 /* ---- Mobile nav overlay ---- */
 .mobile-nav{
   position:fixed; inset:0; z-index:55;
-  background:var(--primary);
+  background:var(--deep-surface);
   display:flex; flex-direction:column;
   opacity:0; visibility:hidden; pointer-events:none;
   transition:opacity .32s ease, visibility .32s ease;
@@ -2419,7 +2564,7 @@ a:focus-visible{ border-radius:2px; }
   z-index:56;
 }
 .mobile-nav__close:hover{
-  background:rgba(242,238,226,.14); color:var(--inverse);
+  background:rgba(242,238,226,.14); color:var(--deep-ink);
 }
 
 /* ---- Back-to-top floating button ---- */
@@ -3030,6 +3175,10 @@ a:focus-visible{ border-radius:2px; }
   .t-text-swap { transition: none !important; }
   .t-digit-group .t-digit { animation: none !important; }
   .t-icon-swap .t-icon { transition: none !important; }
+  body,
+  .theme-toggle,
+  .theme-toggle__track::before,
+  .theme-toggle__option { transition: none !important; }
 }
 </style>
 </head>
@@ -3052,19 +3201,19 @@ a:focus-visible{ border-radius:2px; }
   <div class="nav__inner">
     <a class="brand" href="#top" aria-label="One Postulate · Intelligent Internet">
       <svg class="brand__mark" width="36" height="36" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-        <circle cx="50" cy="50" r="46" stroke="#0F233F" stroke-width="1.2"/>
-        <circle cx="50" cy="50" r="38" stroke="#0F233F" stroke-width="0.6"/>
-        <polygon points="50,4 46,30 50,26 54,30" fill="#0F233F"/>
-        <polygon points="50,96 46,70 50,74 54,70" fill="#0F233F" opacity="0.5"/>
-        <polygon points="96,50 70,46 74,50 70,54" fill="#0F233F" opacity="0.5"/>
-        <polygon points="4,50 30,46 26,50 30,54" fill="#0F233F" opacity="0.5"/>
-        <polygon points="79,21 62,40 65,43 82,24" fill="#0F233F" opacity="0.35"/>
-        <polygon points="21,21 38,40 35,43 18,24" fill="#0F233F" opacity="0.35"/>
-        <polygon points="79,79 62,60 65,57 82,76" fill="#0F233F" opacity="0.35"/>
-        <polygon points="21,79 38,60 35,57 18,76" fill="#0F233F" opacity="0.35"/>
-        <circle cx="50" cy="50" r="5" fill="#0F233F"/>
-        <circle cx="50" cy="50" r="2.5" fill="#BEE6ED"/>
-        <text x="50" y="19" text-anchor="middle" font-family="Libre Caslon Text, Georgia, serif" font-size="9" fill="#0F233F" font-weight="400">N</text>
+        <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="1.2"/>
+        <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="0.6"/>
+        <polygon points="50,4 46,30 50,26 54,30" fill="currentColor"/>
+        <polygon points="50,96 46,70 50,74 54,70" fill="currentColor" opacity="0.5"/>
+        <polygon points="96,50 70,46 74,50 70,54" fill="currentColor" opacity="0.5"/>
+        <polygon points="4,50 30,46 26,50 30,54" fill="currentColor" opacity="0.5"/>
+        <polygon points="79,21 62,40 65,43 82,24" fill="currentColor" opacity="0.35"/>
+        <polygon points="21,21 38,40 35,43 18,24" fill="currentColor" opacity="0.35"/>
+        <polygon points="79,79 62,60 65,57 82,76" fill="currentColor" opacity="0.35"/>
+        <polygon points="21,79 38,60 35,57 18,76" fill="currentColor" opacity="0.35"/>
+        <circle cx="50" cy="50" r="5" fill="currentColor"/>
+        <circle cx="50" cy="50" r="2.5" fill="var(--sky)"/>
+        <text x="50" y="19" text-anchor="middle" font-family="Libre Caslon Text, Georgia, serif" font-size="9" fill="currentColor" font-weight="400">N</text>
       </svg>
       <span class="brand__text">
         <span class="brand__title">One Postulate</span>
@@ -3080,9 +3229,17 @@ a:focus-visible{ border-radius:2px; }
       <a href="#proof">Proof</a>
       <a href="#references">Refs</a>
     </div>
-    <a class="btn btn--primary" href="#abstract">
-      Read the paper <span class="arrow">→</span>
-    </a>
+    <div class="nav__actions">
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="theme-toggle__track" aria-hidden="true">
+          <span class="theme-toggle__option theme-toggle__option--light">Light</span>
+          <span class="theme-toggle__option theme-toggle__option--dark">Dark</span>
+        </span>
+      </button>
+      <a class="btn btn--primary" href="#abstract">
+        Read the paper <span class="arrow">→</span>
+      </a>
+    </div>
     <button class="nav__hamburger" id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav">
       <span class="t-icon-swap nav__hamburger-icons" data-state="a" aria-hidden="true">
         <span class="t-icon nav__hamburger-stack" data-icon="a">
@@ -3107,9 +3264,9 @@ a:focus-visible{ border-radius:2px; }
 <header class="hero">
   <div class="folio" aria-hidden="true">κ</div>
   <div class="shell shell--guides">
-    <div class="hero__inner reveal-stagger">
-      <div class="hero__meta">
-        <span class="pill" style="border-color:rgba(15,35,63,0.32); color:var(--secondary);">Intelligent Internet · 2026</span>
+      <div class="hero__inner reveal-stagger">
+        <div class="hero__meta">
+        <span class="pill">Intelligent Internet · 2026</span>
         <span>April</span>
         <span>·</span>
         <span>Foundations · Symmetry · Spacetime</span>
@@ -3336,23 +3493,23 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
           <svg viewBox="0 0 200 200" width="180" height="180" aria-hidden="true">
             <defs>
               <pattern id="dotgrid-l" width="14" height="14" patternUnits="userSpaceOnUse">
-                <circle cx="1" cy="1" r="0.7" fill="rgba(15,35,63,.18)"/>
+                <circle cx="1" cy="1" r="0.7" fill="var(--diagram-grid-dot)"/>
               </pattern>
             </defs>
-            <rect x="0" y="0" width="200" height="200" fill="rgba(47,149,166,.05)"/>
+            <rect x="0" y="0" width="200" height="200" fill="var(--diagram-accent-wash)"/>
             <rect x="0" y="0" width="200" height="200" fill="url(#dotgrid-l)"/>
             <!-- light cones -->
-            <polygon points="100,100 180,20 20,20" fill="rgba(47,149,166,.18)"/>
-            <polygon points="100,100 180,180 20,180" fill="rgba(47,149,166,.18)"/>
-            <line x1="20" y1="20" x2="100" y2="100" stroke="#2F95A6" stroke-width="1.6"/>
-            <line x1="180" y1="20" x2="100" y2="100" stroke="#2F95A6" stroke-width="1.6"/>
-            <line x1="20" y1="180" x2="100" y2="100" stroke="#2F95A6" stroke-width="1.6"/>
-            <line x1="180" y1="180" x2="100" y2="100" stroke="#2F95A6" stroke-width="1.6"/>
+            <polygon points="100,100 180,20 20,20" fill="var(--diagram-accent-strong)"/>
+            <polygon points="100,100 180,180 20,180" fill="var(--diagram-accent-strong)"/>
+            <line x1="20" y1="20" x2="100" y2="100" stroke="var(--accent)" stroke-width="1.6"/>
+            <line x1="180" y1="20" x2="100" y2="100" stroke="var(--accent)" stroke-width="1.6"/>
+            <line x1="20" y1="180" x2="100" y2="100" stroke="var(--accent)" stroke-width="1.6"/>
+            <line x1="180" y1="180" x2="100" y2="100" stroke="var(--accent)" stroke-width="1.6"/>
             <!-- axes -->
-            <line x1="100" y1="6" x2="100" y2="194" stroke="#0F233F" stroke-width="1"/>
-            <line x1="6" y1="100" x2="194" y2="100" stroke="#0F233F" stroke-width="1"/>
-            <text x="103" y="14" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="#0F233F">t</text>
-            <text x="186" y="96" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="#0F233F">x</text>
+            <line x1="100" y1="6" x2="100" y2="194" stroke="var(--primary)" stroke-width="1"/>
+            <line x1="6" y1="100" x2="194" y2="100" stroke="var(--primary)" stroke-width="1"/>
+            <text x="103" y="14" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="var(--primary)">t</text>
+            <text x="186" y="96" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="var(--primary)">x</text>
           </svg>
         </div>
         <span class="universe__kappa">κ &gt; 0  ·  Lorentzian</span>
@@ -3369,18 +3526,18 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <span class="tick-bl"></span><span class="tick-br"></span>
         <div class="universe__diagram">
           <svg viewBox="0 0 200 200" width="180" height="180" aria-hidden="true">
-            <rect x="0" y="0" width="200" height="200" fill="rgba(81,96,113,.05)"/>
+            <rect x="0" y="0" width="200" height="200" fill="var(--diagram-muted-wash)"/>
             <!-- horizontal slices = absolute now -->
-            <line x1="6" y1="40"  x2="194" y2="40"  stroke="#516071" stroke-width="1" stroke-dasharray="3 4" opacity=".55"/>
-            <line x1="6" y1="70"  x2="194" y2="70"  stroke="#516071" stroke-width="1" stroke-dasharray="3 4" opacity=".55"/>
-            <line x1="6" y1="100" x2="194" y2="100" stroke="#516071" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>
-            <line x1="6" y1="130" x2="194" y2="130" stroke="#516071" stroke-width="1" stroke-dasharray="3 4" opacity=".55"/>
-            <line x1="6" y1="160" x2="194" y2="160" stroke="#516071" stroke-width="1" stroke-dasharray="3 4" opacity=".55"/>
+            <line x1="6" y1="40"  x2="194" y2="40"  stroke="var(--diagram-muted-line)" stroke-width="1" stroke-dasharray="3 4"/>
+            <line x1="6" y1="70"  x2="194" y2="70"  stroke="var(--diagram-muted-line)" stroke-width="1" stroke-dasharray="3 4"/>
+            <line x1="6" y1="100" x2="194" y2="100" stroke="var(--secondary)" stroke-width="1" stroke-dasharray="3 4"/>
+            <line x1="6" y1="130" x2="194" y2="130" stroke="var(--diagram-muted-line)" stroke-width="1" stroke-dasharray="3 4"/>
+            <line x1="6" y1="160" x2="194" y2="160" stroke="var(--diagram-muted-line)" stroke-width="1" stroke-dasharray="3 4"/>
             <!-- axes -->
-            <line x1="100" y1="6" x2="100" y2="194" stroke="#0F233F" stroke-width="1"/>
-            <line x1="6" y1="100" x2="194" y2="100" stroke="#0F233F" stroke-width="1"/>
-            <text x="103" y="14" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="#0F233F">t</text>
-            <text x="186" y="96" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="#0F233F">x</text>
+            <line x1="100" y1="6" x2="100" y2="194" stroke="var(--primary)" stroke-width="1"/>
+            <line x1="6" y1="100" x2="194" y2="100" stroke="var(--primary)" stroke-width="1"/>
+            <text x="103" y="14" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="var(--primary)">t</text>
+            <text x="186" y="96" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="var(--primary)">x</text>
           </svg>
         </div>
         <span class="universe__kappa">κ = 0  ·  Galilean</span>
@@ -3397,26 +3554,26 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <span class="tick-bl"></span><span class="tick-br"></span>
         <div class="universe__diagram">
           <svg viewBox="0 0 200 200" width="180" height="180" aria-hidden="true">
-            <rect x="0" y="0" width="200" height="200" fill="rgba(131,161,204,.07)"/>
-            <line x1="100" y1="6" x2="100" y2="194" stroke="rgba(15,35,63,.4)" stroke-width="1"/>
-            <line x1="6" y1="100" x2="194" y2="100" stroke="rgba(15,35,63,.4)" stroke-width="1"/>
-            <circle cx="100" cy="100" r="62" fill="none" stroke="#83A1CC" stroke-width="1.6"/>
+            <rect x="0" y="0" width="200" height="200" fill="var(--diagram-tertiary-wash)"/>
+            <line x1="100" y1="6" x2="100" y2="194" stroke="var(--diagram-axis-soft)" stroke-width="1"/>
+            <line x1="6" y1="100" x2="194" y2="100" stroke="var(--diagram-axis-soft)" stroke-width="1"/>
+            <circle cx="100" cy="100" r="62" fill="none" stroke="var(--tertiary)" stroke-width="1.6"/>
             <!-- arrows along the circle -->
-            <path d="M 162 100 A 62 62 0 0 0 130 47" fill="none" stroke="#0F233F" stroke-width="1.6"
+            <path d="M 162 100 A 62 62 0 0 0 130 47" fill="none" stroke="var(--primary)" stroke-width="1.6"
                   marker-end="url(#arr1)"/>
-            <path d="M 38 100 A 62 62 0 0 0 70 153" fill="none" stroke="#0F233F" stroke-width="1.6"
+            <path d="M 38 100 A 62 62 0 0 0 70 153" fill="none" stroke="var(--primary)" stroke-width="1.6"
                   marker-end="url(#arr1)"/>
             <defs>
               <marker id="arr1" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                <path d="M0,0 L8,5 L0,10 z" fill="#0F233F"/>
+                <path d="M0,0 L8,5 L0,10 z" fill="var(--primary)"/>
               </marker>
             </defs>
-            <circle cx="100" cy="38"  r="3" fill="#0F233F"/>
-            <circle cx="162" cy="100" r="2" fill="#83A1CC"/>
-            <circle cx="100" cy="162" r="2" fill="#83A1CC"/>
-            <circle cx="38"  cy="100" r="2" fill="#83A1CC"/>
-            <text x="103" y="14" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="#0F233F">t</text>
-            <text x="186" y="96" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="#0F233F">x</text>
+            <circle cx="100" cy="38"  r="3" fill="var(--primary)"/>
+            <circle cx="162" cy="100" r="2" fill="var(--tertiary)"/>
+            <circle cx="100" cy="162" r="2" fill="var(--tertiary)"/>
+            <circle cx="38"  cy="100" r="2" fill="var(--tertiary)"/>
+            <text x="103" y="14" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="var(--primary)">t</text>
+            <text x="186" y="96" font-family="Cormorant Garamond" font-size="13" font-style="italic" fill="var(--primary)">x</text>
           </svg>
         </div>
         <span class="universe__kappa">κ &lt; 0  ·  Euclidean</span>
@@ -3569,31 +3726,31 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
       <div class="killing__viz">
         <svg viewBox="0 0 360 220" width="100%" style="max-width:420px" aria-hidden="true">
           <!-- background grid -->
-          <rect x="20" y="20" width="320" height="180" fill="none" stroke="rgba(15,35,63,.15)"/>
+          <rect x="20" y="20" width="320" height="180" fill="none" stroke="var(--rule-strong)"/>
           <!-- diagonal cells -->
           <g font-family="Cormorant Garamond" font-size="20" font-style="italic" text-anchor="middle">
             <!-- rotations -->
-            <rect x="30" y="30"   width="50" height="40" fill="rgba(15,35,63,.10)" stroke="#0F233F" stroke-width="1"/>
-            <text x="55"  y="58" fill="#0F233F">−4</text>
-            <rect x="85" y="75"   width="50" height="40" fill="rgba(15,35,63,.10)" stroke="#0F233F" stroke-width="1"/>
-            <text x="110" y="103" fill="#0F233F">−4</text>
-            <rect x="140" y="120" width="50" height="40" fill="rgba(15,35,63,.10)" stroke="#0F233F" stroke-width="1"/>
-            <text x="165" y="148" fill="#0F233F">−4</text>
+            <rect x="30" y="30"   width="50" height="40" fill="var(--diagram-muted-wash)" stroke="var(--primary)" stroke-width="1"/>
+            <text x="55"  y="58" fill="var(--primary)">−4</text>
+            <rect x="85" y="75"   width="50" height="40" fill="var(--diagram-muted-wash)" stroke="var(--primary)" stroke-width="1"/>
+            <text x="110" y="103" fill="var(--primary)">−4</text>
+            <rect x="140" y="120" width="50" height="40" fill="var(--diagram-muted-wash)" stroke="var(--primary)" stroke-width="1"/>
+            <text x="165" y="148" fill="var(--primary)">−4</text>
             <!-- boosts -->
-            <rect x="195" y="30"  width="50" height="40" fill="rgba(47,149,166,.18)" stroke="#2F95A6" stroke-width="1.4"/>
-            <text x="220" y="58"  fill="#2F95A6">4κ</text>
-            <rect x="250" y="75"  width="50" height="40" fill="rgba(47,149,166,.18)" stroke="#2F95A6" stroke-width="1.4"/>
-            <text x="275" y="103" fill="#2F95A6">4κ</text>
-            <rect x="305" y="120" width="50" height="40" fill="rgba(47,149,166,.18)" stroke="#2F95A6" stroke-width="1.4"/>
-            <text x="330" y="148" fill="#2F95A6">4κ</text>
+            <rect x="195" y="30"  width="50" height="40" fill="var(--diagram-accent-strong)" stroke="var(--accent)" stroke-width="1.4"/>
+            <text x="220" y="58"  fill="var(--accent)">4κ</text>
+            <rect x="250" y="75"  width="50" height="40" fill="var(--diagram-accent-strong)" stroke="var(--accent)" stroke-width="1.4"/>
+            <text x="275" y="103" fill="var(--accent)">4κ</text>
+            <rect x="305" y="120" width="50" height="40" fill="var(--diagram-accent-strong)" stroke="var(--accent)" stroke-width="1.4"/>
+            <text x="330" y="148" fill="var(--accent)">4κ</text>
           </g>
           <!-- group labels -->
-          <g font-family="Source Serif 4" font-size="11" font-style="italic" fill="#516071" text-anchor="middle">
+          <g font-family="Source Serif 4" font-size="11" font-style="italic" fill="var(--secondary)" text-anchor="middle">
             <text x="110" y="190">rotations  J₁ J₂ J₃</text>
             <text x="275" y="190">boosts  K₁ K₂ K₃</text>
           </g>
           <!-- divider -->
-          <line x1="180" y1="20" x2="180" y2="200" stroke="rgba(15,35,63,.25)" stroke-dasharray="3 3"/>
+          <line x1="180" y1="20" x2="180" y2="200" stroke="var(--rule-strong)" stroke-dasharray="3 3"/>
         </svg>
       </div>
     </div>
@@ -3675,30 +3832,30 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
               <svg viewBox="0 0 220 220" width="100%" style="max-width:200px;margin:0 auto 12px" aria-hidden="true">
                 <defs>
                   <pattern id="dotgrid-v1" width="14" height="14" patternUnits="userSpaceOnUse">
-                    <circle cx="1" cy="1" r="0.6" fill="rgba(15,35,63,.14)"/>
+                    <circle cx="1" cy="1" r="0.6" fill="var(--diagram-grid-dot)"/>
                   </pattern>
                 </defs>
                 <rect x="0" y="0" width="220" height="220" fill="url(#dotgrid-v1)"/>
-                <line x1="10" y1="110" x2="210" y2="110" stroke="#0F233F" stroke-width="1"/>
-                <line x1="110" y1="10" x2="110" y2="210" stroke="#0F233F" stroke-width="1"/>
-                <circle cx="110" cy="110" r="68" fill="rgba(47,149,166,.10)" stroke="#2F95A6" stroke-width="1.6"/>
-                <line x1="110" y1="110" x2="178" y2="110" stroke="#2F95A6" stroke-width="1.5"/>
-                <circle cx="110" cy="110" r="2.4" fill="#2F95A6"/>
-                <text x="144" y="105" font-family="Cormorant Garamond" font-style="italic" font-size="13" fill="#2F95A6">V = 1/√κ</text>
+                <line x1="10" y1="110" x2="210" y2="110" stroke="var(--primary)" stroke-width="1"/>
+                <line x1="110" y1="10" x2="110" y2="210" stroke="var(--primary)" stroke-width="1"/>
+                <circle cx="110" cy="110" r="68" fill="var(--diagram-accent-strong)" stroke="var(--accent)" stroke-width="1.6"/>
+                <line x1="110" y1="110" x2="178" y2="110" stroke="var(--accent)" stroke-width="1.5"/>
+                <circle cx="110" cy="110" r="2.4" fill="var(--accent)"/>
+                <text x="144" y="105" font-family="Cormorant Garamond" font-style="italic" font-size="13" fill="var(--accent)">V = 1/√κ</text>
               </svg>
               <h4>κ &gt; 0</h4>
               <p>The Killing form fixes the radius. A definite invariant speed exists.</p>
             </div>
             <div class="vspace__panel">
               <svg viewBox="0 0 220 220" width="100%" style="max-width:200px;margin:0 auto 12px" aria-hidden="true">
-                <line x1="10" y1="110" x2="210" y2="110" stroke="#0F233F" stroke-width="1"/>
-                <line x1="110" y1="10" x2="110" y2="210" stroke="#0F233F" stroke-width="1"/>
-                <circle cx="110" cy="110" r="30" fill="none" stroke="rgba(81,96,113,.4)" stroke-width="1"/>
-                <circle cx="110" cy="110" r="48" fill="none" stroke="rgba(81,96,113,.4)" stroke-width="1"/>
-                <circle cx="110" cy="110" r="68" fill="none" stroke="rgba(81,96,113,.4)" stroke-width="1"/>
-                <circle cx="110" cy="110" r="86" fill="none" stroke="rgba(81,96,113,.4)" stroke-width="1"/>
-                <circle cx="110" cy="110" r="2.4" fill="#516071"/>
-                <text x="160" y="62" font-family="Cormorant Garamond" font-style="italic" font-size="22" fill="rgba(81,96,113,.7)">?</text>
+                <line x1="10" y1="110" x2="210" y2="110" stroke="var(--primary)" stroke-width="1"/>
+                <line x1="110" y1="10" x2="110" y2="210" stroke="var(--primary)" stroke-width="1"/>
+                <circle cx="110" cy="110" r="30" fill="none" stroke="var(--diagram-muted-line)" stroke-width="1"/>
+                <circle cx="110" cy="110" r="48" fill="none" stroke="var(--diagram-muted-line)" stroke-width="1"/>
+                <circle cx="110" cy="110" r="68" fill="none" stroke="var(--diagram-muted-line)" stroke-width="1"/>
+                <circle cx="110" cy="110" r="86" fill="none" stroke="var(--diagram-muted-line)" stroke-width="1"/>
+                <circle cx="110" cy="110" r="2.4" fill="var(--secondary)"/>
+                <text x="160" y="62" font-family="Cormorant Garamond" font-style="italic" font-size="22" fill="var(--secondary)">?</text>
               </svg>
               <h4>κ = 0</h4>
               <p>Spherically symmetric, but every circle is equally valid. The ruler is missing.</p>
@@ -4419,9 +4576,9 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
 <div class="ornament reveal" aria-hidden="true">
   <div class="ornament__line"></div>
   <svg class="ornament__sigil" width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <rect x="10" y="1" width="12" height="12" transform="rotate(45 10 10)" stroke="#0F233F" stroke-width="0.8" fill="none" opacity="0.5"/>
-    <rect x="10" y="4" width="8" height="8" transform="rotate(45 10 10)" stroke="#0F233F" stroke-width="0.5" fill="none" opacity="0.35"/>
-    <circle cx="10" cy="10" r="1.5" fill="#0F233F" opacity="0.4"/>
+    <rect x="10" y="1" width="12" height="12" transform="rotate(45 10 10)" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.5"/>
+    <rect x="10" y="4" width="8" height="8" transform="rotate(45 10 10)" stroke="currentColor" stroke-width="0.5" fill="none" opacity="0.35"/>
+    <circle cx="10" cy="10" r="1.5" fill="currentColor" opacity="0.4"/>
   </svg>
   <div class="ornament__line"></div>
 </div>
@@ -4596,22 +4753,6 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
         <a href="#top">↑ back to top</a>
       </div>
 
-      <a class="madeby" href="https://ii.inc/web/ii-agent" target="_blank" rel="noreferrer" aria-label="Made by II-Agent">
-        <!-- The II mark — circle with side cuts and central rectangle, recreated as inline SVG -->
-        <svg class="madeby__mark" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-          <!-- Top arc segment -->
-          <path d="M 26 28 A 32 32 0 0 1 74 28 L 64 32 L 36 32 Z" fill="#F2EEE2"/>
-          <!-- Bottom arc segment -->
-          <path d="M 26 72 A 32 32 0 0 0 74 72 L 64 68 L 36 68 Z" fill="#F2EEE2"/>
-          <!-- Left bracket -->
-          <path d="M 22 32 A 32 32 0 0 0 22 68 L 28 64 L 28 36 Z" fill="#F2EEE2"/>
-          <!-- Right bracket -->
-          <path d="M 78 32 A 32 32 0 0 1 78 68 L 72 64 L 72 36 Z" fill="#F2EEE2"/>
-          <!-- Central solid rectangle -->
-          <rect x="38" y="36" width="24" height="28" fill="#F2EEE2"/>
-        </svg>
-        <span class="madeby__text">Made by <em style="font-style:italic;color:var(--sky);">II-Agent</em></span>
-      </a>
     </div>
 
   </div>
@@ -4866,20 +5007,20 @@ function swapPanelHTML(el, html, afterSwap){
 
 function renderKappaDiagram(kSign){
   // Returns SVG string for the chosen κ regime
-  const accent = '#2F95A6', tertiary = '#83A1CC', secondary = '#516071', primary = '#0F233F';
+  const accent = 'var(--accent)', tertiary = 'var(--tertiary)', secondary = 'var(--secondary)', primary = 'var(--primary)';
   if (kSign === '1') {
     // Lorentzian: lightcones
     return `
       <svg viewBox="0 0 320 280" aria-hidden="true">
         <defs>
           <pattern id="kdg-l" width="14" height="14" patternUnits="userSpaceOnUse">
-            <circle cx="1" cy="1" r="0.7" fill="rgba(15,35,63,.18)"/>
+            <circle cx="1" cy="1" r="0.7" fill="var(--diagram-grid-dot)"/>
           </pattern>
         </defs>
-        <rect width="320" height="280" fill="rgba(47,149,166,.04)"/>
+        <rect width="320" height="280" fill="var(--diagram-accent-wash)"/>
         <rect width="320" height="280" fill="url(#kdg-l)"/>
-        <polygon points="160,140 290,10 30,10" fill="rgba(47,149,166,.18)"/>
-        <polygon points="160,140 290,270 30,270" fill="rgba(47,149,166,.18)"/>
+        <polygon points="160,140 290,10 30,10" fill="var(--diagram-accent-strong)"/>
+        <polygon points="160,140 290,270 30,270" fill="var(--diagram-accent-strong)"/>
         <line x1="30" y1="10" x2="160" y2="140" stroke="${accent}" stroke-width="2"/>
         <line x1="290" y1="10" x2="160" y2="140" stroke="${accent}" stroke-width="2"/>
         <line x1="30" y1="270" x2="160" y2="140" stroke="${accent}" stroke-width="2"/>
@@ -4899,11 +5040,11 @@ function renderKappaDiagram(kSign){
     let lines = '';
     for (let y = 24; y < 280; y += 24) {
       if (Math.abs(y - 140) < 6) continue;
-      lines += `<line x1="6" y1="${y}" x2="314" y2="${y}" stroke="${secondary}" stroke-width="1" stroke-dasharray="3 5" opacity=".55"/>`;
+      lines += `<line x1="6" y1="${y}" x2="314" y2="${y}" stroke="var(--diagram-muted-line)" stroke-width="1" stroke-dasharray="3 5"/>`;
     }
     return `
       <svg viewBox="0 0 320 280" aria-hidden="true">
-        <rect width="320" height="280" fill="rgba(81,96,113,.05)"/>
+        <rect width="320" height="280" fill="var(--diagram-muted-wash)"/>
         ${lines}
         <line x1="160" y1="6" x2="160" y2="274" stroke="${primary}" stroke-width="1"/>
         <line x1="6" y1="140" x2="314" y2="140" stroke="${primary}" stroke-width="1"/>
@@ -4916,9 +5057,9 @@ function renderKappaDiagram(kSign){
   // κ < 0: closed orbits / Euclidean rotation in t-x
   return `
     <svg viewBox="0 0 320 280" aria-hidden="true">
-      <rect width="320" height="280" fill="rgba(131,161,204,.07)"/>
-      <line x1="160" y1="6" x2="160" y2="274" stroke="rgba(15,35,63,.4)" stroke-width="1"/>
-      <line x1="6" y1="140" x2="314" y2="140" stroke="rgba(15,35,63,.4)" stroke-width="1"/>
+      <rect width="320" height="280" fill="var(--diagram-tertiary-wash)"/>
+      <line x1="160" y1="6" x2="160" y2="274" stroke="var(--diagram-axis-soft)" stroke-width="1"/>
+      <line x1="6" y1="140" x2="314" y2="140" stroke="var(--diagram-axis-soft)" stroke-width="1"/>
       <circle cx="160" cy="140" r="92" fill="none" stroke="${tertiary}" stroke-width="2"/>
       <path d="M 252 140 A 92 92 0 0 0 198 60" fill="none" stroke="${primary}" stroke-width="2" marker-end="url(#kArr)"/>
       <path d="M 68 140 A 92 92 0 0 0 122 220" fill="none" stroke="${primary}" stroke-width="2" marker-end="url(#kArr)"/>
@@ -5004,19 +5145,19 @@ function renderMinkowski(v){
   const tpx = span * v, tpy = span;       // t' axis half-extent
   const xpx = span,     xpy = span * v;   // x' axis half-extent
 
-  const accent = '#2F95A6';
-  const primary = '#0F233F';
-  const secondary = '#516071';
-  const gold = '#C9A96E';
+  const accent = 'var(--accent)';
+  const primary = 'var(--primary)';
+  const secondary = 'var(--secondary)';
+  const gold = 'var(--gold)';
 
   return `
     <svg viewBox="0 0 ${w} ${h}" aria-label="Minkowski spacetime diagram with v=${v.toFixed(2)}c">
       <defs>
         <pattern id="mink-g" width="20" height="20" patternUnits="userSpaceOnUse">
-          <circle cx="1" cy="1" r="0.6" fill="rgba(15,35,63,.16)"/>
+          <circle cx="1" cy="1" r="0.6" fill="var(--diagram-grid-dot)"/>
         </pattern>
       </defs>
-      <rect width="${w}" height="${h}" fill="rgba(47,149,166,.04)"/>
+      <rect width="${w}" height="${h}" fill="var(--diagram-accent-wash)"/>
       <rect width="${w}" height="${h}" fill="url(#mink-g)"/>
 
       <!-- light cones (45°) -->
@@ -5328,13 +5469,13 @@ function appendOutputError(outEl, msg){
   // <, >, or & cannot break the page or hijack interpolation.
   const lab = document.createElement('div');
   lab.className = 'out-label';
-  lab.style.color = '#a4453a';
+  lab.style.color = 'var(--danger)';
   lab.textContent = 'Error';
   const val = document.createElement('div');
   val.className = 'out-value';
   const pre = document.createElement('pre');
   pre.className = 'text';
-  pre.style.color = '#a4453a';
+  pre.style.color = 'var(--danger)';
   pre.style.whiteSpace = 'pre-wrap';
   pre.textContent = String(msg);
   val.appendChild(pre);
@@ -5747,7 +5888,7 @@ function buildKfMiniCells(){
       bar.style.width = ((i+1)/total*100) + '%';
       if (cell.classList.contains('is-fail')){
         swapTextWithTransition(stat, `Cell ${num} threw an error — see its output.`);
-        bar.style.background = 'linear-gradient(90deg, #a4453a, #C9A96E)';
+        bar.style.background = 'linear-gradient(90deg, var(--danger), var(--gold))';
         btn.disabled = false;
         btn.textContent = '▶ Re-run all 7 cells';
         return;
@@ -5784,6 +5925,12 @@ function buildKfMiniCells(){
       <a href="#references"><span>References</span><span class="mnav-sigil">↗</span></a>
     </nav>
     <div class="mobile-nav__cta">
+      <button class="theme-toggle theme-toggle--mobile" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="theme-toggle__track" aria-hidden="true">
+          <span class="theme-toggle__option theme-toggle__option--light">Light</span>
+          <span class="theme-toggle__option theme-toggle__option--dark">Dark</span>
+        </span>
+      </button>
       <a class="btn btn--primary" href="#abstract">Begin reading <span class="arrow">→</span></a>
     </div>
   </div>
@@ -6094,6 +6241,67 @@ function buildKfMiniCells(){
 /* ================================================================
    UX LAYER — hamburger, back-to-top, citation tooltips, keyboard nav
    ================================================================ */
+
+/* ---- Theme toggle: first visit follows system, explicit choice persists ---- */
+(function(){
+  const KEY = 'ii-theme';
+  const root = document.documentElement;
+  const toggles = Array.from(document.querySelectorAll('[data-theme-toggle]'));
+  const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  function isValidTheme(value){
+    return value === 'light' || value === 'dark';
+  }
+  function getSavedTheme(){
+    try {
+      const saved = localStorage.getItem(KEY);
+      return isValidTheme(saved) ? saved : null;
+    } catch(_) {
+      return null;
+    }
+  }
+  function setSavedTheme(theme){
+    try { localStorage.setItem(KEY, theme); } catch(_) {}
+  }
+  function systemTheme(){
+    return media && media.matches ? 'dark' : 'light';
+  }
+  function currentTheme(){
+    return root.dataset.theme === 'dark' ? 'dark' : 'light';
+  }
+  function syncToggles(theme){
+    const isDark = theme === 'dark';
+    toggles.forEach(btn => {
+      btn.dataset.themeState = theme;
+      btn.setAttribute('aria-pressed', String(isDark));
+      btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+    });
+  }
+  function applyTheme(theme, persist){
+    const next = isValidTheme(theme) ? theme : 'light';
+    root.dataset.theme = next;
+    root.style.colorScheme = next;
+    if (persist) setSavedTheme(next);
+    syncToggles(next);
+  }
+
+  toggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      applyTheme(currentTheme() === 'dark' ? 'light' : 'dark', true);
+    });
+  });
+
+  if (media) {
+    const onSystemChange = () => {
+      if (!getSavedTheme()) applyTheme(systemTheme(), false);
+    };
+    if (typeof media.addEventListener === 'function') media.addEventListener('change', onSystemChange);
+    else if (typeof media.addListener === 'function') media.addListener(onSystemChange);
+  }
+
+  applyTheme(getSavedTheme() || currentTheme() || systemTheme(), false);
+})();
 
 /* ---- Mobile hamburger nav ---- */
 (function(){
