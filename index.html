@@ -4286,6 +4286,478 @@ footer.foot{
   }
 }
 </style>
+<style id="ii-ux-optimization-layer">
+/* ================================================================
+   II UX OPTIMIZATION LAYER - responsive ergonomics and lighter motion
+   ================================================================ */
+:root{
+  --ux-nav-offset:88px;
+  --ux-touch:44px;
+  --ux-mobile-gutter:24px;
+}
+html{
+  scroll-padding-top:var(--ux-nav-offset);
+}
+section[id],
+#top,
+.cell{
+  scroll-margin-top:var(--ux-nav-offset);
+}
+.nav__links a,
+.brand,
+.theme-toggle,
+.nav__hamburger,
+.btn,
+.cell__btn,
+.nb-runall__btn,
+.mobile-nav__close{
+  min-height:var(--ux-touch);
+}
+.skip-link{
+  min-height:var(--ux-touch);
+  display:inline-flex;
+  align-items:center;
+}
+.nav__links a,
+.brand,
+.theme-toggle,
+.nav__hamburger{
+  display:inline-flex;
+  align-items:center;
+}
+.nav__hamburger{
+  display:none;
+}
+.nav__links a{
+  min-width:var(--ux-touch);
+  padding-block:12px;
+  justify-content:center;
+}
+.theme-toggle{
+  --theme-toggle-height:44px;
+}
+.theme-toggle__track{
+  width:124px;
+}
+.cell__btn{
+  min-width:74px;
+  padding:9px 16px;
+}
+.kappa-dial button{
+  min-height:var(--ux-touch);
+}
+.nb-runall__btn{
+  min-height:44px;
+  padding-inline:18px;
+}
+input[type="range"].l-slider,
+.vadd__slider{
+  min-height:var(--ux-touch);
+  background:linear-gradient(to right, var(--accent) 0%, var(--accent) var(--p, 0%), var(--rule-strong) var(--p, 0%), var(--rule-strong) 100%) center / 100% 4px no-repeat;
+}
+.vadd__slider{
+  background:linear-gradient(to right, var(--rule-strong), var(--rule-strong)) center / 100% 3px no-repeat;
+}
+input[type="range"].l-slider::-webkit-slider-thumb,
+.vadd__slider::-webkit-slider-thumb{
+  width:20px;
+  height:20px;
+}
+input[type="range"].l-slider::-moz-range-thumb,
+.vadd__slider::-moz-range-thumb{
+  width:20px;
+  height:20px;
+}
+.hero{
+  min-height:min(1120px, 100svh);
+  padding-top:clamp(112px, 11vh, 152px);
+  padding-bottom:clamp(56px, 8vh, 92px);
+  display:flex;
+  align-items:center;
+}
+.hero .shell{
+  width:100%;
+}
+@media (min-width:1400px) and (min-height:880px){
+  .hero{
+    min-height:min(980px, 92svh);
+  }
+}
+@media (max-height:820px) and (min-width:900px){
+  .hero{
+    min-height:760px;
+    padding-top:104px;
+    padding-bottom:56px;
+  }
+  .hero h1{
+    font-size:clamp(56px, 10vw, 142px);
+  }
+  .hero__meta{
+    margin-bottom:24px;
+  }
+  .hero__byline{
+    margin-top:32px;
+  }
+}
+#postulate,
+#determines,
+#killing,
+#verdicts,
+#lab,
+#proof,
+#references{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 980px;
+}
+.conclusion,
+footer.foot{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 720px;
+}
+@media (pointer:coarse){
+  #grain{
+    display:none;
+  }
+  .ascii-scene[data-ascii-variant="hero"]{
+    --ascii-opacity:.22;
+  }
+  .hero .ascii-scene::before{
+    opacity:.22;
+  }
+  .hero .ascii-scene::after{
+    opacity:.16;
+    filter:blur(22px);
+  }
+  .marquee-track{
+    animation-duration:58s;
+  }
+  .btn::after,
+  .nb-runall__btn::before,
+  .nb-runall__btn::after{
+    display:none;
+  }
+}
+@media (max-width:880px){
+  :root{
+    --gutter:36px;
+    --ux-nav-offset:82px;
+  }
+  .nav__inner{
+    gap:16px;
+  }
+  .nav__hamburger{
+    display:inline-flex;
+    width:48px;
+    height:48px;
+  }
+  .mobile-nav__close{
+    min-width:72px;
+    justify-content:center;
+  }
+  .mobile-nav__links a{
+    min-height:52px;
+    padding-block:10px;
+  }
+}
+@media (max-width:640px){
+  :root{
+    --gutter:var(--ux-mobile-gutter);
+    --section:56px;
+    --f-section-air:58px;
+    --ux-nav-offset:78px;
+  }
+  body{
+    font-size:17px;
+    line-height:1.58;
+  }
+  .nav{
+    height:64px;
+  }
+  .nav__inner{
+    padding-inline:var(--gutter);
+  }
+  .brand{
+    min-height:48px;
+    max-width:210px;
+  }
+  .brand__mark{
+    width:34px;
+    height:34px;
+  }
+  .nav__hamburger{
+    display:inline-flex;
+    width:48px;
+    height:48px;
+    margin-right:-8px;
+  }
+  .hero{
+    min-height:100svh;
+    padding-top:92px;
+    padding-bottom:42px;
+    align-items:center;
+  }
+  .hero .shell{
+    padding-inline:var(--gutter);
+  }
+  .hero__inner{
+    gap:24px;
+  }
+  .hero__meta{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    margin-bottom:18px;
+    font-size:10px;
+    letter-spacing:.13em;
+  }
+  .hero__meta span:not(.pill):nth-child(3){
+    display:none;
+  }
+  .hero__meta .pill{
+    width:max-content;
+    max-width:100%;
+    padding:6px 10px;
+  }
+  .hero h1{
+    font-size:clamp(54px, 17vw, 76px);
+    line-height:.96;
+    margin-bottom:18px;
+  }
+  .hero h1 .small{
+    font-size:.38em;
+    margin-top:9px;
+  }
+  .hero__lede{
+    font-size:clamp(18px, 5.2vw, 22px);
+    line-height:1.38;
+    max-width:28ch;
+  }
+  .hero__cta{
+    margin-top:28px;
+  }
+  .hero__byline{
+    margin-top:30px;
+    padding-top:18px;
+    gap:8px 16px;
+    font-size:10px;
+  }
+  .marquee-strip{
+    padding:7px 0;
+  }
+  .marquee-track span{
+    font-size:9px;
+    padding-inline:12px;
+  }
+  .shell{
+    padding-inline:var(--gutter);
+  }
+  .shell--guides::before,
+  .shell--guides::after,
+  .section-wm{
+    display:none;
+  }
+  section[id]:not(.conclusion)::before{
+    left:var(--gutter);
+    right:var(--gutter);
+  }
+  .s-head{
+    gap:14px;
+    margin-bottom:32px;
+  }
+  .s-head__title{
+    font-size:clamp(36px, 12vw, 54px);
+    line-height:1.02;
+  }
+  .s-head__sub,
+  .prose,
+  .abstract__body,
+  .verdict__body p,
+  .conclusion .lead{
+    font-size:17px;
+    line-height:1.55;
+    max-width:31ch;
+  }
+  .prose .lead{
+    font-size:20px;
+  }
+  .equation,
+  .lab__panel,
+  .killing,
+  .killing-anim,
+  .cell{
+    border-radius:var(--r-sm);
+  }
+  .equation{
+    padding:38px 16px 22px;
+    margin-block:24px;
+  }
+  .lab{
+    gap:22px;
+    margin-top:32px;
+  }
+  .lab__panel{
+    padding:24px 18px;
+  }
+  .lab__panel-title{
+    font-size:28px;
+  }
+  .lab__panel-sub{
+    font-size:14px;
+    line-height:1.5;
+    margin-bottom:18px;
+  }
+  .kappa-dial{
+    gap:8px;
+  }
+  .kappa-dial button{
+    min-height:74px;
+    padding:12px 6px;
+  }
+  .k-stage,
+  .minkowski{
+    min-height:0;
+    height:clamp(236px, 74vw, 300px);
+    padding:10px;
+  }
+  .k-stage svg,
+  .minkowski svg{
+    max-height:100%;
+  }
+  .clocks{
+    gap:12px;
+  }
+  .clock-card{
+    padding:16px 12px;
+    min-height:160px;
+  }
+  .clock-card .stat{
+    font-size:21px;
+  }
+  .vadd{
+    gap:16px;
+    margin-top:20px;
+    padding-top:20px;
+  }
+  .vadd__results{
+    gap:12px;
+  }
+  .notebook{
+    margin-top:34px;
+  }
+  .nb-status{
+    align-items:flex-start;
+    padding:12px 14px;
+    margin-bottom:20px;
+    line-height:1.35;
+  }
+  .nb-runall{
+    padding:14px;
+    gap:12px;
+  }
+  .nb-runall__btn{
+    width:100%;
+  }
+  .nb-runall__status{
+    width:100%;
+    white-space:normal;
+    line-height:1.35;
+  }
+  .nb-runall__spine{
+    padding-top:8px;
+  }
+  .cell{
+    margin-bottom:18px;
+  }
+  .cell__header{
+    padding:18px 16px 4px;
+    gap:10px;
+  }
+  .cell__title{
+    font-size:22px;
+  }
+  .cell__intro{
+    padding-inline:16px;
+    font-size:14px;
+  }
+  .cell__code-toolbar{
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+  }
+  .cell__code-toolbar .actions{
+    gap:6px;
+  }
+  .cell__btn{
+    min-height:44px;
+    padding:9px 13px;
+  }
+  .cell__code pre{
+    padding:16px;
+    font-size:12px;
+    line-height:1.58;
+  }
+  .cell__output{
+    padding:16px;
+  }
+  .refs{
+    gap:0;
+    margin-top:28px;
+  }
+  .refs li{
+    grid-template-columns:24px 1fr;
+    gap:10px;
+    padding-block:12px;
+  }
+  .conclusion{
+    padding:72px 0 86px;
+  }
+  footer.foot{
+    padding-top:48px;
+  }
+  .back-to-top{
+    width:48px;
+    height:48px;
+    right:14px;
+    bottom:18px;
+  }
+  .hero h1 .word{
+    animation-duration:.52s;
+  }
+  .hero h1 .word:nth-child(1){ animation-delay:.03s; }
+  .hero h1 .word:nth-child(2){ animation-delay:.12s; }
+  .hero h1 .small{
+    animation-duration:.52s;
+    animation-delay:.22s;
+  }
+}
+@media (max-width:380px){
+  :root{
+    --ux-mobile-gutter:20px;
+  }
+  .hero h1{
+    font-size:clamp(50px, 16.2vw, 66px);
+  }
+  .hero__lede{
+    max-width:27ch;
+  }
+  .k-stage,
+  .minkowski{
+    height:clamp(216px, 72vw, 278px);
+  }
+  .clock-card{
+    padding-inline:10px;
+  }
+  .cell__btn{
+    min-width:68px;
+    padding-inline:10px;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .marquee-track{
+    animation:none !important;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -6093,6 +6565,7 @@ const iiMotion = (() => {
   }
 
   function runHero(){
+    const compactHero = window.matchMedia && window.matchMedia('(max-width: 640px), (pointer: coarse)').matches;
     const heroBits = [
       '.hero__meta',
       '.hero h1 .word',
@@ -6107,8 +6580,8 @@ const iiMotion = (() => {
       transform: ['translate3d(0, 22px, 0)', 'translate3d(0, 0, 0)'],
       filter: ['blur(10px)', 'blur(0px)']
     }, {
-      duration: 0.7,
-      delay: box.lib && box.lib.stagger ? box.lib.stagger(0.055) : 0,
+      duration: compactHero ? 0.44 : 0.7,
+      delay: box.lib && box.lib.stagger ? box.lib.stagger(compactHero ? 0.026 : 0.055) : 0,
       ease: easeOut
     });
   }
@@ -6165,7 +6638,8 @@ const iiAscii = (() => {
   const chars = ' .:-=+*#%@01κγλ<>/\\';
   const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const saveData = !!(connection && connection.saveData);
-  const lowPower = saveData || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+  const coarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  const lowPower = saveData || coarsePointer || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
   const root = document.documentElement;
   const scenes = [];
 
@@ -6190,7 +6664,7 @@ const iiAscii = (() => {
       this.running = false;
       this.raf = 0;
       this.last = 0;
-      this.frameMs = lowPower ? 1000 / 12 : (this.variant === 'hero' ? 1000 / 24 : 1000 / 16);
+      this.frameMs = lowPower ? 1000 / (this.variant === 'hero' ? 10 : 8) : (this.variant === 'hero' ? 1000 / 24 : 1000 / 16);
       this.pointer = { x:.68, y:.34 };
       this.resize = this.resize.bind(this);
       this.loop = this.loop.bind(this);
@@ -6254,8 +6728,12 @@ const iiAscii = (() => {
       this.font = Math.max(9, Math.round(this.font / this.density));
       this.cellX = Math.round(this.font * 0.72);
       this.cellY = Math.round(this.font * 1.35);
-      this.cols = Math.min(Math.ceil(this.w / this.cellX) + 1, this.variant === 'hero' ? 150 : 92);
-      this.rows = Math.min(Math.ceil(this.h / this.cellY) + 1, this.variant === 'hero' ? 62 : 42);
+      const maxHeroCols = coarsePointer ? 72 : 150;
+      const maxHeroRows = coarsePointer ? 44 : 62;
+      const maxPanelCols = coarsePointer ? 58 : 92;
+      const maxPanelRows = coarsePointer ? 34 : 42;
+      this.cols = Math.min(Math.ceil(this.w / this.cellX) + 1, this.variant === 'hero' ? maxHeroCols : maxPanelCols);
+      this.rows = Math.min(Math.ceil(this.h / this.cellY) + 1, this.variant === 'hero' ? maxHeroRows : maxPanelRows);
       this.draw(performance.now());
     }
 
@@ -6344,11 +6822,11 @@ const iiAscii = (() => {
   }
 
   function init(){
-    create(document.querySelector('.hero'), 'hero', { density:.94, speed:.78, intensity:1.22 });
-    document.querySelectorAll('.universe').forEach(card => create(card, 'panel', { density:.98, speed:.54, intensity:.92 }));
-    document.querySelectorAll('.lab__panel').forEach(panel => create(panel, 'lab', { density:.88, speed:.48, intensity:.82 }));
-    create(document.querySelector('.conclusion'), 'conclusion', { density:.86, speed:.38, intensity:.82 });
-    create(document.querySelector('footer.foot'), 'footer', { density:.80, speed:.32, intensity:.84 });
+    create(document.querySelector('.hero'), 'hero', coarsePointer ? { density:.62, speed:.28, intensity:.70 } : { density:.94, speed:.78, intensity:1.22 });
+    document.querySelectorAll('.universe').forEach(card => create(card, 'panel', coarsePointer ? { density:.76, speed:.24, intensity:.62 } : { density:.98, speed:.54, intensity:.92 }));
+    document.querySelectorAll('.lab__panel').forEach(panel => create(panel, 'lab', coarsePointer ? { density:.70, speed:.22, intensity:.58 } : { density:.88, speed:.48, intensity:.82 }));
+    create(document.querySelector('.conclusion'), 'conclusion', coarsePointer ? { density:.68, speed:.18, intensity:.56 } : { density:.86, speed:.38, intensity:.82 });
+    create(document.querySelector('footer.foot'), 'footer', coarsePointer ? { density:.66, speed:.16, intensity:.54 } : { density:.80, speed:.32, intensity:.84 });
     document.querySelectorAll('.equation, .cell__code, .vadd__results, .killing-anim, .notebook').forEach(el => el.classList.add('ascii-etched'));
   }
 
