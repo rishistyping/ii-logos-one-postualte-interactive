@@ -3367,7 +3367,11 @@ footer.foot > .ascii-scene{
     repeating-linear-gradient(0deg, transparent 0 11px, var(--ascii-scan) 11px 12px);
   mix-blend-mode:multiply;
 }
-html[data-theme="dark"] .ascii-etched::before{ mix-blend-mode:screen; }
+html[data-theme="dark"] .ascii-etched::before{
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 11px, var(--ascii-scan) 11px 12px);
+  mix-blend-mode:screen;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .t-modal { transition: none !important; }
