@@ -1,0 +1,276 @@
+/* ================================================================
+   ENHANCEMENT LAYER — micro-interactions & animation polish
+   ================================================================ */
+
+/* Reading-progress bar */
+#read-progress{
+  position:fixed; top:0; left:0; right:0;
+  height:2px; z-index:200;
+  background:linear-gradient(90deg, var(--accent) 0%, var(--gold) 60%, var(--accent) 100%);
+  background-size:200% 100%;
+  transform:scaleX(0);
+  transform-origin:left;
+  animation:progress-shimmer 3s linear infinite;
+  transition:transform .1s linear;
+  will-change:transform;
+  pointer-events:none;
+}
+@keyframes progress-shimmer{
+  0%{ background-position:0% 0%; }
+  100%{ background-position:200% 0%; }
+}
+
+/* Extended stagger children */
+.reveal-stagger.in > *:nth-child(4){ transition-delay:.46s; }
+.reveal-stagger.in > *:nth-child(5){ transition-delay:.60s; }
+.reveal-stagger.in > *:nth-child(6){ transition-delay:.74s; }
+.reveal-stagger.in > *:nth-child(7){ transition-delay:.88s; }
+.reveal-stagger.in > *:nth-child(8){ transition-delay:1.02s; }
+
+/* Reveal variant — slide from left */
+.reveal-left{
+  opacity:0; transform:translateX(-28px);
+  transition:opacity .85s cubic-bezier(.2,.7,.2,1), transform .85s cubic-bezier(.2,.7,.2,1);
+}
+.reveal-left.in{ opacity:1; transform:none; }
+
+/* Reveal variant — scale up */
+.reveal-scale{
+  opacity:0; transform:scale(.96);
+  transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);
+}
+.reveal-scale.in{ opacity:1; transform:none; }
+
+/* Active nav link */
+.nav__links a.is-active{ color:var(--accent); }
+.nav__links a.is-active::after{ transform:scaleX(1); }
+
+/* Button ripple container */
+.btn{ overflow:hidden; }
+.btn .ripple-wave{
+  position:absolute;
+  border-radius:50%;
+  transform:scale(0);
+  animation:ripple-expand .55s cubic-bezier(0,.5,.5,1) forwards;
+  background:rgba(255,255,255,.22);
+  pointer-events:none;
+}
+.btn--secondary .ripple-wave{ background:rgba(15,35,63,.08); }
+@keyframes ripple-expand{
+  to{ transform:scale(4); opacity:0; }
+}
+
+/* Universe cards — 3-D tilt polish */
+.universe{
+  transition:background .3s ease, transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease;
+  will-change:transform;
+}
+.universe:hover{
+  transform:translateY(-4px) rotateX(1.5deg);
+  box-shadow:0 20px 50px -28px rgba(15,35,63,.30);
+}
+
+/* Kappa-dial buttons — spring press */
+.kappa-dial button{
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+}
+.kappa-dial button:active{ transform:scale(.94); }
+.kappa-dial button.active{ transform:scale(1.03); }
+.kappa-dial button.active.win{ transform:scale(1.05); }
+
+/* Lab panels — hover lift */
+.lab__panel{
+  transition:box-shadow .35s ease, transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.lab__panel:hover{
+  box-shadow:0 24px 64px -32px rgba(15,35,63,.18);
+  transform:translateY(-3px);
+}
+
+/* Postulate block — animated accent stroke */
+.postulate{
+  border-left:2px solid transparent;
+  transition:border-left-color .7s cubic-bezier(.2,.7,.2,1) .1s;
+}
+.postulate.kp-visible{
+  border-left-color:var(--primary);
+}
+
+/* Pullquote flanking lines animate in */
+.pullquote::before,
+.pullquote::after{
+  width:0;
+  transition:width .9s cubic-bezier(.2,.7,.2,1) .2s;
+}
+.pullquote.pq-visible::before,
+.pullquote.pq-visible::after{
+  width:48px;
+}
+
+/* Ornament lines animate in */
+.ornament__line{
+  flex:1; height:1px;
+  background:var(--rule-strong);
+  transform:scaleX(0);
+  transform-origin:center;
+  transition:transform .9s cubic-bezier(.2,.7,.2,1);
+}
+.ornament.orn-visible .ornament__line{
+  transform:scaleX(1);
+}
+
+/* Equation blocks — gentle hover ring */
+.equation{
+  transition:box-shadow .3s ease, background .3s ease;
+}
+.equation:hover{
+  box-shadow:0 0 0 1.5px rgba(15,35,63,.18), 0 6px 28px -16px rgba(15,35,63,.14);
+}
+
+/* Comparison table row hover */
+.compare tbody tr{
+  transition:background .2s ease;
+}
+.compare tbody tr:hover td,
+.compare tbody tr:hover th{
+  background:rgba(47,149,166,.06);
+}
+.compare .col-win{
+  background:rgba(47,149,166,.06);
+  transition:background .2s ease;
+}
+
+/* References list — subtle hover */
+.refs li{
+  transition:padding-left .2s ease, color .2s ease;
+}
+.refs li:hover{
+  padding-left:6px;
+}
+.refs li:hover .num{ color:var(--primary); }
+
+/* Footer nav link slide */
+.foot__nav a{
+  transition:opacity .2s ease, color .2s ease, transform .22s cubic-bezier(.2,.7,.2,1);
+}
+.foot__nav a:hover{ transform:translateX(5px); }
+
+/* Brand mark — playful rotate on hover */
+.brand__mark{
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+}
+.brand:hover .brand__mark{
+  transform:rotate(18deg) scale(1.06);
+}
+
+/* Cells — hover elevation */
+.cell{
+  transition:box-shadow .3s ease, transform .3s ease;
+}
+.cell:hover{
+  box-shadow:0 8px 36px -18px rgba(15,35,63,.18);
+}
+
+/* Folio parallax — will-change for GPU */
+.folio{ will-change:transform; }
+
+/* Hero gradient — very slow drift */
+.hero{
+  transition:background-position 0.8s ease;
+}
+
+/* Smooth lab value flips */
+.lab-num-flash{
+  animation:num-flash .2s ease;
+}
+@keyframes num-flash{
+  0%{ opacity:.3; transform:translateY(4px); }
+  100%{ opacity:1; transform:none; }
+}
+
+/* Aside — left border grow on reveal */
+.aside{
+  border-left-width:0;
+  transition:border-left-width .5s cubic-bezier(.2,.7,.2,1) .15s, padding-left .5s ease .15s;
+  padding-left:4px;
+}
+.aside.in{
+  border-left-width:3px;
+  padding-left:28px;
+}
+
+/* Verdict sigil — slide + fade entrance */
+.verdict__sigil{
+  transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+}
+.verdict:not(.in) .verdict__sigil{
+  opacity:0; transform:translateX(-16px);
+}
+.verdict.in .verdict__sigil{
+  opacity:1; transform:none;
+}
+
+/* Conclusion gradient drift */
+@keyframes conclusion-drift{
+  0%,100%{ background-position:80% 20%, 10% 90%; }
+  50%{ background-position:70% 10%, 20% 80%; }
+}
+.conclusion::before{
+  background-size:cover;
+  animation:conclusion-drift 20s ease-in-out infinite;
+}
+
+/* Section border reveal */
+section + section{
+  border-top-color:transparent;
+  transition:border-top-color .5s ease;
+}
+section + section.in{
+  border-top-color:var(--rule);
+}
+
+/* Smooth btn transitions — force GPU */
+.btn{
+  will-change:transform, box-shadow;
+}
+
+/* Hero h1 — staggered word fade */
+.hero h1 .word{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(14px);
+  animation:word-in .85s cubic-bezier(.2,.7,.2,1) forwards;
+}
+.hero h1 .word:nth-child(1){ animation-delay:.05s; }
+.hero h1 .word:nth-child(2){ animation-delay:.22s; }
+.hero h1 .word:nth-child(3){ animation-delay:.40s; }
+.hero h1 .small{
+  opacity:0;
+  animation:word-in .85s cubic-bezier(.2,.7,.2,1) .58s forwards;
+}
+@keyframes word-in{
+  to{ opacity:1; transform:none; }
+}
+
+/* Pullquote mark — decorative open/close quotes */
+.pullquote__mark{
+  font-family:var(--serif-display);
+  font-size:64px; line-height:.6;
+  color:var(--rule-strong);
+  display:block;
+  user-select:none;
+  height:40px;
+  overflow:hidden;
+  opacity:0;
+  transform:scale(.8);
+  transition:opacity .6s ease .4s, transform .6s cubic-bezier(.2,.7,.2,1) .4s;
+}
+.pullquote.pq-visible .pullquote__mark{
+  opacity:1; transform:none;
+}
+
+/* Skip reduced-motion */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+  .hero h1 .word,.hero h1 .small{ opacity:1; transform:none; animation:none; }
+}
