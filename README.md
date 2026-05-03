@@ -1,6 +1,6 @@
 # Extracted source for web-polish-studio
 
-Source URL: https://web-polish-studio--rishresearch000.replit.app
+Source URL: [https://web-polish-studio--rishresearch000.replit.app](https://rishistyping.github.io/ii-logos-one-postualte-interactive/)
 
 This folder contains the public browser source that the deployed site exposes.
 
