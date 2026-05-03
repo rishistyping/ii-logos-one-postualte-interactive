@@ -242,6 +242,59 @@ var module = undefined, exports = undefined, define = undefined;
   --section:80px;
 
   --r-sm:8px; --r-md:12px; --r-lg:20px; --r-xl:30px; --r-full:9999px;
+
+  /* transitions-dev */
+  --resize-dur:300ms;
+  --resize-ease:cubic-bezier(0.22, 1, 0.36, 1);
+  --digit-dur:360ms;
+  --digit-distance:6px;
+  --digit-stagger:28ms;
+  --digit-blur:1.4px;
+  --digit-ease:cubic-bezier(0.22, 1, 0.36, 1);
+  --digit-dir-x:0;
+  --digit-dir-y:1;
+  --badge-slide-dur:260ms;
+  --badge-pop-dur:500ms;
+  --badge-pop-close-dur:180ms;
+  --badge-fade-dur:400ms;
+  --badge-fade-close-dur:180ms;
+  --badge-blur:2px;
+  --badge-offset-x:-8.2px;
+  --badge-offset-y:12.4px;
+  --badge-slide-ease:cubic-bezier(0.22, 1, 0.36, 1);
+  --badge-pop-ease:cubic-bezier(0.34, 1.36, 0.64, 1);
+  --badge-close-ease:cubic-bezier(0.4, 0, 0.2, 1);
+  --text-swap-dur:160ms;
+  --text-swap-translate-y:6px;
+  --text-swap-blur:1.5px;
+  --text-swap-ease:ease-out;
+  --dropdown-open-dur:250ms;
+  --dropdown-close-dur:150ms;
+  --dropdown-pre-scale:0.97;
+  --dropdown-closing-scale:0.99;
+  --dropdown-ease:cubic-bezier(0.22, 1, 0.36, 1);
+  --modal-open-dur:270ms;
+  --modal-close-dur:170ms;
+  --modal-scale:0.96;
+  --modal-scale-close:0.985;
+  --modal-ease:cubic-bezier(0.22, 1, 0.36, 1);
+  --panel-open-dur:340ms;
+  --panel-close-dur:180ms;
+  --panel-translate-y:22px;
+  --panel-blur:1.4px;
+  --panel-ease:cubic-bezier(0.22, 1, 0.36, 1);
+  --page-slide-dur:200ms;
+  --page-fade-dur:200ms;
+  --page-slide-distance:8px;
+  --page-blur:3px;
+  --page-stagger:0ms;
+  --page-exit-enabled:1;
+  --page-slide-ease:cubic-bezier(0.22, 1, 0.36, 1);
+  --page-fade-ease:cubic-bezier(0.22, 1, 0.36, 1);
+  --icon-swap-dur:190ms;
+  --icon-swap-blur:1.4px;
+  --icon-swap-start-scale:0.62;
+  --icon-swap-ease:ease-in-out;
 }
 
 @media (min-width:1100px){ :root{ --gutter:80px; } }
@@ -1391,8 +1444,15 @@ input[type="range"].l-slider::-moz-range-thumb{
   margin-bottom:18px;
   min-height:300px;
   display:flex; align-items:center; justify-content:center;
+  contain:layout paint;
+  transform:translateZ(0);
+  backface-visibility:hidden;
 }
-.minkowski svg{ width:100%; max-width:360px; height:auto; }
+.minkowski svg{
+  width:100%; max-width:360px; height:auto;
+  transform:translateZ(0);
+  backface-visibility:hidden;
+}
 
 /* Twin clocks visualization */
 .clocks{
@@ -1417,7 +1477,11 @@ input[type="range"].l-slider::-moz-range-thumb{
   height:6px; border-radius:3px;
   background:var(--primary);
   margin:8px auto;
-  transition: width .2s ease, background .2s ease;
+  width:100%;
+  transform-origin:left center;
+  transition:transform .22s var(--resize-ease), background .2s ease;
+  will-change:transform;
+  backface-visibility:hidden;
 }
 .clock-card .stat{
   font-family:var(--serif-display);
@@ -2119,15 +2183,6 @@ input[type="range"].l-slider::-moz-range-thumb{
   transition:background-position 0.8s ease;
 }
 
-/* Smooth lab value flips */
-.lab-num-flash{
-  animation:num-flash .2s ease;
-}
-@keyframes num-flash{
-  0%{ opacity:.3; transform:translateY(4px); }
-  100%{ opacity:1; transform:none; }
-}
-
 /* Aside — left border grow on reveal */
 .aside{
   border-left-width:0;
@@ -2255,7 +2310,7 @@ a:focus-visible{ border-radius:2px; }
   transition:border-color .2s ease;
 }
 .nav__hamburger:hover{ border-color:var(--rule-strong); }
-.nav__hamburger span{
+.nav__hamburger > .legacy-line{
   display:block;
   height:1.5px; width:22px;
   background:var(--primary);
@@ -2263,9 +2318,9 @@ a:focus-visible{ border-radius:2px; }
   transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s ease, width .3s ease;
   transform-origin:center;
 }
-.nav__hamburger[aria-expanded="true"] span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
-.nav__hamburger[aria-expanded="true"] span:nth-child(2){ opacity:0; width:0; }
-.nav__hamburger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+.nav__hamburger[aria-expanded="true"] > .legacy-line:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+.nav__hamburger[aria-expanded="true"] > .legacy-line:nth-child(2){ opacity:0; width:0; }
+.nav__hamburger[aria-expanded="true"] > .legacy-line:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
 @media (max-width:880px){ .nav__hamburger{ display:flex; } }
 @media (max-width:520px){
   .nav .btn--primary{ display:none; }
@@ -2786,6 +2841,196 @@ a:focus-visible{ border-radius:2px; }
   .nb-runall{ flex-direction:column; align-items:flex-start; gap:10px; }
   .nb-runall__progress{ width:100%; }
 }
+
+/* ================================================================
+   TRANSITIONS.DEV POLISH — modal, panel, text, digit, icon primitives
+   ================================================================ */
+.t-modal {
+  transform-origin: center;
+  transform: translateZ(0) scale(var(--modal-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-open-dur) var(--modal-ease),
+    opacity   var(--modal-open-dur) var(--modal-ease);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  contain: layout paint;
+}
+.t-modal.is-open {
+  transform: translateZ(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-modal.is-closing {
+  transform: translateZ(0) scale(var(--modal-scale-close));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-close-dur) var(--modal-ease),
+    opacity   var(--modal-close-dur) var(--modal-ease);
+}
+
+.t-panel-slide {
+  transform: translate3d(0, var(--panel-translate-y), 0);
+  opacity: 0;
+  filter: blur(var(--panel-blur));
+  pointer-events: none;
+  transition:
+    transform var(--panel-close-dur) var(--panel-ease),
+    opacity   var(--panel-close-dur) var(--panel-ease),
+    filter    var(--panel-close-dur) var(--panel-ease);
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+}
+.t-panel-slide[data-open="true"] {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  filter: blur(0);
+  pointer-events: auto;
+  transition:
+    transform var(--panel-open-dur) var(--panel-ease),
+    opacity   var(--panel-open-dur) var(--panel-ease),
+    filter    var(--panel-open-dur) var(--panel-ease);
+}
+
+.t-text-swap {
+  display: inline-block;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+  opacity: 1;
+  transition:
+    transform var(--text-swap-dur) var(--text-swap-ease),
+    filter    var(--text-swap-dur) var(--text-swap-ease),
+    opacity   var(--text-swap-dur) var(--text-swap-ease);
+  will-change: transform, filter, opacity;
+  backface-visibility: hidden;
+}
+.t-text-swap.is-exit {
+  transform: translate3d(0, calc(var(--text-swap-translate-y) * -1), 0);
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+}
+.t-text-swap.is-enter-start {
+  transform: translate3d(0, var(--text-swap-translate-y), 0);
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+  transition: none;
+}
+
+@keyframes t-digit-pop-in {
+  0%   {
+    transform: translate3d(
+      calc(var(--digit-distance) * var(--digit-dir-x)),
+      calc(var(--digit-distance) * var(--digit-dir-y)),
+      0
+    );
+    opacity: 0;
+    filter: blur(var(--digit-blur));
+  }
+  100% { transform: translate3d(0, 0, 0); opacity: 1; filter: blur(0); }
+}
+
+.t-digit-group {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+  transform: translateZ(0);
+}
+.t-digit {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+}
+.t-digit-group.is-animating .t-digit {
+  animation: t-digit-pop-in var(--digit-dur) var(--digit-ease) both;
+}
+.t-digit-group.is-animating .t-digit[data-stagger="1"] {
+  animation-delay: var(--digit-stagger);
+}
+.t-digit-group.is-animating .t-digit[data-stagger="2"] {
+  animation-delay: calc(var(--digit-stagger) * 2);
+}
+
+.t-icon-swap {
+  position: relative;
+  display: inline-grid;
+}
+.t-icon-swap .t-icon {
+  grid-area: 1 / 1;
+  transition:
+    opacity   var(--icon-swap-dur) var(--icon-swap-ease),
+    filter    var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+  will-change: opacity, filter, transform;
+  backface-visibility: hidden;
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="a"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="b"] {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateZ(0) scale(1);
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="b"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="a"] {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: translateZ(0) scale(var(--icon-swap-start-scale));
+}
+
+.motion-block{ display:block; }
+.mobile-nav.t-modal{ visibility:hidden; }
+.mobile-nav.t-modal.is-open,
+.mobile-nav.t-modal.is-closing{ visibility:visible; }
+.nav__hamburger-icons{
+  width:22px;
+  height:18px;
+}
+.nav__hamburger-stack{
+  width:22px;
+  height:18px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+}
+.nav__hamburger .hamb-line{
+  display:block;
+  height:1.5px;
+  width:22px;
+  background:var(--primary);
+  border-radius:2px;
+  transform-origin:center;
+}
+.nav__hamburger-stack--close{
+  position:relative;
+  gap:0;
+}
+.nav__hamburger-stack--close .hamb-line{
+  position:absolute;
+  top:50%;
+  left:0;
+}
+.nav__hamburger-stack--close .hamb-line:nth-child(1){ transform:rotate(45deg); }
+.nav__hamburger-stack--close .hamb-line:nth-child(2){ transform:rotate(-45deg); }
+.k-stage.t-panel-slide,
+.k-readout.t-panel-slide,
+.cell__output.t-panel-slide{
+  --panel-translate-y:18px;
+  contain:layout paint;
+}
+.t-panel-slide.is-swapping{
+  pointer-events:none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-modal { transition: none !important; }
+  .t-panel-slide { transition: none !important; }
+  .t-text-swap { transition: none !important; }
+  .t-digit-group .t-digit { animation: none !important; }
+  .t-icon-swap .t-icon { transition: none !important; }
+}
 </style>
 </head>
 
@@ -2839,9 +3084,17 @@ a:focus-visible{ border-radius:2px; }
       Read the paper <span class="arrow">→</span>
     </a>
     <button class="nav__hamburger" id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span class="t-icon-swap nav__hamburger-icons" data-state="a" aria-hidden="true">
+        <span class="t-icon nav__hamburger-stack" data-icon="a">
+          <span class="hamb-line"></span>
+          <span class="hamb-line"></span>
+          <span class="hamb-line"></span>
+        </span>
+        <span class="t-icon nav__hamburger-stack nav__hamburger-stack--close" data-icon="b">
+          <span class="hamb-line"></span>
+          <span class="hamb-line"></span>
+        </span>
+      </span>
     </button>
   </div>
 </nav>
@@ -3309,8 +3562,8 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
         <h4>The diagnostic, in one diagram.</h4>
         <p>
           Rotations are <em>always</em> non-degenerate. The boosts are non-degenerate
-          when <span class="katex">\( \kappa > 0 \)</span>, vanish when <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>, and flip periodic when
-          <span class="katex">\( \kappa < 0 \)</span>. The fate of physical reality reads off the diagonal.
+          when \( \kappa > 0 \), vanish when <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>, and flip periodic when
+          \( \kappa < 0 \). The fate of physical reality reads off the diagonal.
         </p>
       </div>
       <div class="killing__viz">
@@ -3514,9 +3767,9 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <tbody>
           <tr>
             <th>Killing form on boosts</th>
-            <td class="fail"><span class="katex">\( 4\kappa < 0 \)</span></td>
+            <td class="fail">\( 4\kappa < 0 \)</td>
             <td class="fail"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span></td>
-            <td class="win col-win"><span class="katex">\( 4\kappa > 0 \)</span></td>
+            <td class="win col-win">\( 4\kappa > 0 \)</td>
           </tr>
           <tr>
             <th>Invariant speed <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>=</mo><mn>1</mn><mi mathvariant="normal">/</mi><msqrt><mi>κ</mi></msqrt></mrow><annotation encoding="application/x-tex">V = 1/\sqrt{\kappa}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0503em;vertical-align:-0.25em;"></span><span class="mord">1/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8003em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal">κ</span></span></span><span style="top:-2.7603em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
@@ -3607,9 +3860,9 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
           </button>
         </div>
 
-        <div class="k-stage" id="kStage" aria-live="polite"></div>
+        <div class="k-stage t-panel-slide" id="kStage" aria-live="polite" data-open="true"></div>
 
-        <dl class="k-readout" id="kReadout">
+        <dl class="k-readout t-panel-slide" id="kReadout" data-open="true">
           <!-- filled by JS -->
         </dl>
       </article>
@@ -3654,7 +3907,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
           </div>
           <div class="clock-card">
             <h5>Moving frame</h5>
-            <div class="ruler" id="moveRuler" style="width:86.6%; background:var(--accent);"></div>
+            <div class="ruler" id="moveRuler" style="width:100%; transform:scaleX(0.866); background:var(--accent);"></div>
             <div class="stat" id="dilStat">0.8660 ×</div>
             <div class="label">contracted ruler · dilated clock</div>
           </div>
@@ -3673,7 +3926,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <p class="lab__panel-sub">
           Two boosts compose into one. The relativity principle alone forces the
           composition law, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>⊕</mo><msub><mi>v</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false">(</mo><msub><mi>v</mi><mn>1</mn></msub><mo>+</mo><msub><mi>v</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mi>κ</mi><mtext> </mtext><msub><mi>v</mi><mn>1</mn></msub><msub><mi>v</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">v_1 \oplus v_2 = (v_1 + v_2)/(1 + \kappa\, v_1 v_2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊕</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord">/</span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>.
-          When <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> this is ordinary addition. When <span class="katex">\( \kappa > 0 \)</span> the
+          When <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> this is ordinary addition. When \( \kappa > 0 \) the
           denominator caps the sum at <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi mathvariant="normal">/</mi><msqrt><mi>κ</mi></msqrt><mo>=</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">1/\sqrt{\kappa} = c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0503em;vertical-align:-0.25em;"></span><span class="mord">1/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8003em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal">κ</span></span></span><span style="top:-2.7603em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
 c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
 c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
@@ -4446,6 +4699,171 @@ const KAPPA_DATA = {
   }
 };
 
+function getCssMs(name, fallback){
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  if (!raw) return fallback;
+  if (raw.endsWith('ms')) return parseFloat(raw) || fallback;
+  if (raw.endsWith('s')) return (parseFloat(raw) || 0) * 1000 || fallback;
+  return parseFloat(raw) || fallback;
+}
+
+const motionPref = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+function reduceMotion(){
+  return !!(motionPref && motionPref.matches);
+}
+
+function rafThrottle(fn){
+  let rafId = 0;
+  return function throttled(){
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = 0;
+      fn();
+    });
+  };
+}
+
+function setDigits(el, value){
+  if (!el) return;
+  const str = String(value);
+  if (el.dataset.value === str) return;
+  el.dataset.value = str;
+  el.setAttribute('aria-label', str);
+  el.classList.add('t-digit-group');
+  el.classList.remove('is-animating');
+  cancelAnimationFrame(el._digitRaf);
+  const frag = document.createDocumentFragment();
+  Array.from(str).forEach((ch, i, chars) => {
+    const span = document.createElement('span');
+    span.className = 't-digit';
+    span.textContent = ch;
+    if (i === chars.length - 2) span.dataset.stagger = '1';
+    else if (i === chars.length - 1) span.dataset.stagger = '2';
+    frag.appendChild(span);
+  });
+  el.replaceChildren(frag);
+  if (reduceMotion()) return;
+  el._digitRaf = requestAnimationFrame(() => {
+    void el.offsetHeight;
+    el.classList.add('is-animating');
+  });
+}
+
+function prepareTextSwap(el){
+  if (!el) return;
+  el.classList.add('t-text-swap', 'motion-block');
+}
+
+function swapHTMLWithTransition(el, html, afterSwap){
+  if (!el) return;
+  prepareTextSwap(el);
+  clearTimeout(el._textSwapTimer);
+  const next = String(html);
+  if (el.dataset.textSwapReady && el._textSwapValue === next) return;
+  const apply = () => {
+    el.innerHTML = next;
+    el._textSwapValue = next;
+    if (afterSwap) afterSwap();
+  };
+  if (!el.dataset.textSwapReady || reduceMotion()) {
+    el.classList.remove('is-exit', 'is-enter-start');
+    apply();
+    el.dataset.textSwapReady = 'true';
+    return;
+  }
+  const dur = getCssMs('--text-swap-dur', 200);
+  el.classList.add('is-exit');
+  el._textSwapTimer = setTimeout(() => {
+    apply();
+    el.classList.remove('is-exit');
+    el.classList.add('is-enter-start');
+    void el.offsetHeight;
+    requestAnimationFrame(() => el.classList.remove('is-enter-start'));
+  }, dur);
+}
+
+function swapTextWithTransition(el, text){
+  if (!el) return;
+  prepareTextSwap(el);
+  clearTimeout(el._textSwapTimer);
+  const next = String(text);
+  if (el.dataset.textSwapReady && el._textSwapValue === next) return;
+  const apply = () => {
+    el.textContent = next;
+    el._textSwapValue = next;
+  };
+  if (!el.dataset.textSwapReady || reduceMotion()) {
+    el.classList.remove('is-exit', 'is-enter-start');
+    apply();
+    el.dataset.textSwapReady = 'true';
+    return;
+  }
+  const dur = getCssMs('--text-swap-dur', 200);
+  el.classList.add('is-exit');
+  el._textSwapTimer = setTimeout(() => {
+    apply();
+    el.classList.remove('is-exit');
+    el.classList.add('is-enter-start');
+    void el.offsetHeight;
+    requestAnimationFrame(() => el.classList.remove('is-enter-start'));
+  }, dur);
+}
+
+function revealPanel(el){
+  if (!el) return;
+  el.classList.add('t-panel-slide');
+  if (!el.dataset.open) el.dataset.open = 'false';
+  if (el.dataset.open === 'true') {
+    el.classList.remove('is-swapping');
+    return;
+  }
+  cancelAnimationFrame(el._panelRaf);
+  el._panelRaf = requestAnimationFrame(() => {
+    el.dataset.open = 'true';
+    el.classList.remove('is-swapping');
+  });
+}
+
+function hidePanel(el){
+  if (!el) return;
+  el.classList.add('t-panel-slide');
+  cancelAnimationFrame(el._panelRaf);
+  el.dataset.open = 'false';
+}
+
+function swapPanelHTML(el, html, afterSwap){
+  if (!el) return;
+  const next = String(html);
+  el.classList.add('t-panel-slide');
+  if (el.dataset.panelReady && el._panelHTML === next) return;
+  clearTimeout(el._panelSwapTimer);
+  if (!el.dataset.panelReady) {
+    el.innerHTML = next;
+    el._panelHTML = next;
+    if (afterSwap) afterSwap();
+    el.dataset.open = 'true';
+    el.dataset.panelReady = 'true';
+    return;
+  }
+  if (reduceMotion()) {
+    el.innerHTML = next;
+    el._panelHTML = next;
+    if (afterSwap) afterSwap();
+    el.dataset.open = 'true';
+    return;
+  }
+  el.classList.add('is-swapping');
+  hidePanel(el);
+  const closeMs = getCssMs('--panel-close-dur', 260);
+  el._panelSwapTimer = setTimeout(() => {
+    el.innerHTML = next;
+    el._panelHTML = next;
+    if (afterSwap) afterSwap();
+    void el.offsetHeight;
+    revealPanel(el);
+  }, closeMs);
+}
+
 function renderKappaDiagram(kSign){
   // Returns SVG string for the chosen κ regime
   const accent = '#2F95A6', tertiary = '#83A1CC', secondary = '#516071', primary = '#0F233F';
@@ -4520,7 +4938,10 @@ function renderKappaDiagram(kSign){
     </svg>`;
 }
 
+let activeKappa = null;
 function selectKappa(kSign){
+  if (kSign === activeKappa) return;
+  activeKappa = kSign;
   // Visual state
   kBtns.forEach(b => {
     const active = b.dataset.k === kSign;
@@ -4528,11 +4949,11 @@ function selectKappa(kSign){
     b.setAttribute('aria-selected', active ? 'true' : 'false');
   });
   // Diagram
-  kStage.innerHTML = renderKappaDiagram(kSign);
+  swapPanelHTML(kStage, renderKappaDiagram(kSign));
   // Readout
   const d = KAPPA_DATA[kSign];
   const winClass = kSign === '1' ? 'win' : '';
-  kReadout.innerHTML = `
+  swapPanelHTML(kReadout, `
     <div>
       <dt>Killing form on boosts</dt>
       <dd class="${winClass}">${kSign === '1' ? '4κ > 0 — non-degenerate' : kSign === '0' ? '0 — degenerate' : '4κ < 0 — periodic'}</dd>
@@ -4553,7 +4974,7 @@ function selectKappa(kSign){
       <dt>Verdict</dt>
       <dd class="${winClass}" style="font-family:var(--serif-display); font-size:18px;">${d.verdict}</dd>
     </div>
-  `;
+  `);
 }
 
 kBtns.forEach(b => b.addEventListener('click', () => selectKappa(b.dataset.k)));
@@ -4629,21 +5050,26 @@ function renderMinkowski(v){
 
 function updateLorentz(){
   const v = parseFloat(vSlider.value);
-  vVal.textContent = v.toFixed(2);
+  const vKey = v.toFixed(2);
+  setDigits(vVal, v.toFixed(2));
   vSlider.style.setProperty('--p', (v / 0.99 * 100) + '%');
 
   const gamma = 1 / Math.sqrt(1 - v*v);
   const inv   = 1 / gamma;
   const tilt  = Math.atan(v) * 180 / Math.PI;
 
-  gammaVal.textContent = gamma.toFixed(4);
-  tiltVal.textContent  = tilt.toFixed(1) + '°';
-  dilStat.textContent  = inv.toFixed(4) + ' ×';
-  moveRuler.style.width = (inv * 100) + '%';
+  setDigits(gammaVal, gamma.toFixed(4));
+  setDigits(tiltVal, tilt.toFixed(1) + '°');
+  setDigits(dilStat, inv.toFixed(4) + ' ×');
+  moveRuler.style.transform = `scaleX(${inv.toFixed(4)})`;
 
-  minkStage.innerHTML = renderMinkowski(v);
+  if (minkStage.dataset.v !== vKey) {
+    minkStage.dataset.v = vKey;
+    minkStage.innerHTML = renderMinkowski(v);
+  }
 }
-vSlider.addEventListener('input', updateLorentz);
+const scheduleLorentz = rafThrottle(updateLorentz);
+vSlider.addEventListener('input', scheduleLorentz, { passive:true });
 updateLorentz();
 
 /* ==================================================================
@@ -4663,37 +5089,38 @@ const vaDiff = document.getElementById('vaDiff');
 function updateVadd(){
   const v1 = parseFloat(va1.value);
   const v2 = parseFloat(va2.value);
-  va1Val.textContent = v1.toFixed(2);
-  va2Val.textContent = v2.toFixed(2);
+  setDigits(va1Val, v1.toFixed(2));
+  setDigits(va2Val, v2.toFixed(2));
 
   const newton = v1 + v2;
   const einstein = (v1 + v2) / (1 + v1 * v2);
 
-  vaNewton.textContent = newton.toFixed(4);
-  vaEinstein.textContent = einstein.toFixed(4);
-  vaDiff.textContent = Math.abs(newton - einstein).toFixed(4);
+  setDigits(vaNewton, newton.toFixed(4));
+  setDigits(vaEinstein, einstein.toFixed(4));
+  setDigits(vaDiff, Math.abs(newton - einstein).toFixed(4));
 
   // Style Newton's number — flag when it goes super-luminal
   if (newton > 1) {
     vaNewton.classList.add('warn');
     vaNewton.classList.remove('win');
-    vaNewtonNote.textContent = '→ exceeds c — impossible';
+    swapTextWithTransition(vaNewtonNote, '→ exceeds c — impossible');
     vaNewtonNote.style.color = 'var(--gold)';
   } else {
     vaNewton.classList.remove('warn');
-    vaNewtonNote.textContent = '→ within c — sub-luminal';
+    swapTextWithTransition(vaNewtonNote, '→ within c — sub-luminal');
     vaNewtonNote.style.color = 'var(--secondary)';
   }
 
   // Einstein result is always sub-luminal for v1, v2 < c
   if (einstein > 0.99) {
-    vaEinsteinNote.textContent = `→ approaches c (still ${einstein.toFixed(4)}c)`;
+    swapTextWithTransition(vaEinsteinNote, `→ approaches c (still ${einstein.toFixed(4)}c)`);
   } else {
-    vaEinsteinNote.textContent = '→ stays sub-luminal · always';
+    swapTextWithTransition(vaEinsteinNote, '→ stays sub-luminal · always');
   }
 }
-va1.addEventListener('input', updateVadd);
-va2.addEventListener('input', updateVadd);
+const scheduleVadd = rafThrottle(updateVadd);
+va1.addEventListener('input', scheduleVadd, { passive:true });
+va2.addEventListener('input', scheduleVadd, { passive:true });
 updateVadd();
 
 /* ==================================================================
@@ -4753,8 +5180,9 @@ async function runKillingAnim(){
     }
 
   // Step 1 — diagonals on rotations
-  kfStatus.innerHTML = 'Computing $B(J_i, J_i) = \\mathrm{tr}(\\mathrm{ad}_{J_i}^2)$ — the rotation diagonals.';
-  if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
+  swapHTMLWithTransition(kfStatus, 'Computing $B(J_i, J_i) = \\mathrm{tr}(\\mathrm{ad}_{J_i}^2)$ — the rotation diagonals.', () => {
+    if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
+  });
   for (let i = 0; i < 3; i++){
     const c = document.getElementById(`kc-${i}-${i}`);
     c.classList.add('computing'); c.textContent = '?';
@@ -4765,8 +5193,9 @@ async function runKillingAnim(){
   }
 
   await sleep(220);
-  kfStatus.innerHTML = 'Now $B(K_i, K_i) = \\mathrm{tr}(\\mathrm{ad}_{K_i}^2)$ — and here κ enters the proof.';
-  if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
+  swapHTMLWithTransition(kfStatus, 'Now $B(K_i, K_i) = \\mathrm{tr}(\\mathrm{ad}_{K_i}^2)$ — and here κ enters the proof.', () => {
+    if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
+  });
 
   // Step 2 — diagonals on boosts
   for (let i = 3; i < 6; i++){
@@ -4779,7 +5208,7 @@ async function runKillingAnim(){
   }
 
   await sleep(260);
-  kfStatus.innerHTML = 'Off-diagonals: by rotational + boost symmetry, all of these vanish.';
+  swapTextWithTransition(kfStatus, 'Off-diagonals: by rotational + boost symmetry, all of these vanish.');
 
   // Step 3 — fill all off-diagonals with 0
   const offDiagOrder = [];
@@ -4795,14 +5224,15 @@ async function runKillingAnim(){
   }
 
   await sleep(300);
-  kfStatus.innerHTML = '<strong style="color:var(--accent)">Done.</strong> $B = \\mathrm{diag}(-4,-4,-4,\\,4\\kappa,4\\kappa,4\\kappa)$. The verdict reads off the sign of κ.';
-  if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
+  swapHTMLWithTransition(kfStatus, '<strong style="color:var(--accent)">Done.</strong> $B = \\mathrm{diag}(-4,-4,-4,\\,4\\kappa,4\\kappa,4\\kappa)$. The verdict reads off the sign of κ.', () => {
+    if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
+  });
 
   kfRun.disabled = false; kfReset.disabled = false;
 }
 function resetKillingAnim(){
   buildKgrid();
-  kfStatus.textContent = 'Idle. Click Compute B to begin.';
+  swapTextWithTransition(kfStatus, 'Idle. Click Compute B to begin.');
 }
 kfRun.addEventListener('click', runKillingAnim);
 kfReset.addEventListener('click', resetKillingAnim);
@@ -4816,7 +5246,7 @@ const nbVersion = document.getElementById('nbVersion');
 function setNbStatus(state, msg, version){
   nbStatus.classList.remove('is-loading','is-ready','is-error');
   if (state) nbStatus.classList.add('is-' + state);
-  nbStatus.querySelector('.grow').innerHTML = msg;
+  swapHTMLWithTransition(nbStatus.querySelector('.grow'), msg);
   if (version) nbVersion.innerHTML = `<code>${version}</code>`;
 }
 
@@ -4846,7 +5276,11 @@ async function ensurePyodide(){
   return py;
 }
 
-function clearOutput(outEl){ outEl.innerHTML = ''; }
+function clearOutput(outEl){
+  if (!outEl) return;
+  hidePanel(outEl);
+  outEl.innerHTML = '';
+}
 
 // Escape characters that could break our innerHTML interpolations.
 function htmlEscape(s){
@@ -4884,6 +5318,7 @@ function appendOutputRow(outEl, kind, label, value){
   row.appendChild(lab);
   row.appendChild(val);
   outEl.appendChild(row);
+  revealPanel(outEl);
 }
 
 function appendOutputError(outEl, msg){
@@ -4906,6 +5341,7 @@ function appendOutputError(outEl, msg){
   row.appendChild(lab);
   row.appendChild(val);
   outEl.appendChild(row);
+  revealPanel(outEl);
 }
 
 // Strip our syntax-highlight spans so we get clean Python source.
@@ -4947,6 +5383,7 @@ async function runCell(cellEl){
   pendingRow.appendChild(pLab);
   pendingRow.appendChild(pVal);
   outEl.appendChild(pendingRow);
+  revealPanel(outEl);
 
   const oldLabel = runBtn.innerHTML;
   runBtn.disabled = true;
@@ -5068,6 +5505,7 @@ function addKillingFormMini(cellEl){
   row.style.gridTemplateColumns = '1fr';
   row.appendChild(wrap);
   out.appendChild(row);
+  revealPanel(out);
 }
 function buildKfMiniCells(){
   let html = '';
@@ -5263,23 +5701,8 @@ function buildKfMiniCells(){
 
 /* ---- Smooth lab number transitions ---- */
 (function(){
-  const labNums = document.querySelectorAll('#gammaVal, #tiltVal, #dilStat, #vVal, #vaNewton, #vaEinstein, #vaDiff');
-  // Wrap original updateLorentz and updateVadd to flash numbers
-  function flashEl(el){
-    if (!el) return;
-    el.classList.remove('lab-num-flash');
-    void el.offsetWidth; // reflow
-    el.classList.add('lab-num-flash');
-    el.addEventListener('animationend', () => el.classList.remove('lab-num-flash'), { once:true });
-  }
-
-  const origUpdateLorentz = window.updateLorentz || null;
-
-  // Observe value changes via MutationObserver and flash
-  labNums.forEach(el => {
-    if (!el) return;
-    new MutationObserver(() => flashEl(el)).observe(el, { childList:true, characterData:true, subtree:true });
-  });
+  document.querySelectorAll('#gammaVal, #tiltVal, #dilStat, #vVal, #va1Val, #va2Val, #vaNewton, #vaEinstein, #vaDiff')
+    .forEach(el => el && el.classList.add('t-digit-group'));
 })();
 
 /* ---- Universe cards — perspective tilt on mouse move ---- */
@@ -5319,11 +5742,11 @@ function buildKfMiniCells(){
     for (let i = 0; i < total; i++){
       const cell = cells[i];
       const num  = cell.dataset.cell || (i+1);
-      stat.textContent = `Executing cell ${num} of ${total}…`;
+      swapTextWithTransition(stat, `Executing cell ${num} of ${total}…`);
       await runCellWithStatus(cell);
       bar.style.width = ((i+1)/total*100) + '%';
       if (cell.classList.contains('is-fail')){
-        stat.textContent = `Cell ${num} threw an error — see its output.`;
+        swapTextWithTransition(stat, `Cell ${num} threw an error — see its output.`);
         bar.style.background = 'linear-gradient(90deg, #a4453a, #C9A96E)';
         btn.disabled = false;
         btn.textContent = '▶ Re-run all 7 cells';
@@ -5331,7 +5754,7 @@ function buildKfMiniCells(){
       }
     }
 
-    stat.textContent = `All ${total} cells executed. The proof spine is live in your browser.`;
+    swapTextWithTransition(stat, `All ${total} cells executed. The proof spine is live in your browser.`);
     btn.textContent = '✓ Re-run all 7 cells';
     btn.disabled = false;
   });
@@ -5341,7 +5764,7 @@ function buildKfMiniCells(){
 <!-- ============================================================
      MOBILE NAV OVERLAY
 ============================================================== -->
-<div class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true" role="dialog" aria-modal="true">
+<div class="mobile-nav t-modal" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true" role="dialog" aria-modal="true">
   <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close navigation">
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
       <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -5678,20 +6101,33 @@ function buildKfMiniCells(){
   const mobileNav = document.getElementById('mobile-nav');
   const closeBtn  = document.getElementById('mobile-nav-close');
   if (!hamburger || !mobileNav) return;
+  const iconSwap = hamburger.querySelector('.t-icon-swap');
+  const closeMs = getCssMs('--modal-close-dur', 190);
+  let closeTimer = null;
 
   function openNav(){
+    clearTimeout(closeTimer);
     hamburger.setAttribute('aria-expanded','true');
+    if (iconSwap) iconSwap.dataset.state = 'b';
+    mobileNav.classList.remove('is-closing');
     mobileNav.classList.add('is-open');
     mobileNav.setAttribute('aria-hidden','false');
     document.body.style.overflow = 'hidden';
     setTimeout(() => closeBtn && closeBtn.focus(), 50);
   }
-  function closeNav(){
+  function closeNav(opts = {}){
+    const restoreFocus = opts.restoreFocus !== false;
+    clearTimeout(closeTimer);
     hamburger.setAttribute('aria-expanded','false');
+    if (iconSwap) iconSwap.dataset.state = 'a';
     mobileNav.classList.remove('is-open');
+    mobileNav.classList.add('is-closing');
     mobileNav.setAttribute('aria-hidden','true');
     document.body.style.overflow = '';
-    hamburger.focus();
+    closeTimer = setTimeout(() => {
+      mobileNav.classList.remove('is-closing');
+      if (restoreFocus) hamburger.focus();
+    }, closeMs);
   }
 
   hamburger.addEventListener('click', () =>
@@ -5700,7 +6136,7 @@ function buildKfMiniCells(){
   closeBtn && closeBtn.addEventListener('click', closeNav);
 
   /* Close when any link is clicked */
-  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => closeNav({ restoreFocus:false })));
 
   /* Escape to close */
   document.addEventListener('keydown', e => {
@@ -5824,7 +6260,7 @@ function buildKfMiniCells(){
   function showToast(msg){
     if (!toast) return;
     clearTimeout(showToast._t);
-    toast.textContent = msg;
+    swapTextWithTransition(toast, msg);
     toast.classList.add('is-visible');
     showToast._t = setTimeout(() => toast.classList.remove('is-visible'), 1800);
   }
