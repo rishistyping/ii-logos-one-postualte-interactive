@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>One Postulate — Intelligent Internet</title>
-<meta name="description" content="Einstein built special relativity on two postulates. He needed only one. A research note from Intelligent Internet by Emad Mostaque, April 2026." />
+<meta name="description" content="One Postulate. The rest is geometry. A research note from Intelligent Internet on how the relativity principle fixes the structure of spacetime." />
 <script>
 (function(){
   const KEY = 'ii-theme';
@@ -16,6 +16,20 @@
   const theme = isValid(saved) ? saved : (systemDark ? 'dark' : 'light');
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
+})();
+</script>
+<script>
+(function(){
+  const url = 'https://cdn.jsdelivr.net/npm/motion@12.38.0/+esm';
+  window.__iiMotionReady = import(url).then(mod => {
+    window.__iiMotionLib = mod;
+    window.dispatchEvent(new CustomEvent('ii:motion-ready', { detail: mod }));
+    return mod;
+  }).catch(err => {
+    document.documentElement.classList.add('motion-dev-failed');
+    window.__iiMotionError = err;
+    return null;
+  });
 })();
 </script>
 
@@ -1487,7 +1501,11 @@ footer.foot{
   cursor:pointer;
   text-align:center;
   border-radius:var(--r-sm);
-  transition: all .25s ease;
+  transition:
+    background-color .25s ease,
+    border-color .25s ease,
+    color .25s ease,
+    transform .25s ease;
   color:var(--primary);
 }
 .kappa-dial button .symbol{
@@ -1695,7 +1713,11 @@ input[type="range"].l-slider::-moz-range-thumb{
   display:flex; align-items:center; justify-content:center;
   background:var(--diagram-muted-wash);
   border-radius:3px;
-  transition: all .35s cubic-bezier(.2,.7,.2,1);
+  transition:
+    background-color .35s cubic-bezier(.2,.7,.2,1),
+    color .35s cubic-bezier(.2,.7,.2,1),
+    opacity .35s cubic-bezier(.2,.7,.2,1),
+    transform .35s cubic-bezier(.2,.7,.2,1);
   position:relative;
   font-size:15px;
 }
@@ -1809,7 +1831,7 @@ input[type="range"].l-slider::-moz-range-thumb{
   border:1px solid var(--rule-strong);
   background:transparent; color:var(--primary);
   cursor:pointer;
-  transition: all .2s ease;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
 }
 .cell__btn:hover{ background:var(--surface-elevated); }
 .cell__btn--run{
@@ -2221,7 +2243,11 @@ input[type="range"].l-slider::-moz-range-thumb{
 
 /* Kappa-dial buttons — spring press */
 .kappa-dial button{
-  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  transition:
+    background .22s cubic-bezier(.34,1.2,.64,1),
+    border-color .22s cubic-bezier(.34,1.2,.64,1),
+    color .22s cubic-bezier(.34,1.2,.64,1),
+    transform .22s cubic-bezier(.34,1.2,.64,1);
 }
 .kappa-dial button:active{ transform:scale(.94); }
 .kappa-dial button.active{ transform:scale(1.03); }
@@ -2413,6 +2439,7 @@ section + section.in{
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
   .hero h1 .word,.hero h1 .small{ opacity:1; transform:none; animation:none; }
+  .conclusion::before{ animation:none !important; }
 }
 </style>
 
@@ -2949,6 +2976,12 @@ a:focus-visible{ border-radius:2px; }
   #grain { animation: none; display: none; }
   .s-head.reveal { clip-path: none; }
   .cursor-dot { transition: none; }
+  .nb-status.is-loading .led,
+  .cell__btn .spin,
+  .cell.is-running .cell__num::after,
+  .nb-runall__progress-bar,
+  #read-progress,
+  .conclusion::before { animation: none !important; }
 }
 
 /* ---- Mobile hero responsive tightening ---- */
@@ -3124,6 +3157,21 @@ a:focus-visible{ border-radius:2px; }
 }
 
 .motion-block{ display:block; }
+.motion-dev-ready .hero__meta,
+.motion-dev-ready .hero h1 .word,
+.motion-dev-ready .hero h1 .small,
+.motion-dev-ready .hero__lede,
+.motion-dev-ready .hero__cta,
+.motion-dev-ready .hero__byline,
+.motion-dev-ready .s-head,
+.motion-dev-ready .lab__panel,
+.motion-dev-ready .killing-anim,
+.motion-dev-ready .notebook,
+.motion-dev-ready .conclusion__final{
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+  will-change:opacity, transform, filter;
+}
 .mobile-nav.t-modal{ visibility:hidden; }
 .mobile-nav.t-modal.is-open,
 .mobile-nav.t-modal.is-closing{ visibility:visible; }
@@ -3221,13 +3269,13 @@ a:focus-visible{ border-radius:2px; }
       </span>
     </a>
     <div class="nav__links">
-      <a href="#postulate">Postulate</a>
-      <a href="#determines">Universes</a>
-      <a href="#killing">Killing Form</a>
-      <a href="#verdicts">Verdicts</a>
-      <a href="#lab">Lab</a>
-      <a href="#proof">Proof</a>
-      <a href="#references">Refs</a>
+      <a href="#postulate">Symmetry</a>
+      <a href="#determines">Three Worlds</a>
+      <a href="#killing">Algebra</a>
+      <a href="#verdicts">The Sign</a>
+      <a href="#lab">Touch</a>
+      <a href="#proof">Run</a>
+      <a href="#references">Sources</a>
     </div>
     <div class="nav__actions">
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
@@ -3237,7 +3285,7 @@ a:focus-visible{ border-radius:2px; }
         </span>
       </button>
       <a class="btn btn--primary" href="#abstract">
-        Read the paper <span class="arrow">→</span>
+        Read the argument <span class="arrow">→</span>
       </a>
     </div>
     <button class="nav__hamburger" id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav">
@@ -3274,19 +3322,19 @@ a:focus-visible{ border-radius:2px; }
 
       <h1>
         <span class="word">One</span> <span class="word"><span class="accent-italic">Postulate</span>.</span>
-        <span class="small">Einstein needed only one — not two.</span>
+        <span class="small">The rest is geometry.</span>
       </h1>
 
       <p class="hero__lede">
-        The relativity principle alone forces a finite invariant speed,
-        a Lorentzian spacetime, and the unification of space and time.
-        The second postulate was <em>calibration dressed up as foundation</em>.
-        The tools to prove it existed in 1888.
+        Relativity alone forces a finite invariant speed, a Lorentzian spacetime,
+        and the unification of space and time. Light does not found the structure.
+        It calibrates the scale. The second postulate was <em>measurement mistaken
+        for architecture</em>.
       </p>
 
       <div class="hero__cta">
-        <a class="btn btn--primary" href="#abstract">Begin reading <span class="arrow">→</span></a>
-        <a class="btn btn--secondary" href="#references">View references</a>
+        <a class="btn btn--primary" href="#abstract">Read the argument <span class="arrow">→</span></a>
+        <a class="btn btn--secondary" href="#references">Trace the sources</a>
       </div>
 
       <div class="hero__byline">
@@ -3367,12 +3415,12 @@ a:focus-visible{ border-radius:2px; }
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">⊕</span><span class="num">I</span><span class="dot"></span><span>The postulate</span></div>
-        <h2 class="s-head__title" id="postulate-title">A principle of <em>symmetry</em>, and an empirical concession.</h2>
+        <div class="eyebrow"><span class="eyebrow__sigil">⊕</span><span class="num">I</span><span class="dot"></span><span>The symmetry</span></div>
+        <h2 class="s-head__title" id="postulate-title">The law begins by refusing a privileged room.</h2>
       </div>
       <p class="s-head__sub">
-        Einstein's first postulate is a design principle. His second imports a fact about light
-        into the foundations of physics — a concession he never quite forgave.
+        The first postulate is not an observation. It is an ethic of form:
+        no inertial frame gets to be the frame from which reality is judged.
       </p>
     </div>
 
@@ -3385,34 +3433,32 @@ a:focus-visible{ border-radius:2px; }
           </span>
         </div>
         <p class="drop-cap">
-          An inertial frame is any laboratory moving at constant velocity, a sealed room
-          drifting through space. The postulate says that no experiment performed inside
-          such a room can reveal how fast it is moving, or whether it is moving at all.
+          An inertial frame is a sealed laboratory in uniform motion. The postulate
+          says that no experiment inside it can reveal whether the room is moving,
+          or how fast.
         </p>
         <p>
-          For Einstein this was more than a statement about experiments. It was a
-          <em>design principle</em>. The mathematical framework of physics should contain
-          no structure put in by hand. Everything should emerge from the rules themselves.
+          For Einstein this was more than a rule about laboratories. It was a demand
+          on theory itself. No hidden scaffold. No preferred background. No structure
+          smuggled in by hand.
         </p>
       </div>
 
       <div class="prose">
         <p>
-          Special relativity came from removing the assumption that all observers agree on
-          which events are simultaneous. General relativity came from removing the assumption
-          that there is a single natural way to label points in spacetime. Each advance
-          stripped away a background assumption that the previous framework had smuggled in.
+          Special relativity removed absolute simultaneity. General relativity removed
+          absolute coordinates. Each advance stripped away a background assumption the
+          previous framework had treated as natural.
         </p>
         <p>
-          The second postulate is different in character. It says that light travels at a
-          finite speed <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> that is the same in all inertial frames. This is not a principle
-          of symmetry. It is an observation about a particular physical phenomenon,
-          imported into the foundations.
+          The second postulate has a different character. It says light travels at a
+          finite speed <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> in every inertial frame. That is not symmetry. It is
+          an empirical fact about a particular phenomenon, placed where a principle
+          ought to stand.
         </p>
         <p>
-          For Einstein, who held that the laws of physics should be self-contained,
-          this was a <em>concession</em> — an empirical fact doing the work of a
-          structural argument.
+          The claim here is simple. The structure does not need that concession.
+          The algebra already contains it.
         </p>
       </div>
     </div>
@@ -3426,24 +3472,22 @@ a:focus-visible{ border-radius:2px; }
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">◎</span><span class="num">II</span><span class="dot"></span><span>What it determines</span></div>
-        <h2 class="s-head__title" id="determines-title">A family of universes, indexed by a single number <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span>.</h2>
+        <div class="eyebrow"><span class="eyebrow__sigil">◎</span><span class="num">II</span><span class="dot"></span><span>The three worlds</span></div>
+        <h2 class="s-head__title" id="determines-title">One parameter. Three possible worlds.</h2>
       </div>
       <p class="s-head__sub">
-        Since 1910, derivation after derivation has shown that the relativity principle
-        alone allows exactly one family of inertial-frame transformations, parameterised
-        by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span>. Three signs, three universes.
+        Since 1910, derivation after derivation has shown that the relativity
+        principle allows one transformation family, parameterised by
+        <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span>. The sign is destiny.
       </p>
     </div>
 
     <div class="prose reveal" style="max-width:none;">
       <p style="max-width:62ch;">
-        How do measurements in one inertial frame relate to those in another? If you are on
-        a train moving at speed <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> relative to the platform, the relativity principle
-        — homogeneity, isotropy, consistent composition — turns out to be extraordinarily
-        restrictive.<sup class="cite"><a href="#ref-3">3</a><a href="#ref-6">,6</a><a href="#ref-7">,7</a><a href="#ref-5">,5</a></sup>
-        These properties allow exactly one family of transformation rules, governed by a
-        single undetermined number <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span>:
+        Ask only how one inertial frame is allowed to describe another. Homogeneity,
+        isotropy, and consistent composition leave almost no freedom.<sup class="cite"><a href="#ref-3">3</a><a href="#ref-6">,6</a><a href="#ref-7">,7</a><a href="#ref-5">,5</a></sup>
+        What remains is a single number,
+        <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span>, governing the only possible family:
       </p>
 
       <div class="equation">
@@ -3610,13 +3654,12 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">✦</span><span class="num">III</span><span class="dot"></span><span>Self-examination</span></div>
-        <h2 class="s-head__title" id="killing-title">Can the rules <em>examine themselves?</em></h2>
+        <div class="eyebrow"><span class="eyebrow__sigil">✦</span><span class="num">III</span><span class="dot"></span><span>The algebra turns inward</span></div>
+        <h2 class="s-head__title" id="killing-title">The rules can test their own depth.</h2>
       </div>
       <p class="s-head__sub">
-        Wilhelm Killing found a way in 1888 — seventeen years before Einstein. The Killing
-        form is a single number, computed entirely from the algebra's combination rules.
-        It is the algebra examining itself.
+        Wilhelm Killing found the diagnostic in 1888, seventeen years before Einstein.
+        The Killing form is computed from the algebra alone. No light enters.
       </p>
     </div>
 
@@ -3719,8 +3762,8 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
         <h4>The diagnostic, in one diagram.</h4>
         <p>
           Rotations are <em>always</em> non-degenerate. The boosts are non-degenerate
-          when \( \kappa > 0 \), vanish when <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>, and flip periodic when
-          \( \kappa < 0 \). The fate of physical reality reads off the diagonal.
+          when κ &gt; 0, vanish when <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>, and flip periodic when
+          κ &lt; 0. The fate of physical reality reads off the diagonal.
         </p>
       </div>
       <div class="killing__viz">
@@ -3764,12 +3807,11 @@ c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">◈</span><span class="num">IV</span><span class="dot"></span><span>Three verdicts</span></div>
-        <h2 class="s-head__title" id="verdicts-title">The algebra delivers its <em>own</em> verdict — three times.</h2>
+        <div class="eyebrow"><span class="eyebrow__sigil">◈</span><span class="num">IV</span><span class="dot"></span><span>The sign decides</span></div>
+        <h2 class="s-head__title" id="verdicts-title">Only one sign can house causality.</h2>
       </div>
       <p class="s-head__sub">
-        Two cases fail. Only one survives the postulate's own demand that the laws
-        be the same in every frame.
+        The algebra admits three branches. Two are formal. One is physical.
       </p>
     </div>
 
@@ -3924,9 +3966,9 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <tbody>
           <tr>
             <th>Killing form on boosts</th>
-            <td class="fail">\( 4\kappa < 0 \)</td>
+            <td class="fail">4κ &lt; 0</td>
             <td class="fail"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span></td>
-            <td class="win col-win">\( 4\kappa > 0 \)</td>
+            <td class="win col-win">4κ &gt; 0</td>
           </tr>
           <tr>
             <th>Invariant speed <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>=</mo><mn>1</mn><mi mathvariant="normal">/</mi><msqrt><mi>κ</mi></msqrt></mrow><annotation encoding="application/x-tex">V = 1/\sqrt{\kappa}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0503em;vertical-align:-0.25em;"></span><span class="mord">1/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8003em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal">κ</span></span></span><span style="top:-2.7603em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
@@ -3982,12 +4024,12 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">⊛</span><span class="num">V</span><span class="dot"></span><span>Interactive lab</span></div>
-        <h2 class="s-head__title" id="lab-title">Turn the <em>κ-dial</em>. Slide the <em>velocity</em>. Watch the geometry.</h2>
+        <div class="eyebrow"><span class="eyebrow__sigil">⊛</span><span class="num">V</span><span class="dot"></span><span>Touch the geometry</span></div>
+        <h2 class="s-head__title" id="lab-title">Touch the sign. Watch the world answer.</h2>
       </div>
       <p class="s-head__sub">
-        Two experiments, no physics degree required. The numbers below are not pre-baked
-        animations — they are computed live from the same algebra the paper derives.
+        Three small instruments. No theatre. The numbers are computed live from
+        the same algebra the paper derives.
       </p>
     </div>
 
@@ -3998,8 +4040,8 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <div class="lab__panel-eyebrow">Experiment 1</div>
         <h3 class="lab__panel-title">The <em>κ-dial</em>.</h3>
         <p class="lab__panel-sub">
-          Pick a value of κ. Each choice produces a completely different geometry of
-          spacetime. Two of them fail; one survives the postulate.
+          Pick a value of κ. Each sign opens a world. Two collapse. One keeps
+          causality, metric, and speed in the same hand.
         </p>
 
         <div class="kappa-dial" role="tablist" aria-label="Choose a value of kappa">
@@ -4029,7 +4071,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         <div class="lab__panel-eyebrow">Experiment 2</div>
         <h3 class="lab__panel-title">The <em>Lorentz explorer</em>.</h3>
         <p class="lab__panel-sub">
-          With κ &gt; 0 fixed, slide the velocity. The Minkowski axes tilt toward the
+          With κ &gt; 0 fixed, slide the velocity. The axes lean toward the
           lightcone. Time dilates. Lengths contract. Every number below is
           <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn><mi mathvariant="normal">/</mi><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>v</mi><mn>2</mn></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">\gamma = 1/\sqrt{1 - v^2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1634em;vertical-align:-0.25em;"></span><span class="mord">1/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9134em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-2.8734em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
 c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
@@ -4079,11 +4121,11 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       <!-- =================== EXPERIMENT 3: VELOCITY ADDITION =================== -->
       <article class="lab__panel" style="grid-column: 1 / -1;">
         <div class="lab__panel-eyebrow">Experiment 3</div>
-        <h3 class="lab__panel-title">The <em>composition law</em> — and why nothing exceeds c.</h3>
+        <h3 class="lab__panel-title">The <em>composition law</em> keeps the boundary.</h3>
         <p class="lab__panel-sub">
           Two boosts compose into one. The relativity principle alone forces the
           composition law, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>⊕</mo><msub><mi>v</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false">(</mo><msub><mi>v</mi><mn>1</mn></msub><mo>+</mo><msub><mi>v</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mi>κ</mi><mtext> </mtext><msub><mi>v</mi><mn>1</mn></msub><msub><mi>v</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">v_1 \oplus v_2 = (v_1 + v_2)/(1 + \kappa\, v_1 v_2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊕</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord">/</span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>.
-          When <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> this is ordinary addition. When \( \kappa > 0 \) the
+          When <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> this is ordinary addition. When κ &gt; 0 the
           denominator caps the sum at <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi mathvariant="normal">/</mi><msqrt><mi>κ</mi></msqrt><mo>=</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">1/\sqrt{\kappa} = c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0503em;vertical-align:-0.25em;"></span><span class="mord">1/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8003em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal">κ</span></span></span><span style="top:-2.7603em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
 c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
 c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
@@ -4096,8 +4138,7 @@ H400000v40H845.2724
 s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
 c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
 M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2397em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span>. Slide both speeds
-          past 0.9c and watch — Newton's answer is wrong by exactly the amount
-          the algebra predicts.
+          past 0.9c. Newton crosses the boundary. The algebra refuses.
         </p>
 
         <div class="vadd">
@@ -4121,34 +4162,33 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
               <span style="font-family:var(--sans); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--secondary); font-weight:500;">Newton (κ = 0)</span>
               <div class="formula">v<sub>1</sub> + v<sub>2</sub></div>
               <span class="out warn" id="vaNewton">1.6000</span>
-              <div class="formula" style="color:var(--gold); margin-top:4px;" id="vaNewtonNote">→ exceeds c — impossible</div>
+              <div class="formula" style="color:var(--gold); margin-top:4px;" id="vaNewtonNote">→ exceeds c — rejected</div>
             </div>
             <div>
               <span style="font-family:var(--sans); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--secondary); font-weight:500;">Einstein (κ = 1/c²)</span>
               <div class="formula">(v<sub>1</sub> + v<sub>2</sub>) / (1 + v<sub>1</sub>v<sub>2</sub>/c²)</div>
               <span class="out win" id="vaEinstein">0.9756</span>
-              <div class="formula" id="vaEinsteinNote" style="margin-top:4px;">→ stays sub-luminal · always</div>
+              <div class="formula" id="vaEinsteinNote" style="margin-top:4px;">→ remains below c</div>
             </div>
             <div>
               <span style="font-family:var(--sans); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--secondary); font-weight:500;">Discrepancy</span>
               <div class="formula">| Newton − Einstein | / c</div>
               <span class="out" id="vaDiff">0.6244</span>
-              <div class="formula" style="margin-top:4px;">→ what experiment falsifies in Newton</div>
+              <div class="formula" style="margin-top:4px;">→ the excess Newton cannot hide</div>
             </div>
           </div>
 
           <p class="vadd__verdict">
-            <strong>Note.</strong> The cap at <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> is not enforced from outside —
-            it is what the relativity principle's own composition law does on its
-            own. Try <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><msub><mi>v</mi><mn>2</mn></msub><mo>=</mo><mn>0.99</mn></mrow><annotation encoding="application/x-tex">v_1 = v_2 = 0.99</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.99</span></span></span></span>. Newton says 1.98c. The algebra says
-            0.999949c. Experiment confirms the algebra.
+            <strong>Note.</strong> The cap at <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">c</span></span></span></span> is not enforced from outside.
+            The composition law supplies it. Try <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><msub><mi>v</mi><mn>2</mn></msub><mo>=</mo><mn>0.99</mn></mrow><annotation encoding="application/x-tex">v_1 = v_2 = 0.99</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.99</span></span></span></span>. Newton says 1.98c. The algebra says
+            0.999949c. The structure holds.
           </p>
         </div>
       </article>
     </div>
 
     <p class="reveal" style="margin-top:48px; max-width:62ch; font-family:var(--serif-display); font-size:24px; line-height:1.4; color:var(--primary); font-weight:400;">
-      Every slider you moved is a consequence of a single algebraic fact:
+      Every slider moved above is a consequence of a single algebraic fact:
       <em>the Killing form demands κ &gt; 0</em>. Light plays no special role in the
       derivation. Its speed is simply the value experiment assigns to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>=</mo><mn>1</mn><mi mathvariant="normal">/</mi><msqrt><mi>κ</mi></msqrt></mrow><annotation encoding="application/x-tex">V = 1/\sqrt{\kappa}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0503em;vertical-align:-0.25em;"></span><span class="mord">1/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8003em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal">κ</span></span></span><span style="top:-2.7603em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
 c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
@@ -4173,13 +4213,13 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="num">VI</span><span class="dot"></span><span>The proof, executable</span></div>
-        <h2 class="s-head__title" id="proof-title">The <em>algebra</em> computes itself. <br/>Watch — or run it yourself.</h2>
+        <div class="eyebrow"><span class="num">VI</span><span class="dot"></span><span>Run the spine</span></div>
+        <h2 class="s-head__title" id="proof-title">The <em>algebra</em> can be executed.</h2>
       </div>
       <p class="s-head__sub">
-        Below: the Killing-form computation animated cell-by-cell, then the same proof
-        as a SymPy notebook embedded in the page. Click <em>Run</em> on any cell and a
-        full Python interpreter loads in your browser to verify the result, end to end.
+        First the Killing form fills itself. Then the same proof runs as a SymPy
+        notebook in the page. Click <em>Run</em>. A Python interpreter verifies
+        the argument, end to end.
       </p>
     </div>
 
@@ -4188,7 +4228,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       <div>
         <h4>The Killing form, in six steps.</h4>
         <p>
-          Press <em>Compute</em>. Each diagonal cell will fill in turn — the trace of
+          Press <em>Compute</em>. Each diagonal cell answers in turn — the trace of
           <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi></mrow><mi>X</mi></msub><mo>∘</mo><msub><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">d</mi></mrow><mi>X</mi></msub></mrow><annotation encoding="application/x-tex">\mathrm{ad}_X \circ \mathrm{ad}_X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">ad</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∘</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">ad</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">X</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> for each generator — followed by the
           off-diagonals, which all vanish by symmetry.
         </p>
@@ -4201,7 +4241,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
           <button class="btn btn--primary" id="kfRun">Compute B <span class="arrow">→</span></button>
           <button class="btn btn--secondary" id="kfReset">Reset</button>
         </div>
-        <div class="step-readout" id="kfStatus">Idle. Click <strong>Compute B</strong> to begin.</div>
+        <div class="step-readout" id="kfStatus">Ready. Let the algebra test itself.</div>
       </div>
 
       <div class="kgrid" id="kgrid" aria-hidden="true">
@@ -4216,7 +4256,7 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
         From <em style="color:var(--accent)">brackets</em> to <em style="color:var(--accent)">Minkowski</em>, in your browser.
       </h3>
       <p style="font-family:var(--serif-body); font-size:18px; line-height:1.6; color:var(--secondary); max-width:60ch; margin:0 0 32px;">
-        Seven SymPy cells reproduce the paper's argument exactly. Cells 1–2 build the
+        Seven SymPy cells reproduce the paper's argument exactly. Cells 1-2 build the
         algebra. Cell 3 computes the Killing form symbolically and finds it diagonal.
         Cell 4 substitutes the three values of κ and reads off the eigenvalue
         signatures — the three verdicts. Cell 5 solves <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>⊕</mo><mi>V</mi><mo>=</mo><mi>V</mi></mrow><annotation encoding="application/x-tex">V \oplus V = V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⊕</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> for the
@@ -4235,16 +4275,16 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
     <div class="notebook reveal" style="margin-top:32px;">
       <div class="nb-status" id="nbStatus">
         <span class="led"></span>
-        <span class="grow">SymPy interpreter — <code>sympy</code> via Pyodide. <strong style="color:var(--primary)">Idle.</strong> Click any <em>Run</em> button to load Python in your browser (~10 MB, one-time).</span>
+        <span class="grow">SymPy interpreter — <code>sympy</code> via Pyodide. <strong style="color:var(--primary)">Ready.</strong> Run a cell to wake the proof (~10 MB, one-time).</span>
         <span id="nbVersion"></span>
       </div>
 
       <div class="nb-runall" id="nbRunAll">
-        <button class="nb-runall__btn" id="runAllBtn" type="button">▶ Run all 7 cells</button>
+        <button class="nb-runall__btn" id="runAllBtn" type="button">▶ Run the proof spine</button>
         <div class="nb-runall__progress" aria-hidden="true">
           <div class="nb-runall__progress-bar" id="runAllBar"></div>
         </div>
-        <div class="nb-runall__status" id="runAllStatus">Press to execute the full proof spine sequentially.</div>
+        <div class="nb-runall__status" id="runAllStatus">Ready to execute all seven cells.</div>
       </div>
 
       <!-- ============ CELL 1 ============ -->
@@ -4590,7 +4630,7 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
 <section class="conclusion" id="conclusion" aria-labelledby="conclusion-title">
   <div class="shell">
     <div class="reveal">
-      <div class="eyebrow"><span class="num">VII</span><span class="dot"></span><span>Structure and scale</span></div>
+      <div class="eyebrow"><span class="num">VII</span><span class="dot"></span><span>What is fixed; what is measured</span></div>
       <h2 id="conclusion-title">
         The speed's <em>value</em> is empirical. <br/>Its <em>existence</em> is not.
       </h2>
@@ -4610,7 +4650,7 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
 
     <div class="conclusion__final reveal">
       <div class="conclusion__epitaph">
-        Einstein needed one postulate, not two.
+        One postulate fixes the structure. Measurement fixes the number.
       </div>
       <div>
         <p class="conclusion__sub">
@@ -4620,7 +4660,7 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
           space and time — follows from the relativity principle alone.
         </p>
         <a class="btn btn--gold conclusion__cta" href="#references">
-          Read the references <span class="arrow">→</span>
+          Trace the sources <span class="arrow">→</span>
         </a>
       </div>
     </div>
@@ -4634,7 +4674,7 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="num">VIII</span><span class="dot"></span><span>References</span></div>
+        <div class="eyebrow"><span class="num">VIII</span><span class="dot"></span><span>Sources</span></div>
         <h2 class="s-head__title" id="refs-title">Sources & <em>antecedents</em>.</h2>
       </div>
       <p class="s-head__sub">
@@ -4723,13 +4763,13 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
       <div>
         <div class="foot__col-h">Chapters</div>
         <nav class="foot__nav">
-          <a href="#postulate">⊕ The postulate</a>
-          <a href="#determines">◎ Three universes</a>
-          <a href="#killing">✦ The Killing form</a>
-          <a href="#verdicts">◈ Three verdicts</a>
-          <a href="#lab">⊛ Interactive lab</a>
-          <a href="#proof">The proof, executable</a>
-          <a href="#conclusion">Structure and scale</a>
+          <a href="#postulate">⊕ The symmetry</a>
+          <a href="#determines">◎ The three worlds</a>
+          <a href="#killing">✦ The algebra turns inward</a>
+          <a href="#verdicts">◈ The sign decides</a>
+          <a href="#lab">⊛ Touch the geometry</a>
+          <a href="#proof">Run the spine</a>
+          <a href="#conclusion">What is fixed; what is measured</a>
         </nav>
       </div>
 
@@ -4779,6 +4819,14 @@ onScroll();
 
   const io = window.IntersectionObserver;
   if (io) {
+    const revealHashTarget = () => {
+      const id = decodeURIComponent((location.hash || '').slice(1));
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      target.querySelectorAll('.reveal, .reveal-stagger, .reveal-left, .reveal-scale')
+        .forEach(el => el.classList.add('in'));
+    };
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -4789,6 +4837,8 @@ onScroll();
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
 
     revealTargets.forEach(el => obs.observe(el));
+    window.addEventListener('hashchange', () => requestAnimationFrame(revealHashTarget));
+    requestAnimationFrame(revealHashTarget);
     return;
   }
 
@@ -4813,7 +4863,7 @@ const kBtns = document.querySelectorAll('.kappa-dial button');
 const KAPPA_DATA = {
   '-1': {
     name: 'Euclidean',
-    blurb: 'No causality. All four directions look alike. Velocity loops back to rest.',
+    blurb: 'No causal direction. Velocity becomes rotation. Time cannot orient a world.',
     speed: 'imaginary',
     metric: 'Euclidean (++++)',
     causal: 'none — no past, no future',
@@ -4822,7 +4872,7 @@ const KAPPA_DATA = {
   },
   '0': {
     name: 'Galilean',
-    blurb: 'Killing form blind on boosts. Time is absolute, but the algebra cannot fix the spatial scale.',
+    blurb: 'Boosts go blind. Time is absolute. The spatial scale is not fixed.',
     speed: 'undefined (no ruler)',
     metric: 'dt² only — degenerate',
     causal: 'none — no lightcones',
@@ -4831,7 +4881,7 @@ const KAPPA_DATA = {
   },
   '1': {
     name: 'Lorentzian',
-    blurb: 'The only universe that survives. Finite invariant speed, lightcones, unified spacetime.',
+    blurb: 'The surviving branch. Finite invariant speed, lightcones, unified spacetime.',
     speed: 'V = 1/√κ — finite, real',
     metric: 'Minkowski (+−−−)',
     causal: 'lightcones — past/future distinct',
@@ -4864,6 +4914,186 @@ function rafThrottle(fn){
   };
 }
 
+const iiMotion = (() => {
+  const box = { lib: null };
+  const ready = window.__iiMotionReady || Promise.resolve(window.__iiMotionLib || null);
+  const easeOut = [0.22, 1, 0.36, 1];
+  const easeInOut = [0.37, 0, 0.63, 1];
+  const noop = { finished: Promise.resolve(), cancel(){} };
+
+  function elements(target){
+    if (!target) return [];
+    if (typeof target === 'string') return Array.from(document.querySelectorAll(target));
+    if (target instanceof Element) return [target];
+    if (target instanceof NodeList || Array.isArray(target)) return Array.from(target).filter(Boolean);
+    return [];
+  }
+
+  function motionEnabled(){
+    return !!(box.lib && box.lib.animate && !reduceMotion());
+  }
+
+  function safeAnimate(target, keyframes, options){
+    const els = elements(target);
+    if (!motionEnabled() || !els.length) return noop;
+    try {
+      const controls = box.lib.animate(els.length === 1 ? els[0] : els, keyframes, options || {});
+      return controls && controls.finished ? controls : Object.assign(controls || {}, { finished: Promise.resolve() });
+    } catch (_) {
+      return noop;
+    }
+  }
+
+  async function sequence(steps){
+    for (const step of steps) {
+      const [target, keyframes, options] = step;
+      await safeAnimate(target, keyframes, options).finished.catch(() => {});
+    }
+  }
+
+  function inView(target, callback, options){
+    const els = elements(target);
+    if (!els.length) return () => {};
+    if (motionEnabled() && box.lib.inView) {
+      try {
+        const cleanups = els.map(el => box.lib.inView(el, callback, options || {})).filter(Boolean);
+        return () => cleanups.forEach(fn => typeof fn === 'function' && fn());
+      }
+      catch (_) {}
+    }
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          callback(entry.target, entry);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -14% 0px', threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }
+
+  function panelReveal(el){
+    safeAnimate(el, {
+      opacity: [0, 1],
+      transform: ['translate3d(0, 18px, 0) scale(0.985)', 'translate3d(0, 0, 0) scale(1)'],
+      filter: ['blur(8px)', 'blur(0px)']
+    }, { duration: 0.42, ease: easeOut });
+  }
+
+  function panelExit(el){
+    safeAnimate(el, {
+      opacity: [1, 0],
+      transform: ['translate3d(0, 0, 0) scale(1)', 'translate3d(0, -8px, 0) scale(0.992)'],
+      filter: ['blur(0px)', 'blur(4px)']
+    }, { duration: 0.18, ease: easeInOut });
+  }
+
+  function digits(el){
+    if (!el) return;
+    const chars = el.querySelectorAll('.t-digit');
+    safeAnimate(chars.length ? chars : el, {
+      opacity: [0, 1],
+      transform: ['translate3d(0, 7px, 0)', 'translate3d(0, 0, 0)'],
+      filter: ['blur(3px)', 'blur(0px)']
+    }, {
+      duration: 0.34,
+      delay: box.lib && box.lib.stagger ? box.lib.stagger(0.018) : 0,
+      ease: easeOut
+    });
+  }
+
+  function microPulse(el){
+    safeAnimate(el, {
+      transform: ['scale(1)', 'scale(1.012)', 'scale(1)']
+    }, { duration: 0.34, ease: easeOut });
+  }
+
+  function animateTransform(el, transform, options){
+    if (!el) return;
+    if (!motionEnabled()) {
+      el.style.transform = transform;
+      return;
+    }
+    if (el._iiMotionTransform && el._iiMotionTransform.cancel) el._iiMotionTransform.cancel();
+    const from = getComputedStyle(el).transform;
+    el._iiMotionTransform = safeAnimate(el, {
+      transform: [from && from !== 'none' ? from : 'none', transform]
+    }, Object.assign({ duration: 0.22, ease: easeOut }, options || {}));
+    el._iiMotionTransform.finished.then(() => {
+      el.style.transform = transform;
+    }).catch(() => {});
+  }
+
+  function runHero(){
+    const heroBits = [
+      '.hero__meta',
+      '.hero h1 .word',
+      '.hero h1 .small',
+      '.hero__lede',
+      '.hero__cta',
+      '.hero__byline'
+    ];
+    const nodes = heroBits.flatMap(selector => elements(selector));
+    safeAnimate(nodes, {
+      opacity: [0, 1],
+      transform: ['translate3d(0, 22px, 0)', 'translate3d(0, 0, 0)'],
+      filter: ['blur(10px)', 'blur(0px)']
+    }, {
+      duration: 0.7,
+      delay: box.lib && box.lib.stagger ? box.lib.stagger(0.055) : 0,
+      ease: easeOut
+    });
+  }
+
+  function runInView(){
+    inView('.reveal, .reveal-stagger, .reveal-left, .reveal-scale, .s-head, .pullquote, .equation, .universe, .verdict, .lab__panel, .killing-anim, .notebook, .conclusion__final', el => {
+      el.classList.add('in');
+      safeAnimate(el, {
+        opacity: [0, 1],
+        transform: ['translate3d(0, 26px, 0)', 'translate3d(0, 0, 0)'],
+        filter: ['blur(8px)', 'blur(0px)']
+      }, { duration: 0.52, ease: easeOut });
+    }, { margin: '0px 0px -16% 0px' });
+  }
+
+  function mobileNavOpen(el){
+    safeAnimate(el, {
+      opacity: [0, 1],
+      transform: ['translate3d(0, 12px, 0) scale(0.985)', 'translate3d(0, 0, 0) scale(1)'],
+      filter: ['blur(8px)', 'blur(0px)']
+    }, { duration: 0.32, ease: easeOut });
+  }
+
+  function mobileNavClose(el){
+    safeAnimate(el, {
+      opacity: [1, 0],
+      transform: ['translate3d(0, 0, 0) scale(1)', 'translate3d(0, 8px, 0) scale(0.992)'],
+      filter: ['blur(0px)', 'blur(4px)']
+    }, { duration: 0.18, ease: easeInOut });
+  }
+
+  ready.then(lib => {
+    if (!lib || reduceMotion()) return;
+    box.lib = lib;
+    document.documentElement.classList.add('motion-dev-ready');
+    runHero();
+    runInView();
+  });
+
+  if (motionPref) {
+    const onMotionChange = () => {
+      document.documentElement.classList.toggle('motion-dev-reduce', reduceMotion());
+    };
+    onMotionChange();
+    if (typeof motionPref.addEventListener === 'function') motionPref.addEventListener('change', onMotionChange);
+    else if (typeof motionPref.addListener === 'function') motionPref.addListener(onMotionChange);
+  }
+
+  return { motionEnabled, safeAnimate, sequence, inView, panelReveal, panelExit, digits, microPulse, animateTransform, mobileNavOpen, mobileNavClose };
+})();
+window.iiMotion = iiMotion;
+
 function setDigits(el, value){
   if (!el) return;
   const str = String(value);
@@ -4887,6 +5117,7 @@ function setDigits(el, value){
   el._digitRaf = requestAnimationFrame(() => {
     void el.offsetHeight;
     el.classList.add('is-animating');
+    window.iiMotion && window.iiMotion.digits(el);
   });
 }
 
@@ -4919,7 +5150,10 @@ function swapHTMLWithTransition(el, html, afterSwap){
     el.classList.remove('is-exit');
     el.classList.add('is-enter-start');
     void el.offsetHeight;
-    requestAnimationFrame(() => el.classList.remove('is-enter-start'));
+    requestAnimationFrame(() => {
+      el.classList.remove('is-enter-start');
+      window.iiMotion && window.iiMotion.microPulse(el);
+    });
   }, dur);
 }
 
@@ -4946,7 +5180,10 @@ function swapTextWithTransition(el, text){
     el.classList.remove('is-exit');
     el.classList.add('is-enter-start');
     void el.offsetHeight;
-    requestAnimationFrame(() => el.classList.remove('is-enter-start'));
+    requestAnimationFrame(() => {
+      el.classList.remove('is-enter-start');
+      window.iiMotion && window.iiMotion.microPulse(el);
+    });
   }, dur);
 }
 
@@ -4962,6 +5199,7 @@ function revealPanel(el){
   el._panelRaf = requestAnimationFrame(() => {
     el.dataset.open = 'true';
     el.classList.remove('is-swapping');
+    window.iiMotion && window.iiMotion.panelReveal(el);
   });
 }
 
@@ -4969,6 +5207,9 @@ function hidePanel(el){
   if (!el) return;
   el.classList.add('t-panel-slide');
   cancelAnimationFrame(el._panelRaf);
+  if (el.dataset.open === 'true' && !reduceMotion()) {
+    window.iiMotion && window.iiMotion.panelExit(el);
+  }
   el.dataset.open = 'false';
 }
 
@@ -4984,6 +5225,7 @@ function swapPanelHTML(el, html, afterSwap){
     if (afterSwap) afterSwap();
     el.dataset.open = 'true';
     el.dataset.panelReady = 'true';
+    if (!reduceMotion()) requestAnimationFrame(() => window.iiMotion && window.iiMotion.panelReveal(el));
     return;
   }
   if (reduceMotion()) {
@@ -5088,6 +5330,7 @@ function selectKappa(kSign){
     const active = b.dataset.k === kSign;
     b.classList.toggle('active', active);
     b.setAttribute('aria-selected', active ? 'true' : 'false');
+    if (active) window.iiMotion && window.iiMotion.microPulse(b);
   });
   // Diagram
   swapPanelHTML(kStage, renderKappaDiagram(kSign));
@@ -5184,7 +5427,7 @@ function renderMinkowski(v){
 
       <!-- caption -->
       <text x="${cx}" y="${h - 10}" text-anchor="middle" font-family="Source Serif 4" font-size="11" font-style="italic" fill="${secondary}">
-        moving frame at v = ${v.toFixed(2)}c — axes tilt toward the lightcone
+        v = ${v.toFixed(2)}c — axes lean toward the lightcone
       </text>
     </svg>`;
 }
@@ -5202,11 +5445,17 @@ function updateLorentz(){
   setDigits(gammaVal, gamma.toFixed(4));
   setDigits(tiltVal, tilt.toFixed(1) + '°');
   setDigits(dilStat, inv.toFixed(4) + ' ×');
-  moveRuler.style.transform = `scaleX(${inv.toFixed(4)})`;
+  const rulerTransform = `scaleX(${inv.toFixed(4)})`;
+  if (window.iiMotion && window.iiMotion.motionEnabled()) {
+    window.iiMotion.animateTransform(moveRuler, rulerTransform, { duration: 0.2 });
+  } else {
+    moveRuler.style.transform = rulerTransform;
+  }
 
   if (minkStage.dataset.v !== vKey) {
     minkStage.dataset.v = vKey;
     minkStage.innerHTML = renderMinkowski(v);
+    window.iiMotion && window.iiMotion.panelReveal(minkStage.querySelector('svg') || minkStage);
   }
 }
 const scheduleLorentz = rafThrottle(updateLorentz);
@@ -5244,19 +5493,19 @@ function updateVadd(){
   if (newton > 1) {
     vaNewton.classList.add('warn');
     vaNewton.classList.remove('win');
-    swapTextWithTransition(vaNewtonNote, '→ exceeds c — impossible');
+    swapTextWithTransition(vaNewtonNote, '→ exceeds c — rejected');
     vaNewtonNote.style.color = 'var(--gold)';
   } else {
     vaNewton.classList.remove('warn');
-    swapTextWithTransition(vaNewtonNote, '→ within c — sub-luminal');
+    swapTextWithTransition(vaNewtonNote, '→ within c');
     vaNewtonNote.style.color = 'var(--secondary)';
   }
 
   // Einstein result is always sub-luminal for v1, v2 < c
   if (einstein > 0.99) {
-    swapTextWithTransition(vaEinsteinNote, `→ approaches c (still ${einstein.toFixed(4)}c)`);
+    swapTextWithTransition(vaEinsteinNote, `→ approaches c, never crosses (${einstein.toFixed(4)}c)`);
   } else {
-    swapTextWithTransition(vaEinsteinNote, '→ stays sub-luminal · always');
+    swapTextWithTransition(vaEinsteinNote, '→ remains below c');
   }
 }
 const scheduleVadd = rafThrottle(updateVadd);
@@ -5321,7 +5570,7 @@ async function runKillingAnim(){
     }
 
   // Step 1 — diagonals on rotations
-  swapHTMLWithTransition(kfStatus, 'Computing $B(J_i, J_i) = \\mathrm{tr}(\\mathrm{ad}_{J_i}^2)$ — the rotation diagonals.', () => {
+  swapHTMLWithTransition(kfStatus, 'Testing rotations: $B(J_i,J_i)=\\mathrm{tr}(\\mathrm{ad}_{J_i}^2)$ fills the first block.', () => {
     if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
   });
   for (let i = 0; i < 3; i++){
@@ -5334,7 +5583,7 @@ async function runKillingAnim(){
   }
 
   await sleep(220);
-  swapHTMLWithTransition(kfStatus, 'Now $B(K_i, K_i) = \\mathrm{tr}(\\mathrm{ad}_{K_i}^2)$ — and here κ enters the proof.', () => {
+  swapHTMLWithTransition(kfStatus, 'Testing boosts: $B(K_i,K_i)=\\mathrm{tr}(\\mathrm{ad}_{K_i}^2)$. Here κ enters.', () => {
     if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
   });
 
@@ -5349,7 +5598,7 @@ async function runKillingAnim(){
   }
 
   await sleep(260);
-  swapTextWithTransition(kfStatus, 'Off-diagonals: by rotational + boost symmetry, all of these vanish.');
+  swapTextWithTransition(kfStatus, 'Off-diagonals vanish. Symmetry leaves the diagonal to speak.');
 
   // Step 3 — fill all off-diagonals with 0
   const offDiagOrder = [];
@@ -5365,7 +5614,7 @@ async function runKillingAnim(){
   }
 
   await sleep(300);
-  swapHTMLWithTransition(kfStatus, '<strong style="color:var(--accent)">Done.</strong> $B = \\mathrm{diag}(-4,-4,-4,\\,4\\kappa,4\\kappa,4\\kappa)$. The verdict reads off the sign of κ.', () => {
+  swapHTMLWithTransition(kfStatus, '<strong style="color:var(--accent)">Done.</strong> $B = \\mathrm{diag}(-4,-4,-4,\\,4\\kappa,4\\kappa,4\\kappa)$. The sign of κ decides the geometry.', () => {
     if (window.renderMathInElement) renderMathInElement(kfStatus, window._katexOpts || {throwOnError:false, strict:false});
   });
 
@@ -5373,7 +5622,7 @@ async function runKillingAnim(){
 }
 function resetKillingAnim(){
   buildKgrid();
-  swapTextWithTransition(kfStatus, 'Idle. Click Compute B to begin.');
+  swapTextWithTransition(kfStatus, 'Ready. Let the algebra test itself.');
 }
 kfRun.addEventListener('click', runKillingAnim);
 kfReset.addEventListener('click', resetKillingAnim);
@@ -5393,7 +5642,7 @@ function setNbStatus(state, msg, version){
 
 async function ensurePyodide(){
   if (window.__pyodideReady) return window.__pyodideReady;
-  setNbStatus('loading', 'Loading Pyodide + SymPy in your browser… one-time, ~10 MB.');
+  setNbStatus('loading', 'Loading the symbolic engine — one-time, about 10 MB.');
   let py;
   try {
     py = await window.loadPyodideLazily();
@@ -5413,7 +5662,7 @@ async function ensurePyodide(){
     ver = (raw && typeof raw.toString === 'function') ? String(raw) : '';
     if (raw && typeof raw.destroy === 'function') raw.destroy();
   } catch(_) { ver = ''; }
-  setNbStatus('ready', '<strong style="color:var(--primary)">Ready.</strong> Edit any cell and re-run. SymPy is live in the browser.', ver);
+  setNbStatus('ready', '<strong style="color:var(--primary)">Ready.</strong> SymPy is live. Edit a cell or run the spine.', ver);
   return py;
 }
 
@@ -5520,7 +5769,7 @@ async function runCell(cellEl){
   pLab.textContent = 'Status';
   const pVal = document.createElement('div');
   pVal.className = 'out-value out-pending';
-  pVal.textContent = 'Loading SymPy and executing…';
+  pVal.textContent = 'Executing the cell in SymPy...';
   pendingRow.appendChild(pLab);
   pendingRow.appendChild(pVal);
   outEl.appendChild(pendingRow);
@@ -5563,7 +5812,7 @@ async function runCell(cellEl){
 
     clearOutput(outEl);
     if (!Array.isArray(outputs) || outputs.length === 0){
-      appendOutputRow(outEl, 'text', 'Result', '(no output — cell ran without calling show())');
+      appendOutputRow(outEl, 'text', 'Result', '(cell ran without calling show())');
     } else {
       for (const o of outputs){
         appendOutputRow(outEl, o && o.kind, o && o.label, o && o.value);
@@ -5572,7 +5821,7 @@ async function runCell(cellEl){
   } catch (err) {
     clearOutput(outEl);
     appendOutputError(outEl, (err && err.message) ? err.message : String(err));
-    setNbStatus('error', 'A cell threw an error — see output.');
+    setNbStatus('error', 'A cell threw an error. See its output.');
   } finally {
     runBtn.disabled = false;
     runBtn.innerHTML = oldLabel;
@@ -5714,6 +5963,7 @@ function buildKfMiniCells(){
 (function(){
   document.querySelectorAll('.btn').forEach(btn => {
     btn.addEventListener('click', function(e){
+      if (reduceMotion()) return;
       const rect   = btn.getBoundingClientRect();
       const size   = Math.max(rect.width, rect.height) * 1.8;
       const x      = e.clientX - rect.left - size / 2;
@@ -5737,6 +5987,7 @@ function buildKfMiniCells(){
 (function(){
   const folio = document.querySelector('.folio');
   if (!folio) return;
+  if (reduceMotion()) return;
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (!ticking){
@@ -5850,12 +6101,13 @@ function buildKfMiniCells(){
 (function(){
   document.querySelectorAll('.universe').forEach(card => {
     card.addEventListener('mousemove', e => {
+      if (reduceMotion()) return;
       const rect = card.getBoundingClientRect();
       const cx   = rect.left + rect.width  / 2;
       const cy   = rect.top  + rect.height / 2;
       const dx   = (e.clientX - cx) / (rect.width  / 2);
       const dy   = (e.clientY - cy) / (rect.height / 2);
-      card.style.transform = `translateY(-4px) rotateY(${dx * 4}deg) rotateX(${-dy * 3}deg)`;
+      card.style.transform = `translateY(-3px) rotateY(${dx * 2.6}deg) rotateX(${-dy * 2}deg)`;
     });
     card.addEventListener('mouseleave', () => {
       card.style.transform = '';
@@ -5879,24 +6131,26 @@ function buildKfMiniCells(){
     btn.textContent = '◜ Running…';
     bar.style.width = '0%';
     bar.style.background = 'linear-gradient(90deg, var(--accent), var(--gold))';
+    swapTextWithTransition(stat, 'Preparing the proof spine.');
 
     for (let i = 0; i < total; i++){
       const cell = cells[i];
       const num  = cell.dataset.cell || (i+1);
-      swapTextWithTransition(stat, `Executing cell ${num} of ${total}…`);
+      swapTextWithTransition(stat, `Running cell ${num} of ${total}...`);
       await runCellWithStatus(cell);
       bar.style.width = ((i+1)/total*100) + '%';
       if (cell.classList.contains('is-fail')){
-        swapTextWithTransition(stat, `Cell ${num} threw an error — see its output.`);
+        swapTextWithTransition(stat, `Cell ${num} threw an error. See its output.`);
         bar.style.background = 'linear-gradient(90deg, var(--danger), var(--gold))';
         btn.disabled = false;
-        btn.textContent = '▶ Re-run all 7 cells';
+        btn.textContent = '▶ Re-run the proof spine';
         return;
       }
     }
 
-    swapTextWithTransition(stat, `All ${total} cells executed. The proof spine is live in your browser.`);
-    btn.textContent = '✓ Re-run all 7 cells';
+    swapTextWithTransition(stat, `All ${total} cells executed. The argument is live in your browser.`);
+    window.iiMotion && window.iiMotion.microPulse(document.getElementById('nbRunAll'));
+    btn.textContent = '✓ Re-run the proof spine';
     btn.disabled = false;
   });
 })();
@@ -5914,15 +6168,15 @@ function buildKfMiniCells(){
     Close
   </button>
   <div class="mobile-nav__inner">
-    <div class="mobile-nav__heading">One Postulate · Navigation</div>
+    <div class="mobile-nav__heading">One Postulate · Sections</div>
     <nav class="mobile-nav__links" aria-label="Sections">
-      <a href="#postulate"><span>A principle of symmetry</span><span class="mnav-sigil">⊕ I</span></a>
-      <a href="#determines"><span>Three universes</span><span class="mnav-sigil">◎ II</span></a>
-      <a href="#killing"><span>The Killing form</span><span class="mnav-sigil">✦ III</span></a>
-      <a href="#verdicts"><span>Three verdicts</span><span class="mnav-sigil">◈ IV</span></a>
-      <a href="#lab"><span>Interactive lab</span><span class="mnav-sigil">⊛ V</span></a>
-      <a href="#proof"><span>The proof, executable</span><span class="mnav-sigil">VI</span></a>
-      <a href="#references"><span>References</span><span class="mnav-sigil">↗</span></a>
+      <a href="#postulate"><span>The symmetry</span><span class="mnav-sigil">⊕ I</span></a>
+      <a href="#determines"><span>The three worlds</span><span class="mnav-sigil">◎ II</span></a>
+      <a href="#killing"><span>The algebra turns inward</span><span class="mnav-sigil">✦ III</span></a>
+      <a href="#verdicts"><span>The sign decides</span><span class="mnav-sigil">◈ IV</span></a>
+      <a href="#lab"><span>Touch the geometry</span><span class="mnav-sigil">⊛ V</span></a>
+      <a href="#proof"><span>Run the spine</span><span class="mnav-sigil">VI</span></a>
+      <a href="#references"><span>Sources</span><span class="mnav-sigil">↗</span></a>
     </nav>
     <div class="mobile-nav__cta">
       <button class="theme-toggle theme-toggle--mobile" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
@@ -5931,7 +6185,7 @@ function buildKfMiniCells(){
           <span class="theme-toggle__option theme-toggle__option--dark">Dark</span>
         </span>
       </button>
-      <a class="btn btn--primary" href="#abstract">Begin reading <span class="arrow">→</span></a>
+      <a class="btn btn--primary" href="#abstract">Read the argument <span class="arrow">→</span></a>
     </div>
   </div>
 </div>
@@ -5957,6 +6211,8 @@ function buildKfMiniCells(){
 
 /* ── 2. TEXT SCRAMBLE on section headings ── */
 (function(){
+  const SCRAMBLE_ENABLED = false;
+  if (!SCRAMBLE_ENABLED || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
   const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#∂∇κ∞⊕◎∈';
   const DURATION = 900; /* ms total scramble */
   const INTERVAL = 40;  /* ms between frame updates */
@@ -6161,6 +6417,7 @@ function buildKfMiniCells(){
 <script>
 (function(){
   if (!window.matchMedia('(pointer: fine)').matches) return;
+  if (typeof reduceMotion === 'function' && reduceMotion()) return;
 
   const dot = document.getElementById('cursor-dot');
   if (!dot) return;
@@ -6284,6 +6541,7 @@ function buildKfMiniCells(){
     root.style.colorScheme = next;
     if (persist) setSavedTheme(next);
     syncToggles(next);
+    if (persist) toggles.forEach(btn => window.iiMotion && window.iiMotion.microPulse(btn));
   }
 
   toggles.forEach(btn => {
@@ -6321,6 +6579,7 @@ function buildKfMiniCells(){
     mobileNav.classList.add('is-open');
     mobileNav.setAttribute('aria-hidden','false');
     document.body.style.overflow = 'hidden';
+    window.iiMotion && window.iiMotion.mobileNavOpen(mobileNav);
     setTimeout(() => closeBtn && closeBtn.focus(), 50);
   }
   function closeNav(opts = {}){
@@ -6332,6 +6591,7 @@ function buildKfMiniCells(){
     mobileNav.classList.add('is-closing');
     mobileNav.setAttribute('aria-hidden','true');
     document.body.style.overflow = '';
+    window.iiMotion && window.iiMotion.mobileNavClose(mobileNav);
     closeTimer = setTimeout(() => {
       mobileNav.classList.remove('is-closing');
       if (restoreFocus) hamburger.focus();
@@ -6376,7 +6636,7 @@ function buildKfMiniCells(){
       btn.classList.toggle('is-visible', vis);
     }
   }, { passive:true });
-  btn.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+  btn.addEventListener('click', () => window.scrollTo({ top:0, behavior: reduceMotion() ? 'auto' : 'smooth' }));
 })();
 
 /* ---- Citation tooltips ---- */
@@ -6502,11 +6762,11 @@ function buildKfMiniCells(){
 
     if (e.key === 'j'){
       const next = sections[Math.min(currentIdx() + 1, sections.length - 1)];
-      next.scrollIntoView({ behavior:'smooth', block:'start' });
+      next.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block:'start' });
       showToast('▼  ' + labelOf(next));
     } else if (e.key === 'k'){
       const prev = sections[Math.max(currentIdx() - 1, 0)];
-      prev.scrollIntoView({ behavior:'smooth', block:'start' });
+      prev.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block:'start' });
       showToast('▲  ' + labelOf(prev));
     }
   });
