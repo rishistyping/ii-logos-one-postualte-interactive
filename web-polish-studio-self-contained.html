@@ -356,6 +356,16 @@ var module = undefined, exports = undefined, define = undefined;
   --ascii-gold:rgba(201,169,110,.38);
   --ascii-scan:rgba(15,35,63,.08);
   --ascii-density:1;
+  --cursor-core:var(--primary);
+  --cursor-stroke:rgba(15,35,63,.18);
+  --cursor-aura:rgba(47,149,166,.34);
+  --cursor-ring:rgba(47,149,166,.58);
+  --cursor-field:rgba(47,149,166,.20);
+  --cursor-field-gold:rgba(201,169,110,.16);
+  --cursor-x:50vw;
+  --cursor-y:50vh;
+  --cursor-presence:0;
+  --cursor-press:0;
   --motion-fast:180ms;
   --motion-soft:520ms;
   --motion-spring:cubic-bezier(0.22, 1, 0.36, 1);
@@ -412,6 +422,12 @@ html[data-theme="dark"]{
   --ascii-accent:rgba(116,201,211,.72);
   --ascii-gold:rgba(216,184,117,.58);
   --ascii-scan:rgba(242,238,226,.10);
+  --cursor-core:#F2EEE2;
+  --cursor-stroke:rgba(242,238,226,.34);
+  --cursor-aura:rgba(116,201,211,.48);
+  --cursor-ring:rgba(116,201,211,.72);
+  --cursor-field:rgba(116,201,211,.30);
+  --cursor-field-gold:rgba(216,184,117,.18);
   color-scheme:dark;
 }
 
@@ -434,6 +450,24 @@ body{
   font-feature-settings:"kern","liga","onum";
   overflow-x:hidden;
   transition:background-color .28s ease, color .28s ease;
+}
+@media (pointer:fine){
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:58;
+    pointer-events:none;
+    opacity:var(--cursor-presence);
+    background:
+      radial-gradient(circle 24px at var(--cursor-x) var(--cursor-y), var(--cursor-ring), transparent 76%),
+      radial-gradient(circle 220px at var(--cursor-x) var(--cursor-y), var(--cursor-field), transparent 66%),
+      radial-gradient(circle 480px at var(--cursor-x) var(--cursor-y), var(--cursor-field-gold), transparent 74%);
+    mix-blend-mode:multiply;
+    filter:saturate(118%);
+    transition:opacity .18s ease;
+  }
+  html[data-theme="dark"] body::after{ mix-blend-mode:screen; }
 }
 a{ color:inherit; text-decoration:none; }
 img,svg{ display:block; max-width:100%; }
@@ -2761,73 +2795,156 @@ a:focus-visible{ border-radius:2px; }
 .cursor-dot {
   position: fixed;
   top: 0; left: 0;
-  width: 10px; height: 10px;
+  width: 14px; height: 14px;
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--cursor-core);
+  border:1px solid var(--cursor-stroke);
+  box-shadow:
+    0 0 0 1px rgba(242,238,226,.10),
+    0 0 24px var(--cursor-aura),
+    0 0 64px rgba(47,149,166,.12);
   pointer-events: none;
   z-index: 9999;
   will-change: transform;
   backface-visibility: hidden;
+  isolation:isolate;
   /* No transform transition — JS RAF drives transform directly */
   transition:
     width  .28s cubic-bezier(.34,1.56,.64,1),
     height .28s cubic-bezier(.34,1.56,.64,1),
     background .22s ease,
+    border-color .22s ease,
+    box-shadow .22s ease,
     opacity .18s ease;
+}
+.cursor-dot::before,
+.cursor-dot::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  border-radius:50%;
+  pointer-events:none;
+  transform:translate(-50%,-50%) scale(1);
+  transition:
+    width .32s cubic-bezier(.22,1,.36,1),
+    height .32s cubic-bezier(.22,1,.36,1),
+    opacity .22s ease,
+    transform .22s ease,
+    filter .22s ease;
+}
+.cursor-dot::before{
+  z-index:-2;
+  width:var(--cursor-aura-size,58px);
+  height:var(--cursor-aura-size,58px);
+  background:radial-gradient(circle, var(--cursor-aura) 0 18%, transparent 70%);
+  filter:blur(4px);
+  opacity:var(--cursor-aura-opacity,.42);
+}
+.cursor-dot::after{
+  z-index:-1;
+  width:var(--cursor-ring-size,38px);
+  height:var(--cursor-ring-size,38px);
+  border:1px solid var(--cursor-ring);
+  box-shadow:0 0 28px var(--cursor-aura);
+  opacity:var(--cursor-ring-opacity,.48);
 }
 
 /* link — accent, slightly larger */
 .cursor-dot.s-link {
-  width: 16px; height: 16px;
+  width: 18px; height: 18px;
   background: var(--accent);
+  --cursor-aura-size:74px;
+  --cursor-ring-size:46px;
+  --cursor-aura-opacity:.50;
+  --cursor-ring-opacity:.56;
 }
 
 /* button — accent, bigger */
 .cursor-dot.s-btn {
-  width: 22px; height: 22px;
+  width: 26px; height: 26px;
   background: var(--accent);
   opacity: .82;
+  --cursor-aura-size:92px;
+  --cursor-ring-size:62px;
+  --cursor-aura-opacity:.58;
+  --cursor-ring-opacity:.64;
 }
 
 /* gold button */
 .cursor-dot.s-gold {
-  width: 22px; height: 22px;
+  width: 26px; height: 26px;
   background: var(--gold);
   opacity: .85;
+  --cursor-aura-size:96px;
+  --cursor-ring-size:64px;
+  --cursor-aura-opacity:.60;
+  --cursor-ring-opacity:.66;
+  --cursor-aura:rgba(201,169,110,.48);
+  --cursor-ring:rgba(201,169,110,.72);
 }
 
 /* kappa dial */
 .cursor-dot.s-kappa {
-  width: 18px; height: 18px;
+  width: 24px; height: 24px;
   background: var(--primary);
   opacity: .75;
+  --cursor-aura-size:90px;
+  --cursor-ring-size:58px;
+  --cursor-aura-opacity:.52;
+  --cursor-ring-opacity:.62;
 }
 
 /* text/prose — small accent dot */
 .cursor-dot.s-text {
-  width: 5px; height: 5px;
+  width: 8px; height: 8px;
   background: var(--accent);
+  --cursor-aura-size:48px;
+  --cursor-ring-size:28px;
+  --cursor-aura-opacity:.32;
+  --cursor-ring-opacity:.32;
 }
 
 /* slider / grab */
 .cursor-dot.s-grab {
-  width: 14px; height: 14px;
+  width: 22px; height: 22px;
   background: var(--accent);
   opacity: .7;
+  --cursor-aura-size:86px;
+  --cursor-ring-size:58px;
+  --cursor-aura-opacity:.54;
+  --cursor-ring-opacity:.62;
 }
 
 /* lab / interactive diagram */
 .cursor-dot.s-lab {
-  width: 12px; height: 12px;
+  width: 22px; height: 22px;
   background: var(--accent);
-  opacity: .65;
+  opacity: .78;
+  --cursor-aura-size:112px;
+  --cursor-ring-size:72px;
+  --cursor-aura-opacity:.64;
+  --cursor-ring-opacity:.68;
 }
 
 /* press / mousedown — squish */
 .cursor-dot.s-down {
-  width: 6px; height: 6px;
+  width: 8px; height: 8px;
   background: var(--accent);
   opacity: .9;
+  --cursor-aura-size:126px;
+  --cursor-ring-size:82px;
+  --cursor-aura-opacity:.72;
+  --cursor-ring-opacity:.78;
+}
+.cursor-dot.s-down::before{ filter:blur(2px); }
+.cursor-dot.s-down::after{ transform:translate(-50%,-50%) scale(.82); }
+
+html[data-theme="dark"] .cursor-dot{
+  box-shadow:
+    0 0 0 1px rgba(7,21,39,.22),
+    0 0 28px var(--cursor-aura),
+    0 0 84px rgba(116,201,211,.18);
 }
 
 /* hidden on mouse leave */
@@ -3026,8 +3143,11 @@ a:focus-visible{ border-radius:2px; }
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
   #grain { animation: none; display: none; }
+  body::after{ display:none !important; }
   .s-head.reveal { clip-path: none; }
   .cursor-dot { transition: none; }
+  .cursor-dot { display:none !important; }
+  html, body, *, *::before, *::after { cursor:auto !important; }
   .nb-status.is-loading .led,
   .cell__btn .spin,
   .cell.is-running .cell__num::after,
@@ -3308,29 +3428,29 @@ a:focus-visible{ border-radius:2px; }
   background:
     radial-gradient(circle at var(--ascii-light-x,68%) var(--ascii-light-y,34%), var(--ascii-accent), transparent 34%),
     radial-gradient(circle at 16% 82%, var(--ascii-gold), transparent 28%);
-  opacity:.18;
-  filter:blur(18px);
+  opacity:.30;
+  filter:blur(16px);
   transform:translateZ(0);
   pointer-events:none;
 }
 .ascii-scene[data-ascii-variant="hero"]{
-  --ascii-opacity:.38;
+  --ascii-opacity:.54;
   border-radius:0;
 }
-.ascii-scene[data-ascii-variant="hero"]::before{ opacity:.28; }
+.ascii-scene[data-ascii-variant="hero"]::before{ opacity:.36; }
 .ascii-scene[data-ascii-variant="panel"]{
-  --ascii-opacity:.16;
+  --ascii-opacity:.26;
   mask-image:linear-gradient(135deg, #000 0%, rgba(0,0,0,.82) 42%, transparent 82%);
   -webkit-mask-image:linear-gradient(135deg, #000 0%, rgba(0,0,0,.82) 42%, transparent 82%);
 }
 .ascii-scene[data-ascii-variant="lab"]{
-  --ascii-opacity:.12;
+  --ascii-opacity:.22;
   mask-image:linear-gradient(160deg, transparent 0%, #000 30%, #000 100%);
   -webkit-mask-image:linear-gradient(160deg, transparent 0%, #000 30%, #000 100%);
 }
 .ascii-scene[data-ascii-variant="footer"],
 .ascii-scene[data-ascii-variant="conclusion"]{
-  --ascii-opacity:.26;
+  --ascii-opacity:.36;
   color:var(--deep-ink);
 }
 .ascii-scene[data-ascii-paused="true"] canvas{
@@ -5309,12 +5429,25 @@ const iiAscii = (() => {
     }
 
     onPointer(event){
+      if (!motionAllowed()) return;
+      this.setPointer(event.clientX, event.clientY, true);
+    }
+
+    setPointer(clientX, clientY, immediate){
       const rect = this.host.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
-      this.pointer.x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
-      this.pointer.y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
+      const nextX = Math.max(-0.22, Math.min(1.22, (clientX - rect.left) / rect.width));
+      const nextY = Math.max(-0.22, Math.min(1.22, (clientY - rect.top) / rect.height));
+      if (immediate) {
+        this.pointer.x = nextX;
+        this.pointer.y = nextY;
+      } else {
+        this.pointer.x += (nextX - this.pointer.x) * 0.46;
+        this.pointer.y += (nextY - this.pointer.y) * 0.46;
+      }
       this.host.style.setProperty('--ascii-light-x', Math.round(this.pointer.x * 100) + '%');
       this.host.style.setProperty('--ascii-light-y', Math.round(this.pointer.y * 100) + '%');
+      if (!this.running) this.draw(performance.now());
     }
 
     resize(){
@@ -5362,19 +5495,21 @@ const iiAscii = (() => {
           const ny = y / Math.max(1, this.rows - 1);
           const dx = nx - this.pointer.x;
           const dy = ny - this.pointer.y;
-          const light = Math.max(0, 1 - Math.sqrt(dx * dx + dy * dy) * 2.1);
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const light = Math.max(0, 1 - distance * (this.variant === 'hero' ? 1.15 : 1.34));
+          const wake = Math.max(0, 1 - distance * 3.2);
           const wave = (
             Math.sin(x * .31 + t * 1.7) +
             Math.cos(y * .43 - t * 1.3) +
             Math.sin((x + y) * .12 + t)
           ) / 3;
           const edge = Math.abs(Math.sin((x - y) * .16 + t * .7));
-          const value = (wave + 1) * .36 + light * .42 + edge * .22;
-          const threshold = this.variant === 'hero' ? .33 : .48;
+          const value = (wave + 1) * .31 + light * .68 + wake * .12 + edge * .24;
+          const threshold = this.variant === 'hero' ? .24 : (this.variant === 'lab' ? .36 : .40);
           if (value < threshold) continue;
           const index = Math.min(chars.length - 1, Math.max(0, Math.floor(value * chars.length)));
-          ctx.fillStyle = light > .62 ? gold : (edge > .84 ? accent : fg);
-          ctx.globalAlpha = Math.min(.86, (.20 + value * .58) * this.intensity);
+          ctx.fillStyle = light > .68 ? gold : (light > .38 || edge > .78 ? accent : fg);
+          ctx.globalAlpha = Math.min(this.variant === 'hero' ? .98 : .90, (.24 + value * .72) * this.intensity);
           ctx.fillText(chars[index], px, py);
         }
       }
@@ -5420,11 +5555,11 @@ const iiAscii = (() => {
   }
 
   function init(){
-    create(document.querySelector('.hero'), 'hero', { density:1.05, speed:.72, intensity:1 });
-    document.querySelectorAll('.universe').forEach(card => create(card, 'panel', { density:1.1, speed:.48, intensity:.72 }));
-    document.querySelectorAll('.lab__panel').forEach(panel => create(panel, 'lab', { density:.95, speed:.42, intensity:.58 }));
-    create(document.querySelector('.conclusion'), 'conclusion', { density:.92, speed:.34, intensity:.62 });
-    create(document.querySelector('footer.foot'), 'footer', { density:.85, speed:.28, intensity:.64 });
+    create(document.querySelector('.hero'), 'hero', { density:.94, speed:.78, intensity:1.22 });
+    document.querySelectorAll('.universe').forEach(card => create(card, 'panel', { density:.98, speed:.54, intensity:.92 }));
+    document.querySelectorAll('.lab__panel').forEach(panel => create(panel, 'lab', { density:.88, speed:.48, intensity:.82 }));
+    create(document.querySelector('.conclusion'), 'conclusion', { density:.86, speed:.38, intensity:.82 });
+    create(document.querySelector('footer.foot'), 'footer', { density:.80, speed:.32, intensity:.84 });
     document.querySelectorAll('.equation, .cell__code, .vadd__results, .killing-anim, .notebook').forEach(el => el.classList.add('ascii-etched'));
   }
 
@@ -5443,6 +5578,22 @@ const iiAscii = (() => {
     if (typeof motionPref.addEventListener === 'function') motionPref.addEventListener('change', update);
     else if (typeof motionPref.addListener === 'function') motionPref.addListener(update);
   }
+
+  let pointerFrame = 0;
+  let pointerX = window.innerWidth * .68;
+  let pointerY = window.innerHeight * .34;
+  document.addEventListener('pointermove', event => {
+    if (!motionAllowed()) return;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (pointerFrame) return;
+    pointerFrame = requestAnimationFrame(() => {
+      pointerFrame = 0;
+      scenes.forEach(scene => {
+        if (scene.visible) scene.setPointer(pointerX, pointerY, false);
+      });
+    });
+  }, { passive:true });
 
   window.addEventListener('ii:theme-change', () => scenes.forEach(scene => scene.draw(performance.now())));
 
@@ -6778,11 +6929,13 @@ function buildKfMiniCells(){
   const dot = document.getElementById('cursor-dot');
   if (!dot) return;
 
+  const root = document.documentElement;
   let mx = -300, my = -300;  /* raw mouse */
   let cx = -300, cy = -300;  /* current dot position (lerp) */
   let curState = '';
+  let visible = false;
 
-  const LERP = 0.72;
+  const LERP = 0.58;
 
   /* [selector, state] — first match wins */
   const STATES = [
@@ -6811,12 +6964,20 @@ function buildKfMiniCells(){
     if (st) dot.classList.add('s-' + st);
   }
 
+  function setVisible(next){
+    if (visible === next) return;
+    visible = next;
+    root.style.setProperty('--cursor-presence', next ? '.92' : '0');
+  }
+
   /* RAF loop — lerp position */
   function tick() {
     requestAnimationFrame(tick);
     cx += (mx - cx) * LERP;
     cy += (my - cy) * LERP;
     dot.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+    root.style.setProperty('--cursor-x', `${Math.round(cx)}px`);
+    root.style.setProperty('--cursor-y', `${Math.round(cy)}px`);
   }
   requestAnimationFrame(tick);
 
@@ -6827,17 +6988,33 @@ function buildKfMiniCells(){
     if (dot.classList.contains('cur-hidden')) {
       dot.classList.remove('cur-hidden');
     }
+    setVisible(true);
     applyState(detectState(e.target));
   }, { passive: true });
 
   /* Leave / enter window */
-  document.addEventListener('mouseleave', () => dot.classList.add('cur-hidden'));
-  document.addEventListener('mouseenter', () => dot.classList.remove('cur-hidden'));
+  document.addEventListener('mouseleave', () => {
+    dot.classList.add('cur-hidden');
+    setVisible(false);
+  });
+  document.addEventListener('mouseenter', () => {
+    dot.classList.remove('cur-hidden');
+    setVisible(true);
+  });
 
   /* Press feedback */
-  document.addEventListener('mousedown', () => dot.classList.add('s-down'));
+  document.addEventListener('mousedown', e => {
+    mx = e.clientX;
+    my = e.clientY;
+    dot.classList.add('s-down');
+    root.style.setProperty('--cursor-presence', '1');
+    root.style.setProperty('--cursor-press', '1');
+    setVisible(true);
+  });
   document.addEventListener('mouseup',   () => {
     dot.classList.remove('s-down');
+    root.style.setProperty('--cursor-press', '0');
+    setVisible(true);
     applyState(curState);
   });
 
