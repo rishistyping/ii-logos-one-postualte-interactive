@@ -6495,7 +6495,16 @@ const sBar   = document.getElementById('chat-progress-bar');
 
 const MODEL_ID = 'Llama-3.2-1B-Instruct-q4f16_1-MLC';
 
-let engine = null, paperText = '', booted = false, busy = false;
+/* Cloud chat path. The Cloudflare Worker (see worker/) proxies to OpenRouter
+   and holds the API key. Leave empty to disable the cloud path entirely;
+   the chat will fall through to web-llm. After deploying the Worker, set
+   this to its URL (e.g. 'https://op-postulate-chat.<your-subdomain>.workers.dev/chat'). */
+const CHAT_API_URL = 'https://op-postulate-chat.rishistyping.workers.dev/chat';
+const CLOUD_MODEL  = 'openai/gpt-oss-120b';
+
+let engine = null, paperText = '', busy = false;
+let bootPromise = null;       /* memoised: model load + system-prompt seed */
+let reviewStarted = false;    /* runs once on first drawer open */
 
 async function fetchPaper(){
   if (paperText) return paperText;
@@ -6570,46 +6579,115 @@ function appendMessage(role, content){
 
 let systemMessage = null;
 
-async function boot(){
-  if (booted) return engine;
-  booted = true;
+/* Loads the model + paper context. Memoised — kicked off eagerly on
+   page load, awaited again on first drawer-open. The master review is
+   not started here; that only fires the first time the drawer opens. */
+function boot(){
+  if (bootPromise) return bootPromise;
+  bootPromise = (async () => {
+    if (!('gpu' in navigator)){
+      status.hidden = false;
+      sBar.style.width = '0%';
+      sText.textContent = 'WebGPU is required to run the local model. Try Chrome or Edge 113+ on a desktop with a modern GPU.';
+      throw new Error('WebGPU not available');
+    }
+    try {
+      status.hidden = false;
+      sText.textContent = 'Loading web-llm runtime…';
+      const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm');
 
-  if (!('gpu' in navigator)){
-    status.hidden = false;
-    sBar.style.width = '0%';
-    sText.textContent = 'WebGPU is required to run the local model. Try Chrome or Edge 113+ on a desktop with a modern GPU.';
-    return null;
+      sText.textContent = 'Fetching paper text…';
+      const text = await fetchPaper();
+
+      sText.textContent = 'Preparing model — first run downloads ~700 MB and caches it locally.';
+      engine = await CreateMLCEngine(MODEL_ID, {
+        initProgressCallback: (p) => {
+          if (p && p.text) sText.textContent = p.text;
+          if (p && typeof p.progress === 'number') sBar.style.width = (p.progress * 100).toFixed(1) + '%';
+        }
+      });
+
+      systemMessage = { role: 'system', content: buildSystemPrompt(text) };
+      status.hidden = true;
+      fab.classList.add('chat-fab--ready');
+      send.disabled = !input.value.trim();
+      return engine;
+    } catch (err){
+      status.hidden = false;
+      sBar.style.width = '0%';
+      sText.textContent = 'Could not start the model: ' + (err && err.message ? err.message : err);
+      bootPromise = null;  /* allow retry on next open */
+      throw err;
+    }
+  })();
+  return bootPromise;
+}
+
+/* Parse an OpenAI-style SSE stream coming back from the Worker proxy. */
+async function* sseDeltas(response){
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  while (true){
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let nl;
+    while ((nl = buffer.indexOf('\n')) >= 0){
+      const line = buffer.slice(0, nl).trim();
+      buffer = buffer.slice(nl + 1);
+      if (!line.startsWith('data:')) continue;
+      const data = line.slice(5).trim();
+      if (data === '[DONE]') return;
+      try {
+        const obj = JSON.parse(data);
+        const delta = obj.choices?.[0]?.delta?.content;
+        if (delta) yield delta;
+      } catch(_){}
+    }
   }
+}
 
+/* Try the cloud API (Worker → OpenRouter); throw to trigger fallback. */
+async function* chatViaApi(messages, opts = {}){
+  if (!CHAT_API_URL) throw new Error('cloud-disabled');
+  const r = await fetch(CHAT_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: CLOUD_MODEL,
+      messages,
+      temperature: opts.temperature ?? 0.4,
+      max_tokens: opts.max_tokens ?? 2048
+    })
+  });
+  if (!r.ok) throw new Error('cloud-' + r.status);
+  yield* sseDeltas(r);
+}
+
+/* Lazy paper-text + system-message ensure for the API path. */
+async function ensureSystemMessage(){
+  if (systemMessage) return systemMessage;
+  const text = await fetchPaper();
+  systemMessage = { role: 'system', content: buildSystemPrompt(text) };
+  return systemMessage;
+}
+
+/* Try cloud first, fall back to web-llm on any error. Yields content
+   deltas as they arrive from whichever path succeeds. */
+async function* streamChat(messages, opts){
   try {
-    status.hidden = false;
-    sText.textContent = 'Loading web-llm runtime…';
-    const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm');
-
-    sText.textContent = 'Fetching paper text…';
-    const text = await fetchPaper();
-
-    sText.textContent = 'Preparing model — first run downloads ~700 MB and caches it locally.';
-    engine = await CreateMLCEngine(MODEL_ID, {
-      initProgressCallback: (p) => {
-        if (p && p.text) sText.textContent = p.text;
-        if (p && typeof p.progress === 'number') sBar.style.width = (p.progress * 100).toFixed(1) + '%';
-      }
-    });
-
-    systemMessage = { role: 'system', content: buildSystemPrompt(text) };
-    status.hidden = true;
-    send.disabled = !input.value.trim();
-
-    /* Auto-kick the master review on first ready. */
-    await runReview();
-    return engine;
+    yield* chatViaApi(messages, opts);
+    return;
   } catch (err){
-    status.hidden = false;
-    sBar.style.width = '0%';
-    sText.textContent = 'Could not start the model: ' + (err && err.message ? err.message : err);
-    booted = false;  /* allow retry on next open */
-    return null;
+    console.warn('[chat] cloud path failed, falling back to web-llm:', err.message || err);
+  }
+  await boot();
+  if (!engine) throw new Error('No chat backend available');
+  const stream = await engine.chat.completions.create({ messages, stream: true, ...opts });
+  for await (const chunk of stream){
+    const delta = chunk.choices?.[0]?.delta?.content || '';
+    if (delta) yield delta;
   }
 }
 
@@ -6619,18 +6697,11 @@ async function runReview(){
   const out = appendMessage('assistant', '');
   out.classList.add('chat-msg--review');
   try {
-    const stream = await engine.chat.completions.create({
-      messages: [
-        systemMessage,
-        { role: 'user', content: 'Please begin the review now.' }
-      ],
-      stream: true,
-      temperature: 0.3,
-      max_tokens: 2048
-    });
-    for await (const chunk of stream){
-      const delta = chunk.choices?.[0]?.delta?.content || '';
-      if (delta){ out.textContent += delta; list.scrollTop = list.scrollHeight; }
+    const sys = await ensureSystemMessage();
+    const messages = [sys, { role: 'user', content: 'Please begin the review now.' }];
+    for await (const delta of streamChat(messages, { temperature: 0.3, max_tokens: 2048 })){
+      out.textContent += delta;
+      list.scrollTop = list.scrollHeight;
     }
   } catch (err){
     out.textContent = '⚠ ' + (err && err.message ? err.message : err);
@@ -6641,28 +6712,24 @@ async function runReview(){
 }
 
 async function ask(prompt){
-  if (busy || !engine) return;
+  if (busy) return;
   busy = true;
   send.disabled = true;
   appendMessage('user', prompt);
   const out = appendMessage('assistant', '');
   try {
-    /* Reconstruct conversation history from DOM for stateless engines. */
+    const sys = await ensureSystemMessage();
+    /* Reconstruct conversation history from DOM. */
     const history = [...list.querySelectorAll('.chat-msg')]
       .slice(0, -1)  /* drop the empty assistant placeholder */
       .map(el => ({
         role: el.classList.contains('chat-msg--user') ? 'user' : 'assistant',
         content: el.textContent
       }));
-    const stream = await engine.chat.completions.create({
-      messages: [systemMessage, ...history],
-      stream: true,
-      temperature: 0.4,
-      max_tokens: 1024
-    });
-    for await (const chunk of stream){
-      const delta = chunk.choices?.[0]?.delta?.content || '';
-      if (delta){ out.textContent += delta; list.scrollTop = list.scrollHeight; }
+    const messages = [sys, ...history];
+    for await (const delta of streamChat(messages, { temperature: 0.4, max_tokens: 1024 })){
+      out.textContent += delta;
+      list.scrollTop = list.scrollHeight;
     }
   } catch (err){
     out.textContent = '⚠ ' + (err && err.message ? err.message : err);
@@ -6676,7 +6743,12 @@ function openDrawer(){
   drawer.classList.add('is-open');
   drawer.setAttribute('aria-hidden', 'false');
   fab.setAttribute('aria-expanded', 'true');
-  boot();
+  /* Eager preload (started at script load) is awaited here. The master
+     review fires on the first drawer-open after the model is ready. */
+  if (!reviewStarted){
+    reviewStarted = true;
+    boot().then(() => runReview()).catch(() => { /* status text already shown */ });
+  }
 }
 function closeDrawer(){
   drawer.classList.remove('is-open');
@@ -6712,6 +6784,10 @@ form.addEventListener('submit', e => {
   input.style.height = 'auto';
   ask(v);
 });
+
+/* No eager preload: the cloud API path is instant when configured.
+   web-llm only boots if the API path fails or is not configured (see
+   streamChat below). */
 </script>
 </body>
 </html>
