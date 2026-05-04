@@ -5057,6 +5057,12 @@ const io = new IntersectionObserver((entries) => {
     if (e.isIntersecting) {
       e.target.classList.add('in');
       io.unobserve(e.target);
+      // Re-render math inside this element now that content-visibility:auto
+      // has activated it — formulas in off-screen sections may have been
+      // skipped during the initial renderMathInElement(document.body) pass.
+      if (typeof renderMathInElement === 'function' && window._katexOpts) {
+        renderMathInElement(e.target, window._katexOpts);
+      }
     }
   });
 }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
