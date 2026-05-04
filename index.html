@@ -454,12 +454,12 @@
   --icon-swap-blur:1.4px;
   --icon-swap-start-scale:0.62;
   --icon-swap-ease:ease-in-out;
-  --ascii-fg:rgba(15,35,63,.20);
-  --ascii-bg:rgba(242,238,226,.30);
-  --ascii-accent:rgba(47,149,166,.46);
-  --ascii-gold:rgba(201,169,110,.38);
-  --ascii-scan:rgba(15,35,63,.08);
-  --ascii-density:1;
+  --fluid-ink:rgba(15,35,63,.18);
+  --fluid-accent:rgba(47,149,166,.42);
+  --fluid-gold:rgba(201,169,110,.28);
+  --fluid-ripple:rgba(15,35,63,.08);
+  --fluid-opacity:.46;
+  --fluid-blend:multiply;
   --cursor-core:var(--primary);
   --cursor-stroke:rgba(15,35,63,.18);
   --cursor-aura:rgba(47,149,166,.34);
@@ -521,11 +521,12 @@ html[data-theme="dark"]{
   --token-number:#74C9D3;
   --token-string:#B8D991;
   --danger:#F09A8B;
-  --ascii-fg:rgba(242,238,226,.54);
-  --ascii-bg:rgba(7,21,39,.62);
-  --ascii-accent:rgba(116,201,211,.72);
-  --ascii-gold:rgba(216,184,117,.58);
-  --ascii-scan:rgba(242,238,226,.10);
+  --fluid-ink:rgba(242,238,226,.16);
+  --fluid-accent:rgba(116,201,211,.52);
+  --fluid-gold:rgba(216,184,117,.30);
+  --fluid-ripple:rgba(242,238,226,.08);
+  --fluid-opacity:.40;
+  --fluid-blend:screen;
   --cursor-core:#F2EEE2;
   --cursor-stroke:rgba(242,238,226,.34);
   --cursor-aura:rgba(116,201,211,.48);
@@ -1202,7 +1203,7 @@ html[data-theme="dark"] .hero::after{
   overflow:hidden;
   isolation:isolate;
 }
-.universe > :not(.ascii-scene){ position:relative; z-index:1; }
+.universe > *{ position:relative; z-index:1; }
 .universe:hover{
   background:var(--surface-elevated);
   transform:translateY(-2px);
@@ -1701,7 +1702,7 @@ footer.foot{
   overflow:hidden;
   isolation:isolate;
 }
-.lab__panel > :not(.ascii-scene){ position:relative; z-index:1; }
+.lab__panel > *{ position:relative; z-index:1; }
 .lab__panel-eyebrow{
   font-family:var(--sans);
   font-size:11px; letter-spacing:0.22em;
@@ -3838,115 +3839,42 @@ html[data-theme="dark"] .cursor-dot{
   pointer-events:none;
 }
 
-/* ASCII Magic-inspired field layer — custom, local, and canvas-driven */
-.ascii-scene{
-  position:absolute;
+/* Pointer-fluid field layer inspired by Lusion-style liquid motion */
+.fluid-field{
+  position:fixed;
   inset:0;
-  z-index:0;
-  pointer-events:none;
-  overflow:hidden;
-  border-radius:inherit;
-  opacity:var(--ascii-opacity,.34);
-  mix-blend-mode:normal;
-  contain:layout paint size;
-}
-.ascii-scene canvas{
+  z-index:3;
   width:100%;
   height:100%;
-  display:block;
-  filter:saturate(112%) contrast(108%);
-  transform:translateZ(0);
-}
-.ascii-scene::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0 7px,
-      var(--ascii-scan) 7px 8px
-    );
-  opacity:.46;
   pointer-events:none;
-}
-.ascii-scene::after{
-  content:"";
-  position:absolute;
-  inset:-12%;
-  background:
-    radial-gradient(circle at var(--ascii-light-x,68%) var(--ascii-light-y,34%), var(--ascii-accent), transparent 34%),
-    radial-gradient(circle at 16% 82%, var(--ascii-gold), transparent 28%);
-  opacity:.30;
-  filter:blur(16px);
+  opacity:var(--fluid-opacity);
+  mix-blend-mode:var(--fluid-blend);
+  filter:saturate(122%) contrast(106%);
   transform:translateZ(0);
-  pointer-events:none;
+  contain:strict;
 }
-.ascii-scene[data-ascii-variant="hero"]{
-  --ascii-opacity:.54;
-  border-radius:0;
-}
-.ascii-scene[data-ascii-variant="hero"]::before{ opacity:.36; }
-html.is-hero-pointer .hero .ascii-scene[data-ascii-variant="hero"]{
-  --ascii-opacity:.68;
-}
-html.is-hero-pointer .hero .ascii-scene[data-ascii-variant="hero"]::after{
-  opacity:.48;
-  filter:blur(12px);
-}
-.ascii-scene[data-ascii-variant="panel"]{
-  --ascii-opacity:.26;
-  mask-image:linear-gradient(135deg, #000 0%, rgba(0,0,0,.82) 42%, transparent 82%);
-  -webkit-mask-image:linear-gradient(135deg, #000 0%, rgba(0,0,0,.82) 42%, transparent 82%);
-}
-.ascii-scene[data-ascii-variant="lab"]{
-  --ascii-opacity:.22;
-  mask-image:linear-gradient(160deg, transparent 0%, #000 30%, #000 100%);
-  -webkit-mask-image:linear-gradient(160deg, transparent 0%, #000 30%, #000 100%);
-}
-.ascii-scene[data-ascii-variant="footer"],
-.ascii-scene[data-ascii-variant="conclusion"]{
-  --ascii-opacity:.36;
-  color:var(--deep-ink);
-}
-.ascii-scene[data-ascii-paused="true"] canvas{
-  opacity:.78;
-}
-.has-ascii-scene{
-  position:relative;
-  isolation:isolate;
-}
-.has-ascii-scene > :not(.ascii-scene){
+body > :where(:not(.fluid-field):not(#cursor-dot):not(#grain):not(#read-progress)){
   position:relative;
   z-index:1;
 }
-.hero .ascii-scene{
-  inset:-8% -4% -10%;
+#grain{ z-index:2; }
+.fluid-field[data-fluid-idle="true"]{
+  opacity:calc(var(--fluid-opacity) * .34);
 }
-.conclusion > .ascii-scene{
-  z-index:0;
+.fluid-field[data-fluid-disabled="true"]{
+  display:none !important;
 }
-footer.foot > .ascii-scene{
-  z-index:0;
+html[data-theme="dark"] .fluid-field{
+  filter:saturate(130%) contrast(112%);
 }
-.ascii-etched{
-  position:relative;
+@media (pointer:coarse){
+  .fluid-field{
+    opacity:calc(var(--fluid-opacity) * .52);
+    filter:saturate(108%);
+  }
 }
-.ascii-etched::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  opacity:.16;
-  background-image:
-    linear-gradient(90deg, transparent 0 42%, var(--ascii-accent) 42% 43%, transparent 43%),
-    repeating-linear-gradient(0deg, transparent 0 11px, var(--ascii-scan) 11px 12px);
-  mix-blend-mode:multiply;
-}
-html[data-theme="dark"] .ascii-etched::before{
-  background-image:
-    repeating-linear-gradient(0deg, transparent 0 11px, var(--ascii-scan) 11px 12px);
-  mix-blend-mode:screen;
+@media (prefers-reduced-motion: reduce){
+  .fluid-field{ display:none !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3955,8 +3883,6 @@ html[data-theme="dark"] .ascii-etched::before{
   .t-text-swap { transition: none !important; }
   .t-digit-group .t-digit { animation: none !important; }
   .t-icon-swap .t-icon { transition: none !important; }
-  .ascii-scene canvas { filter:none !important; }
-  .ascii-scene::after { display:none !important; }
   body,
   .theme-toggle,
   .theme-toggle__track::before,
@@ -4092,12 +4018,6 @@ html[data-theme="dark"] .hero{
     radial-gradient(820px 560px at 76% 10%, rgba(116,201,211,.095), transparent 64%),
     radial-gradient(720px 520px at 8% 92%, rgba(216,184,117,.052), transparent 70%),
     linear-gradient(180deg, color-mix(in srgb, var(--surface) 88%, #010120 12%), var(--surface));
-}
-.hero .ascii-scene[data-ascii-variant="hero"]{
-  --ascii-opacity:.30;
-}
-html.is-hero-pointer .hero .ascii-scene[data-ascii-variant="hero"]{
-  --ascii-opacity:.66;
 }
 .hero::before{ opacity:calc(var(--hero-pointer-presence) * .82); }
 .hero::after{ opacity:calc(var(--hero-pointer-lines) * .84); }
@@ -4247,13 +4167,6 @@ html.is-hero-pointer .hero .ascii-scene[data-ascii-variant="hero"]{
 .lab__panel{
   border-radius:var(--r-sm);
 }
-.lab__panel .ascii-scene[data-ascii-variant="lab"]{
-  --ascii-opacity:.16;
-}
-.lab__panel:hover .ascii-scene[data-ascii-variant="lab"],
-.lab__panel:focus-within .ascii-scene[data-ascii-variant="lab"]{
-  --ascii-opacity:.30;
-}
 .kappa-dial button{
   border-color:var(--f-hairline);
   box-shadow:var(--f-ambient);
@@ -4343,9 +4256,6 @@ input[type="range"].l-slider::-moz-range-thumb,
 }
 .cell__output .out-row{
   border-top-color:var(--f-hairline-soft);
-}
-.ascii-etched::before{
-  opacity:.085;
 }
 .conclusion{
   background:var(--deep-surface);
@@ -4521,16 +4431,6 @@ footer.foot{
 @media (pointer:coarse){
   #grain{
     display:none;
-  }
-  .ascii-scene[data-ascii-variant="hero"]{
-    --ascii-opacity:.22;
-  }
-  .hero .ascii-scene::before{
-    opacity:.22;
-  }
-  .hero .ascii-scene::after{
-    opacity:.16;
-    filter:blur(22px);
   }
   .marquee-track{
     animation-duration:58s;
@@ -4915,7 +4815,6 @@ footer.foot{
     font-size:9px;
     gap:6px 12px;
   }
-  .ascii-scene[data-ascii-variant="hero"]{ --ascii-opacity:.18; }
   a[href^="#"], .refs a, .foot a, .cite a{
     touch-action:manipulation;
   }
@@ -4976,12 +4875,6 @@ footer.foot{
   }
   .hero__byline{ display:none; }
 }
-@media (pointer:coarse){
-  .ascii-scene[data-ascii-variant="panel"],
-  .ascii-scene[data-ascii-variant="lab"],
-  .ascii-scene[data-ascii-variant="footer"],
-  .ascii-scene[data-ascii-variant="conclusion"]{ --ascii-opacity:.10; }
-}
 @media (prefers-reduced-motion:reduce){
   .nb-runall{ backdrop-filter:none; }
 }
@@ -4992,6 +4885,7 @@ footer.foot{
 
 <a class="skip-link" href="#abstract">Skip to content</a>
 <div id="read-progress" aria-hidden="true"></div>
+<canvas id="fluid-field" class="fluid-field" aria-hidden="true"></canvas>
 
 <!-- Custom adaptive cursor — single solid circle -->
 <div id="cursor-dot" class="cursor-dot" aria-hidden="true"></div>
@@ -6862,254 +6756,200 @@ const iiMotion = (() => {
 })();
 window.iiMotion = iiMotion;
 
-const iiAscii = (() => {
-  const chars = ' .:-=+*#%@01κγλ<>/\\';
+const iiFluid = (() => {
+  const canvas = document.getElementById('fluid-field');
   const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const saveData = !!(connection && connection.saveData);
   const coarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
   const lowPower = saveData || coarsePointer || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
   const root = document.documentElement;
-  const scenes = [];
+  const state = { canvas, enabled:false, running:false, idle:true, points:[], raf:0 };
+  if (!canvas) return state;
 
-  function cssVar(name, fallback){
-    return getComputedStyle(root).getPropertyValue(name).trim() || fallback;
+  const ctx = canvas.getContext('2d', { alpha:true, desynchronized:true });
+  if (!ctx || saveData || reduceMotion()) {
+    canvas.dataset.fluidDisabled = 'true';
+    return state;
   }
 
-  function motionAllowed(){
-    return !reduceMotion() && !saveData;
-  }
-
-  class AsciiScene {
-    constructor(host, opts){
-      this.host = host;
-      this.canvas = host.querySelector('canvas');
-      this.ctx = this.canvas.getContext('2d', { alpha:true });
-      this.variant = opts.variant || 'panel';
-      this.density = opts.density || 1;
-      this.speed = opts.speed || 1;
-      this.intensity = opts.intensity || 1;
-      this.visible = true;
-      this.running = false;
-      this.raf = 0;
-      this.last = 0;
-      this.frameMs = lowPower ? 1000 / (this.variant === 'hero' ? 8 : 6) : (this.variant === 'hero' ? 1000 / 22 : 1000 / 14);
-      this.pointer = { x:.68, y:.34 };
-      this.resize = this.resize.bind(this);
-      this.loop = this.loop.bind(this);
-      this.onPointer = this.onPointer.bind(this);
-      this.host.parentElement && this.host.parentElement.addEventListener('pointermove', this.onPointer, { passive:true });
-      window.addEventListener('resize', this.resize, { passive:true });
-      this.resize();
-      this.observe();
-      this.draw(0);
-      if (motionAllowed()) this.start();
-      else this.host.dataset.asciiPaused = 'true';
-    }
-
-    observe(){
-      if (!('IntersectionObserver' in window)) return;
-      const io = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          this.visible = entry.isIntersecting;
-          this.host.dataset.asciiPaused = String(!this.visible || !motionAllowed());
-          if (this.visible && motionAllowed()) this.start();
-          else this.stop();
-        });
-      }, { rootMargin:'160px 0px', threshold:0.02 });
-      io.observe(this.host);
-    }
-
-    onPointer(event){
-      if (!motionAllowed()) return;
-      this.setPointer(event.clientX, event.clientY, true);
-    }
-
-    setPointer(clientX, clientY, immediate){
-      const rect = this.host.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const nextX = Math.max(-0.22, Math.min(1.22, (clientX - rect.left) / rect.width));
-      const nextY = Math.max(-0.22, Math.min(1.22, (clientY - rect.top) / rect.height));
-      if (immediate) {
-        this.pointer.x = nextX;
-        this.pointer.y = nextY;
-      } else {
-        this.pointer.x += (nextX - this.pointer.x) * 0.46;
-        this.pointer.y += (nextY - this.pointer.y) * 0.46;
-      }
-      this.host.style.setProperty('--ascii-light-x', Math.round(this.pointer.x * 100) + '%');
-      this.host.style.setProperty('--ascii-light-y', Math.round(this.pointer.y * 100) + '%');
-      if (!this.running) this.draw(performance.now());
-    }
-
-    resize(){
-      const rect = this.host.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1 : 1.35);
-      this.w = Math.max(1, Math.floor(rect.width));
-      this.h = Math.max(1, Math.floor(rect.height));
-      this.canvas.width = Math.floor(this.w * dpr);
-      this.canvas.height = Math.floor(this.h * dpr);
-      this.canvas.style.width = this.w + 'px';
-      this.canvas.style.height = this.h + 'px';
-      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      this.font = this.variant === 'hero' ? 13 : (this.variant === 'footer' ? 11 : 10);
-      this.font = Math.max(9, Math.round(this.font / this.density));
-      this.cellX = Math.round(this.font * 0.72);
-      this.cellY = Math.round(this.font * 1.35);
-      const maxHeroCols = coarsePointer ? 58 : 140;
-      const maxHeroRows = coarsePointer ? 38 : 58;
-      const maxPanelCols = coarsePointer ? 46 : 86;
-      const maxPanelRows = coarsePointer ? 28 : 40;
-      this.cols = Math.min(Math.ceil(this.w / this.cellX) + 1, this.variant === 'hero' ? maxHeroCols : maxPanelCols);
-      this.rows = Math.min(Math.ceil(this.h / this.cellY) + 1, this.variant === 'hero' ? maxHeroRows : maxPanelRows);
-      this.draw(performance.now());
-    }
-
-    draw(now){
-      const ctx = this.ctx;
-      if (!ctx || !this.w || !this.h) return;
-      const fg = cssVar('--ascii-fg', 'rgba(15,35,63,.32)');
-      const accent = cssVar('--ascii-accent', 'rgba(47,149,166,.62)');
-      const gold = cssVar('--ascii-gold', 'rgba(201,169,110,.45)');
-      const bg = cssVar('--ascii-bg', 'rgba(242,238,226,.20)');
-      const t = now * 0.001 * this.speed;
-
-      ctx.clearRect(0, 0, this.w, this.h);
-      ctx.fillStyle = bg;
-      ctx.globalAlpha = this.variant === 'hero' ? 0.18 : 0.08;
-      ctx.fillRect(0, 0, this.w, this.h);
-      ctx.globalAlpha = 1;
-      ctx.font = `${this.font}px Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace`;
-      ctx.textBaseline = 'top';
-
-      for (let y = 0; y < this.rows; y++){
-        for (let x = 0; x < this.cols; x++){
-          const px = x * this.cellX;
-          const py = y * this.cellY;
-          const nx = x / Math.max(1, this.cols - 1);
-          const ny = y / Math.max(1, this.rows - 1);
-          const dx = nx - this.pointer.x;
-          const dy = ny - this.pointer.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          const light = Math.max(0, 1 - distance * (this.variant === 'hero' ? 1.15 : 1.34));
-          const wake = Math.max(0, 1 - distance * 3.2);
-          const wave = (
-            Math.sin(x * .31 + t * 1.7) +
-            Math.cos(y * .43 - t * 1.3) +
-            Math.sin((x + y) * .12 + t)
-          ) / 3;
-          const edge = Math.abs(Math.sin((x - y) * .16 + t * .7));
-          const value = (wave + 1) * .31 + light * .68 + wake * .12 + edge * .24;
-          const threshold = this.variant === 'hero' ? .24 : (this.variant === 'lab' ? .36 : .40);
-          if (value < threshold) continue;
-          const index = Math.min(chars.length - 1, Math.max(0, Math.floor(value * chars.length)));
-          ctx.fillStyle = light > .68 ? gold : (light > .38 || edge > .78 ? accent : fg);
-          ctx.globalAlpha = Math.min(this.variant === 'hero' ? .98 : .90, (.24 + value * .72) * this.intensity);
-          ctx.fillText(chars[index], px, py);
-        }
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    loop(now){
-      if (!this.running) return;
-      if (now - this.last >= this.frameMs) {
-        this.last = now;
-        this.draw(now);
-      }
-      this.raf = requestAnimationFrame(this.loop);
-    }
-
-    start(){
-      if (this.running) return;
-      this.running = true;
-      this.host.dataset.asciiPaused = 'false';
-      this.raf = requestAnimationFrame(this.loop);
-    }
-
-    stop(){
-      this.running = false;
-      if (this.raf) cancelAnimationFrame(this.raf);
-      this.raf = 0;
-    }
-  }
-
-  function create(target, variant, opts = {}){
-    if (!target || target.querySelector(':scope > .ascii-scene')) return null;
-    target.classList.add('has-ascii-scene');
-    const scene = document.createElement('div');
-    scene.className = 'ascii-scene';
-    scene.dataset.asciiVariant = variant;
-    scene.setAttribute('aria-hidden', 'true');
-    const canvas = document.createElement('canvas');
-    scene.appendChild(canvas);
-    target.prepend(scene);
-    const instance = new AsciiScene(scene, Object.assign({}, opts, { variant }));
-    scenes.push(instance);
-    return instance;
-  }
-
-  function scheduleCreate(target, variant, opts = {}){
-    if (!target) return null;
-    if (variant === 'hero' || !('IntersectionObserver' in window)) return create(target, variant, opts);
-    target.classList.add('has-ascii-pending');
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        io.disconnect();
-        create(target, variant, opts);
-      });
-    }, { rootMargin:'420px 0px', threshold:0.01 });
-    io.observe(target);
-    return null;
-  }
-
-  function init(){
-    scheduleCreate(document.querySelector('.hero'), 'hero', coarsePointer ? { density:.58, speed:.24, intensity:.72 } : { density:.94, speed:.78, intensity:1.22 });
-    document.querySelectorAll('.universe').forEach(card => scheduleCreate(card, 'panel', coarsePointer ? { density:.74, speed:.18, intensity:.54 } : { density:.98, speed:.54, intensity:.92 }));
-    document.querySelectorAll('.lab__panel').forEach(panel => scheduleCreate(panel, 'lab', coarsePointer ? { density:.68, speed:.16, intensity:.52 } : { density:.88, speed:.48, intensity:.82 }));
-    scheduleCreate(document.querySelector('.conclusion'), 'conclusion', coarsePointer ? { density:.66, speed:.14, intensity:.50 } : { density:.86, speed:.38, intensity:.82 });
-    scheduleCreate(document.querySelector('footer.foot'), 'footer', coarsePointer ? { density:.64, speed:.12, intensity:.48 } : { density:.80, speed:.32, intensity:.84 });
-    document.querySelectorAll('.equation, .cell__code, .vadd__results, .killing-anim, .notebook').forEach(el => el.classList.add('ascii-etched'));
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
-
-  if (motionPref) {
-    const update = () => {
-      scenes.forEach(scene => {
-        scene.host.dataset.asciiPaused = String(!motionAllowed());
-        if (motionAllowed() && scene.visible) scene.start();
-        else scene.stop();
-        scene.draw(performance.now());
-      });
-    };
-    if (typeof motionPref.addEventListener === 'function') motionPref.addEventListener('change', update);
-    else if (typeof motionPref.addListener === 'function') motionPref.addListener(update);
-  }
-
+  let css = null;
+  let width = 1;
+  let height = 1;
+  let dpr = 1;
+  let lastX = window.innerWidth * .68;
+  let lastY = window.innerHeight * .34;
+  let lastT = performance.now();
   let pointerFrame = 0;
-  let pointerX = window.innerWidth * .68;
-  let pointerY = window.innerHeight * .34;
-  document.addEventListener('pointermove', event => {
-    if (!motionAllowed()) return;
-    pointerX = event.clientX;
-    pointerY = event.clientY;
+  let idleTimer = 0;
+  const maxPoints = lowPower ? 22 : 48;
+
+  function readColor(name, fallback){
+    if (!css) css = getComputedStyle(root);
+    return css.getPropertyValue(name).trim() || fallback;
+  }
+
+  function refreshPalette(){
+    css = null;
+    state.ink = readColor('--fluid-ink', 'rgba(15,35,63,.18)');
+    state.accent = readColor('--fluid-accent', 'rgba(47,149,166,.42)');
+    state.gold = readColor('--fluid-gold', 'rgba(201,169,110,.28)');
+    state.ripple = readColor('--fluid-ripple', 'rgba(15,35,63,.08)');
+  }
+
+  function resize(){
+    const scale = lowPower ? .62 : .82;
+    dpr = Math.max(.5, Math.min(window.devicePixelRatio || 1, lowPower ? .9 : 1.25)) * scale;
+    width = Math.max(1, Math.floor(window.innerWidth));
+    height = Math.max(1, Math.floor(window.innerHeight));
+    canvas.width = Math.max(1, Math.floor(width * dpr));
+    canvas.height = Math.max(1, Math.floor(height * dpr));
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw(performance.now());
+  }
+
+  function setIdle(next){
+    if (state.idle === next) return;
+    state.idle = next;
+    canvas.dataset.fluidIdle = String(next);
+  }
+
+  function colorFor(point){
+    if (point.kind === 'gold') return state.gold;
+    if (point.kind === 'ink') return state.ink;
+    return state.accent;
+  }
+
+  function emit(x, y, force = 1, kind = 'accent'){
+    const now = performance.now();
+    const dt = Math.max(16, now - lastT);
+    const vx = (x - lastX) / dt;
+    const vy = (y - lastY) / dt;
+    const speed = Math.min(2.8, Math.hypot(vx, vy) * 18);
+    lastX = x;
+    lastY = y;
+    lastT = now;
+    state.points.push({
+      x, y,
+      vx: vx * 36,
+      vy: vy * 36,
+      life: 1,
+      force: Math.min(1.8, force + speed * .22),
+      radius: (lowPower ? 110 : 160) + speed * 42,
+      spin: (Math.random() - .5) * .9,
+      kind
+    });
+    while (state.points.length > maxPoints) state.points.shift();
+    setIdle(false);
+    window.clearTimeout(idleTimer);
+    idleTimer = window.setTimeout(() => setIdle(true), 760);
+    start();
+  }
+
+  function draw(now){
+    if (!ctx) return;
+    ctx.clearRect(0, 0, width, height);
+    if (!state.points.length) return;
+
+    ctx.save();
+    ctx.globalCompositeOperation = root.dataset.theme === 'dark' ? 'lighter' : 'source-over';
+    for (let i = state.points.length - 1; i >= 0; i--){
+      const p = state.points[i];
+      p.life -= lowPower ? .034 : .026;
+      if (p.life <= 0){
+        state.points.splice(i, 1);
+        continue;
+      }
+      p.x += p.vx * .016;
+      p.y += p.vy * .016;
+      p.vx *= .94;
+      p.vy *= .94;
+      const life = Math.max(0, p.life);
+      const radius = p.radius * (.52 + (1 - life) * .76);
+      const stretch = 1 + Math.min(1.35, Math.hypot(p.vx, p.vy) / 22);
+      const angle = Math.atan2(p.vy, p.vx) + p.spin * (1 - life);
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(angle);
+      ctx.scale(stretch, 1 / Math.sqrt(stretch));
+      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+      grad.addColorStop(0, colorFor(p));
+      grad.addColorStop(.30, colorFor(p));
+      grad.addColorStop(.64, state.ripple);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.globalAlpha = Math.min(.54, life * .42 * p.force);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radius, radius * .54, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function loop(now){
+    if (!state.running) return;
+    draw(now);
+    if (!state.points.length) {
+      state.running = false;
+      state.raf = 0;
+      setIdle(true);
+      return;
+    }
+    state.raf = requestAnimationFrame(loop);
+  }
+
+  function start(){
+    if (state.running || document.hidden) return;
+    state.running = true;
+    state.raf = requestAnimationFrame(loop);
+  }
+
+  function onPointer(event){
+    if (document.hidden) return;
+    const x = event.clientX;
+    const y = event.clientY;
+    const target = event.target;
+    const kind = target && target.closest && target.closest('.btn--gold, .hero__cta .btn--secondary, .kappa-dial button[data-kappa="1"]') ? 'gold' : (target && target.closest && target.closest('.equation, .cell__code, .notebook') ? 'ink' : 'accent');
     if (pointerFrame) return;
     pointerFrame = requestAnimationFrame(() => {
       pointerFrame = 0;
-      scenes.forEach(scene => {
-        if (scene.visible) scene.setPointer(pointerX, pointerY, false);
-      });
+      emit(x, y, event.pressure && event.pressure > 0 ? 1.35 : 1, kind);
     });
-  }, { passive:true });
+  }
 
-  window.addEventListener('ii:theme-change', () => scenes.forEach(scene => scene.draw(performance.now())));
+  function onDown(event){
+    emit(event.clientX, event.clientY, 1.8, 'gold');
+  }
 
-  return { scenes, create };
+  function onVisibility(){
+    if (document.hidden) {
+      state.running = false;
+      if (state.raf) cancelAnimationFrame(state.raf);
+      state.raf = 0;
+    } else if (state.points.length) start();
+  }
+
+  refreshPalette();
+  resize();
+  setIdle(true);
+  state.enabled = true;
+  window.addEventListener('resize', rafThrottle(resize), { passive:true });
+  document.addEventListener('pointermove', onPointer, { passive:true });
+  document.addEventListener('pointerdown', onDown, { passive:true });
+  document.addEventListener('visibilitychange', onVisibility);
+  window.addEventListener('ii:theme-change', () => { refreshPalette(); draw(performance.now()); });
+
+  return {
+    canvas,
+    get enabled(){ return state.enabled; },
+    emit,
+    clear(){ state.points.length = 0; draw(performance.now()); }
+  };
 })();
-window.iiAscii = iiAscii;
+window.iiFluid = iiFluid;
 
 function setDigits(el, value){
   if (!el) return;
