@@ -471,112 +471,79 @@ section + section{ border-top:1px solid var(--rule); }
   gap:12px;
 }
 .theme-toggle{
-  --theme-toggle-height:36px;
   appearance:none;
-  border:1px solid var(--theme-toggle-border);
-  border-radius:var(--r-full);
-  background:var(--theme-toggle-bg);
+  border:none;
+  background:transparent;
   color:var(--theme-toggle-fg);
-  height:var(--theme-toggle-height);
   padding:0;
   font:600 10px/1 var(--sans);
-  letter-spacing:.11em;
+  letter-spacing:.12em;
   text-transform:uppercase;
   cursor:pointer;
-  transition:background-color .24s ease, border-color .24s ease, color .24s ease, transform .2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:opacity .2s ease;
 }
-.theme-toggle:hover{ transform:translateY(-1px); }
+.theme-toggle:hover{ opacity:.82; }
 .theme-toggle:focus-visible{
   outline:2px solid var(--focus-ring);
-  outline-offset:3px;
+  outline-offset:4px;
+  border-radius:var(--r-full);
+}
+.theme-toggle__lbl{
+  color:var(--theme-toggle-fg);
+  transition:color .2s ease;
+  user-select:none;
+}
+.theme-toggle[data-theme-state="dark"]  .theme-toggle__lbl--dark,
+.theme-toggle[data-theme-state="light"] .theme-toggle__lbl--light{
+  color:var(--primary);
 }
 .theme-toggle__track{
   position:relative;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  align-items:center;
-  width:116px;
-  height:100%;
-  padding:3px;
-  isolation:isolate;
-}
-.theme-toggle__track::before{
-  content:"";
-  position:absolute;
-  top:3px; bottom:3px; left:3px;
-  width:calc(50% - 3px);
+  width:52px;
+  height:28px;
+  background:var(--theme-toggle-bg);
+  border:1px solid var(--theme-toggle-border);
   border-radius:var(--r-full);
+  flex-shrink:0;
+  transition:background .24s ease, border-color .24s ease;
+}
+.theme-toggle__thumb{
+  position:absolute;
+  top:3px; left:3px;
+  width:22px; height:22px;
+  border-radius:50%;
   background:var(--theme-toggle-active-bg);
-  box-shadow:0 8px 18px -12px var(--rule-strong);
-  transform:translate3d(0,0,0);
-  transition:transform .24s ease, background-color .24s ease;
-  will-change:transform;
-}
-.theme-toggle[data-theme-state="dark"] .theme-toggle__track::before{
-  transform:translate3d(100%,0,0);
-}
-.theme-toggle__option{
-  position:relative;
-  z-index:1;
+  color:var(--theme-toggle-active-fg);
   display:flex;
   align-items:center;
   justify-content:center;
-  min-width:0;
-  color:var(--theme-toggle-fg);
-  transition:color .2s ease;
+  transition:transform .24s cubic-bezier(.34,1.56,.64,1), background .24s ease;
+  will-change:transform;
+  box-shadow:0 1px 4px rgba(0,0,0,.18);
 }
-.theme-toggle[data-theme-state="light"] .theme-toggle__option--light,
-.theme-toggle[data-theme-state="dark"] .theme-toggle__option--dark{
-  color:var(--theme-toggle-active-fg);
+.theme-toggle[data-theme-state="light"] .theme-toggle__thumb{
+  transform:translateX(24px);
 }
+.theme-toggle__icon{ width:11px; height:11px; display:block; }
+.theme-toggle__icon--light{ display:none; }
+.theme-toggle[data-theme-state="light"] .theme-toggle__icon--dark{ display:none; }
+.theme-toggle[data-theme-state="light"] .theme-toggle__icon--light{ display:block; }
 .mobile-nav .theme-toggle{
   --theme-toggle-bg:rgba(242,238,226,.08);
   --theme-toggle-border:rgba(242,238,226,.18);
   --theme-toggle-fg:rgba(242,238,226,.72);
   --theme-toggle-active-bg:var(--deep-ink);
   --theme-toggle-active-fg:var(--deep-surface);
-  height:48px;
+  gap:12px;
 }
-.mobile-nav .theme-toggle__track{ width:132px; }
+.mobile-nav .theme-toggle__track{ width:60px; height:32px; }
+.mobile-nav .theme-toggle__thumb{ width:26px; height:26px; }
+.mobile-nav .theme-toggle[data-theme-state="light"] .theme-toggle__thumb{ transform:translateX(28px); }
 @media (max-width:520px){
-  .nav__actions .theme-toggle,
-  .nav__actions .cursor-toggle{ display:none; }
-}
-
-/* ── Cursor preference toggle: lets users restore native pointer ── */
-.cursor-toggle{
-  appearance:none;
-  border:1px solid var(--theme-toggle-border);
-  border-radius:var(--r-full);
-  background:var(--theme-toggle-bg);
-  color:var(--theme-toggle-fg);
-  width:36px; height:36px;
-  padding:0;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:background-color .24s ease, border-color .24s ease, color .24s ease, transform .2s ease;
-}
-.cursor-toggle:hover{ transform:translateY(-1px); }
-.cursor-toggle:focus-visible{
-  outline:2px solid var(--focus-ring);
-  outline-offset:3px;
-}
-.cursor-toggle svg{ width:16px; height:16px; display:block; }
-.cursor-toggle .icon-native{ display:none; }
-.cursor-toggle[aria-pressed="true"]{
-  background:var(--theme-toggle-active-bg);
-  color:var(--theme-toggle-active-fg);
-  border-color:var(--theme-toggle-active-bg);
-}
-.cursor-toggle[aria-pressed="true"] .icon-stylized{ display:none; }
-.cursor-toggle[aria-pressed="true"] .icon-native{ display:block; }
-.mobile-nav .cursor-toggle{
-  --theme-toggle-bg:rgba(242,238,226,.08);
-  --theme-toggle-border:rgba(242,238,226,.18);
-  --theme-toggle-fg:rgba(242,238,226,.72);
-  width:48px; height:48px;
+  .nav__actions .theme-toggle{ display:none; }
 }
 
 /* When user opts out, restore native pointer everywhere */
@@ -592,9 +559,7 @@ section + section{ border-top:1px solid var(--rule); }
 
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle,
-  .theme-toggle__track::before,
-  .theme-toggle__option,
-  .cursor-toggle { transition: none !important; }
+  .theme-toggle__thumb { transition: none !important; }
 }
 
 /* ------------------------------------------------------------------
@@ -3045,24 +3010,15 @@ html[data-theme="dark"] .cursor-dot{
       <a href="#references">Refs</a>
     </div>
     <div class="nav__actions">
-      <button class="cursor-toggle" type="button" data-cursor-toggle aria-label="Switch to native cursor" aria-pressed="false" title="Switch to native cursor">
-        <span class="icon-stylized" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
-            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/>
-          </svg>
-        </span>
-        <span class="icon-native" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none">
-            <path d="M3 2 L13 8 L8.5 9 L9.5 13 L7.5 13.5 L6.5 9.5 L4 12 Z" fill="currentColor"/>
-          </svg>
-        </span>
-      </button>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="theme-toggle__lbl theme-toggle__lbl--dark" aria-hidden="true">Dark</span>
         <span class="theme-toggle__track" aria-hidden="true">
-          <span class="theme-toggle__option theme-toggle__option--light">Light</span>
-          <span class="theme-toggle__option theme-toggle__option--dark">Dark</span>
+          <span class="theme-toggle__thumb">
+            <svg class="theme-toggle__icon theme-toggle__icon--dark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/></svg>
+            <svg class="theme-toggle__icon theme-toggle__icon--light" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/></svg>
+          </span>
         </span>
+        <span class="theme-toggle__lbl theme-toggle__lbl--light" aria-hidden="true">Light</span>
       </button>
       <a class="btn btn--primary" href="#abstract">
         Read the paper <span class="arrow">→</span>
@@ -5465,24 +5421,15 @@ function buildKfMiniCells(){
       <a href="#references"><span>References</span><span class="mnav-sigil" aria-hidden="true">↗</span></a>
     </nav>
     <div class="mobile-nav__cta">
-      <button class="cursor-toggle" type="button" data-cursor-toggle aria-label="Switch to native cursor" aria-pressed="false" title="Switch to native cursor">
-        <span class="icon-stylized" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
-            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/>
-          </svg>
-        </span>
-        <span class="icon-native" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none">
-            <path d="M3 2 L13 8 L8.5 9 L9.5 13 L7.5 13.5 L6.5 9.5 L4 12 Z" fill="currentColor"/>
-          </svg>
-        </span>
-      </button>
       <button class="theme-toggle theme-toggle--mobile" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="theme-toggle__lbl theme-toggle__lbl--dark" aria-hidden="true">Dark</span>
         <span class="theme-toggle__track" aria-hidden="true">
-          <span class="theme-toggle__option theme-toggle__option--light">Light</span>
-          <span class="theme-toggle__option theme-toggle__option--dark">Dark</span>
+          <span class="theme-toggle__thumb">
+            <svg class="theme-toggle__icon theme-toggle__icon--dark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/></svg>
+            <svg class="theme-toggle__icon theme-toggle__icon--light" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/></svg>
+          </span>
         </span>
+        <span class="theme-toggle__lbl theme-toggle__lbl--light" aria-hidden="true">Light</span>
       </button>
       <a class="btn btn--primary" href="#abstract">Begin reading <span class="arrow">→</span></a>
     </div>
