@@ -2692,6 +2692,7 @@ a:focus-visible{ border-radius:2px; }
   flex:1; overflow-y:auto;
   display:flex; flex-direction:column; gap:14px;
   scroll-behavior:smooth;
+  overscroll-behavior:contain;
 }
 .chat-msg{
   font-family:var(--serif-body);
@@ -7288,17 +7289,38 @@ async function ask(prompt){
   }
 }
 
+let _chatScrollLocked = false;
+let _chatLockedScrollY = 0;
+function lockBodyScroll(){
+  if (_chatScrollLocked) return;
+  _chatLockedScrollY = window.scrollY;
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.top      = `-${_chatLockedScrollY}px`;
+  document.body.style.width    = '100%';
+  _chatScrollLocked = true;
+}
+function unlockBodyScroll(){
+  if (!_chatScrollLocked) return;
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.top      = '';
+  document.body.style.width    = '';
+  window.scrollTo(0, _chatLockedScrollY);
+  _chatScrollLocked = false;
+}
+
 function openDrawer(){
   drawer.classList.add('is-open');
   drawer.setAttribute('aria-hidden', 'false');
   fab.setAttribute('aria-expanded', 'true');
-  /* Opening the drawer is passive: no model request runs until the user
-     submits a question. Paper context still preloads after page load. */
+  if (window.matchMedia('(max-width:560px)').matches) lockBodyScroll();
 }
 function closeDrawer(){
   drawer.classList.remove('is-open');
   drawer.setAttribute('aria-hidden', 'true');
   fab.setAttribute('aria-expanded', 'false');
+  unlockBodyScroll();
 }
 
 fab.addEventListener('click', () => {
