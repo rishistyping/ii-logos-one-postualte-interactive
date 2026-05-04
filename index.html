@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+
+<!-- Mobile chrome integration: matches surface in light/dark, native PWA behavior on iOS -->
+<meta name="theme-color" content="#F2EEE2" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0F233F" media="(prefers-color-scheme: dark)" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="One Postulate" />
+<meta name="format-detection" content="telephone=no" />
 <title>One Postulate — Intelligent Internet</title>
 <meta name="description" content="Einstein built special relativity on two postulates. He needed only one. A research note from Intelligent Internet by Emad Mostaque, April 2026." />
 
@@ -43,11 +51,10 @@
 <!-- Fonts: Libre Caslon Text (op.ii.inc display face), Cormorant Garamond (display), Source Serif 4 (body/labels), Geist Sans (utility) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Preload the display font used above-the-fold -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&display=swap">
-<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<!-- Single combined Google Fonts request — one round-trip for all five families -->
+<link rel="preload" as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 
 <!-- KaTeX for rendering equations: math is below the fold, so promote stylesheet
      after first paint to avoid render-blocking -->
@@ -239,13 +246,29 @@ html[data-theme="dark"]{
 }
 
 @media (min-width:1100px){ :root{ --gutter:80px; } }
+@media (max-width:520px){ :root{ --gutter:20px; } }
 
 /* ------------------------------------------------------------------
    Reset & base
    ------------------------------------------------------------------ */
 *,*::before,*::after{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
-html{ scroll-behavior:smooth; }
+html{
+  scroll-behavior:smooth;
+  /* Anchor jumps land below the 80px sticky nav, not under it */
+  scroll-padding-top:96px;
+  /* Stop iOS text-autosize on landscape rotation */
+  -webkit-text-size-adjust:100%;
+}
+body{
+  /* Suppress the default mobile tap flash on every touch */
+  -webkit-tap-highlight-color:transparent;
+}
+/* Kill the 300ms double-tap zoom delay on interactive controls */
+button, a.btn, .theme-toggle, .kappa-dial button, .cell__btn,
+.nb-runall__btn, .back-to-top, input[type="range"]{
+  touch-action:manipulation;
+}
 body{
   background:var(--surface);
   color:var(--primary);
@@ -311,10 +334,12 @@ section{
 }
 section + section{ border-top:1px solid var(--rule); }
 
-/* Skip rendering off-screen deep sections until near viewport */
-#proof, #references {
+/* Skip rendering off-screen sections until near viewport. Each chapter is
+   long enough to dominate paint cost when scrolled past, so let the browser
+   skip layout/paint work for sections not in or near the viewport. */
+#postulate, #determines, #killing, #verdicts, #lab, #proof, #conclusion, #references, .foot {
   content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
+  contain-intrinsic-size: auto 1200px;
 }
 
 /* ------------------------------------------------------------------
@@ -531,20 +556,6 @@ section + section{ border-top:1px solid var(--rule); }
 .theme-toggle__icon--light{ display:none; }
 .theme-toggle[data-theme-state="light"] .theme-toggle__icon--dark{ display:none; }
 .theme-toggle[data-theme-state="light"] .theme-toggle__icon--light{ display:block; }
-.mobile-nav .theme-toggle{
-  --theme-toggle-bg:rgba(242,238,226,.08);
-  --theme-toggle-border:rgba(242,238,226,.18);
-  --theme-toggle-fg:rgba(242,238,226,.72);
-  --theme-toggle-active-bg:var(--deep-ink);
-  --theme-toggle-active-fg:var(--deep-surface);
-  gap:12px;
-}
-.mobile-nav .theme-toggle__track{ width:60px; height:32px; }
-.mobile-nav .theme-toggle__thumb{ width:26px; height:26px; }
-.mobile-nav .theme-toggle[data-theme-state="light"] .theme-toggle__thumb{ transform:translateX(28px); }
-@media (max-width:520px){
-  .nav__actions .theme-toggle{ display:none; }
-}
 
 /* When user opts out, restore native pointer everywhere */
 @media (pointer:fine){
@@ -1241,7 +1252,7 @@ footer.foot{
   display:block;
   font-family:var(--serif-body);
   font-size:13.5px;
-  color:var(--neutral);
+  color:var(--slate);
   text-decoration:none;
   opacity:.72;
   padding:2px 0;
@@ -2057,6 +2068,11 @@ input[type="range"].l-slider::-moz-range-thumb{
   .hero{ padding-top:120px; padding-bottom:48px; }
   .hero h1{ font-size:64px; }
 }
+@media (max-width:520px){
+  .hero{ padding-top:96px; padding-bottom:36px; }
+  .hero h1{ font-size:48px; line-height:1.0; }
+  .hero__lede{ font-size:17px; }
+}
 </style>
 
 <style>
@@ -2340,7 +2356,7 @@ section + section.in{
 
 <style>
 /* ================================================================
-   UX LAYER — mobile nav, back-to-top, tooltips, accessibility
+   UX LAYER — back-to-top, tooltips, accessibility
    ================================================================ */
 
 /* Skip-to-content link (screen-readers + keyboard users) */
@@ -2364,130 +2380,6 @@ section + section.in{
 :focus:not(:focus-visible){ outline:none; }
 .btn:focus-visible{ outline-offset:4px; }
 a:focus-visible{ border-radius:2px; }
-
-/* ---- Hamburger button ---- */
-.nav__hamburger{
-  display:none;
-  flex-direction:column; justify-content:center; align-items:center;
-  gap:5px; padding:10px;
-  background:none; border:1px solid transparent;
-  border-radius:var(--r-sm);
-  cursor:pointer; z-index:60;
-  width:44px; height:44px; flex-shrink:0;
-  transition:border-color .2s ease;
-}
-.nav__hamburger:hover{ border-color:var(--rule-strong); }
-.nav__hamburger span{
-  display:block;
-  height:1.5px; width:22px;
-  background:var(--primary);
-  border-radius:2px;
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s ease, width .3s ease;
-  transform-origin:center;
-}
-.nav__hamburger[aria-expanded="true"] span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
-.nav__hamburger[aria-expanded="true"] span:nth-child(2){ opacity:0; width:0; }
-.nav__hamburger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
-@media (max-width:880px){ .nav__hamburger{ display:flex; } }
-@media (max-width:520px){
-  .nav .btn--primary{ display:none; }
-}
-
-/* ---- Mobile nav overlay ---- */
-.mobile-nav{
-  position:fixed; inset:0; z-index:55;
-  background:var(--primary);
-  display:flex; flex-direction:column;
-  opacity:0; visibility:hidden; pointer-events:none;
-  transition:opacity .32s ease, visibility .32s ease;
-  overflow-y:auto;
-}
-.mobile-nav.is-open{
-  opacity:1; visibility:visible; pointer-events:all;
-}
-.mobile-nav__inner{
-  display:flex; flex-direction:column; justify-content:center;
-  padding:100px var(--gutter) 80px;
-  min-height:100%; gap:0;
-}
-.mobile-nav__heading{
-  font-family:var(--sans);
-  font-size:10px; letter-spacing:.22em; text-transform:uppercase;
-  color:rgba(242,238,226,.35);
-  margin-bottom:36px;
-  display:flex; align-items:center; gap:12px;
-}
-.mobile-nav__heading::after{
-  content:""; flex:1; height:1px;
-  background:rgba(242,238,226,.10);
-}
-.mobile-nav__links{ display:flex; flex-direction:column; }
-.mobile-nav__links a{
-  font-family:var(--serif-display);
-  font-size:clamp(26px, 7vw, 48px); font-weight:300; line-height:1.1;
-  letter-spacing:-0.01em;
-  color:rgba(242,238,226,.72);
-  text-decoration:none;
-  padding:14px 0;
-  border-bottom:1px solid rgba(242,238,226,.07);
-  display:flex; align-items:baseline; justify-content:space-between;
-  gap:16px;
-  transition:color .25s ease, padding-left .25s cubic-bezier(.2,.7,.2,1);
-  opacity:0;
-}
-.mobile-nav.is-open .mobile-nav__links a{
-  animation:mnav-in .45s cubic-bezier(.2,.7,.2,1) both;
-}
-.mobile-nav.is-open .mobile-nav__links a:nth-child(1){ animation-delay:.06s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(2){ animation-delay:.12s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(3){ animation-delay:.18s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(4){ animation-delay:.24s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(5){ animation-delay:.30s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(6){ animation-delay:.36s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(7){ animation-delay:.42s; }
-@keyframes mnav-in{
-  from{ opacity:0; transform:translateX(-20px); }
-  to{ opacity:1; transform:none; }
-}
-.mobile-nav__links a:hover{ color:var(--gold); padding-left:8px; }
-.mobile-nav__links a .mnav-sigil{
-  font-size:.5em; color:rgba(242,238,226,.25);
-  flex-shrink:0; align-self:center;
-  font-style:normal; font-family:var(--serif-caslon);
-}
-.mobile-nav__links a .mnav-arrow{
-  font-size:.45em; color:rgba(242,238,226,.22);
-  flex-shrink:0; align-self:center;
-}
-.mobile-nav__cta{
-  margin-top:48px;
-  display:flex; gap:12px; flex-wrap:wrap;
-  opacity:0;
-  animation:none;
-}
-.mobile-nav.is-open .mobile-nav__cta{
-  animation:mnav-in .4s cubic-bezier(.2,.7,.2,1) .48s both;
-}
-.mobile-nav__cta .btn--primary{
-  background:var(--accent); border-color:var(--accent);
-  font-size:13px; height:48px;
-}
-.mobile-nav__close{
-  position:fixed; top:20px; right:20px;
-  background:rgba(242,238,226,.08);
-  border:1px solid rgba(242,238,226,.14);
-  border-radius:var(--r-full);
-  color:rgba(242,238,226,.65);
-  font-family:var(--sans); font-size:11px; letter-spacing:.12em; text-transform:uppercase;
-  cursor:pointer;
-  padding:8px 16px; gap:6px;
-  display:flex; align-items:center;
-  transition:background .2s ease, color .2s ease;
-  z-index:56;
-}
-.mobile-nav__close:hover{
-  background:rgba(242,238,226,.14); color:var(--inverse);
-}
 
 /* ---- Back-to-top floating button ---- */
 .back-to-top{
@@ -2515,7 +2407,8 @@ a:focus-visible{ border-radius:2px; }
 /* ---- Citation tooltip ---- */
 .cite-tooltip{
   position:absolute; z-index:130;
-  background:var(--primary);
+  /* Always-dark bubble — pairs with the constant cream rgba foregrounds below */
+  background:var(--deep-surface);
   color:rgba(242,238,226,.88);
   font-family:var(--serif-body);
   font-size:13px; line-height:1.55;
@@ -2546,18 +2439,19 @@ a:focus-visible{ border-radius:2px; }
   position:absolute; bottom:-5px; left:50%;
   transform:translateX(-50%);
   border-left:5px solid transparent; border-right:5px solid transparent;
-  border-top:5px solid var(--primary);
+  border-top:5px solid var(--deep-surface);
 }
 .cite-tooltip.below::after{
   bottom:auto; top:-5px;
-  border-top:none; border-bottom:5px solid var(--primary);
+  border-top:none; border-bottom:5px solid var(--deep-surface);
 }
 
 /* ---- Keyboard nav toast ---- */
 .kbd-toast{
   position:fixed; bottom:28px; left:50%;
   transform:translateX(-50%) translateY(14px);
-  background:var(--primary);
+  /* Always-dark pill — fg is constant cream rgba */
+  background:var(--deep-surface);
   color:rgba(242,238,226,.85);
   font-family:var(--sans); font-size:12px; letter-spacing:.06em;
   padding:9px 20px;
@@ -2591,6 +2485,70 @@ a:focus-visible{ border-radius:2px; }
 @media (max-width:780px){
   .compare-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table.compare{ min-width:520px; }
+}
+
+/* On phones, drop the horizontal scroll and re-render each row as a card.
+   Each diagnostic becomes its own block with the three κ values stacked
+   beneath, each labelled inline by its column header. */
+@media (max-width:520px){
+  .compare-wrap{
+    overflow-x:visible;
+    border:none;
+    background:transparent;
+  }
+  .compare-wrap::after{ display:none; }
+  table.compare{ min-width:0; }
+  .compare,
+  .compare thead,
+  .compare tbody,
+  .compare tr,
+  .compare th,
+  .compare td{
+    display:block;
+    width:auto;
+  }
+  .compare thead{
+    /* Visually hide column headers but keep them for screen readers */
+    position:absolute; left:-9999px; top:auto; width:1px; height:1px;
+    overflow:hidden;
+  }
+  .compare tbody tr{
+    border:1px solid var(--rule-strong);
+    border-radius:var(--r-sm);
+    background:var(--surface-elevated);
+    padding:14px 16px;
+    margin-bottom:12px;
+  }
+  .compare tbody tr:last-child{ margin-bottom:0; }
+  .compare tbody th{
+    width:auto;
+    padding:0 0 10px;
+    font-size:13px;
+    font-weight:500;
+    text-align:left;
+    color:var(--primary);
+    border-bottom:1px solid var(--rule);
+  }
+  .compare td{
+    border:none;
+    padding:8px 0 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    font-size:14px;
+  }
+  .compare td::before{
+    font-family:var(--sans);
+    font-size:10px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--secondary);
+    flex-shrink:0;
+  }
+  .compare td:first-of-type::before{ content:"κ < 0"; }
+  .compare td:nth-of-type(2)::before{ content:"κ = 0"; }
+  .compare td:nth-of-type(3)::before{ content:"κ > 0"; color:var(--accent); }
 }
 
 /* ================================================================
@@ -2766,10 +2724,58 @@ html[data-theme="dark"] .cursor-dot{
 /* hidden on mouse leave */
 .cursor-dot.cur-hidden { opacity: 0 !important; }
 
+/* ── Cursor polish: idle pulse, click ripple, smooth state vars ── */
+
+/* Smoothly interpolate between cursor states (not just snap CSS vars).
+   Works in Chromium and Safari; Firefox falls back to instant change. */
+@property --cursor-aura-size    { syntax: '<length>'; inherits: true; initial-value: 58px; }
+@property --cursor-ring-size    { syntax: '<length>'; inherits: true; initial-value: 38px; }
+@property --cursor-aura-opacity { syntax: '<number>'; inherits: true; initial-value: 0.42; }
+@property --cursor-ring-opacity { syntax: '<number>'; inherits: true; initial-value: 0.48; }
+.cursor-dot::before,
+.cursor-dot::after{
+  transition:
+    --cursor-aura-size    .32s cubic-bezier(.22,1,.36,1),
+    --cursor-ring-size    .32s cubic-bezier(.22,1,.36,1),
+    --cursor-aura-opacity .22s ease,
+    --cursor-ring-opacity .22s ease,
+    width  .32s cubic-bezier(.22,1,.36,1),
+    height .32s cubic-bezier(.22,1,.36,1),
+    opacity .22s ease,
+    transform .22s ease,
+    filter .22s ease;
+}
+
+/* Idle pulse — gentle 1.04 breath on the aura after 1.8s of no motion */
+@keyframes cursor-idle-pulse{
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%      { transform: translate(-50%, -50%) scale(1.04); }
+}
+.cursor-dot.is-idle::before{
+  animation: cursor-idle-pulse 3.5s ease-in-out infinite;
+}
+
+/* Click ripple — concentric accent ring, single pass on mousedown */
+.cursor-ripple{
+  position: fixed;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(0);
+  animation: cursor-ripple-out .6s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes cursor-ripple-out{
+  to{ transform: translate(-50%, -50%) scale(2.07); opacity: 0; }
+}
+
 /* touch devices — restore native */
 @media (pointer: coarse) {
   body::after{ display:none !important; }
   .cursor-dot { display: none !important; }
+  .cursor-ripple { display: none !important; }
   html, body, *, *::before, *::after { cursor:auto !important; }
 }
 
@@ -2964,6 +2970,10 @@ html[data-theme="dark"] .cursor-dot{
   .s-head.reveal { clip-path: none; }
   .cursor-dot { transition: none; }
   .cursor-dot { display:none !important; }
+  /* Suppress the new cursor polish layer too: ripples and idle pulse
+     would otherwise still fire even with the dot itself hidden. */
+  .cursor-ripple { display: none !important; }
+  .cursor-dot.is-idle::before { animation: none !important; }
   html, body, *, *::before, *::after { cursor:auto !important; }
 }
 
@@ -3001,6 +3011,120 @@ html[data-theme="dark"] .cursor-dot{
   .cell__output .out-row{ grid-template-columns:1fr; gap:4px; }
   .nb-runall{ flex-direction:column; align-items:flex-start; gap:10px; }
   .nb-runall__progress{ width:100%; }
+}
+
+/* ================================================================
+   POLISH LAYER — animista-style entry / hover effects
+   Layered on top of the existing reveal observer; fires once on
+   first viewport entry. Transform/opacity-only for compositor speed.
+   ================================================================ */
+
+/* 1 — Section heading: animated underline draws from the left */
+.s-head__title{ position:relative; }
+.s-head__title::after{
+  content:"";
+  position:absolute;
+  left:0; bottom:-12px;
+  width:96px; height:1px;
+  background:var(--accent);
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform .7s cubic-bezier(.2,.7,.2,1) .25s;
+}
+.s-head.reveal.in .s-head__title::after{ transform:scaleX(1); }
+
+/* 2 — Eyebrow sigil: brief scale + sky halo on first reveal */
+@keyframes sigil-pulse{
+  0%   { transform:scale(1);    text-shadow:0 0 0 transparent; }
+  45%  { transform:scale(1.18); text-shadow:0 0 14px var(--sky); }
+  100% { transform:scale(1);    text-shadow:0 0 0 transparent; }
+}
+.reveal.in .eyebrow__sigil{
+  animation:sigil-pulse .56s cubic-bezier(.2,.7,.2,1) .15s both;
+}
+
+/* 3 — Equation label slides in from the right after the equation reveals */
+@keyframes label-slide{
+  from { transform:translateX(8px); opacity:0; }
+  to   { transform:translateX(0);   opacity:1; }
+}
+.equation .label{ opacity:0; }
+.equation.reveal.in .label{
+  animation:label-slide .5s cubic-bezier(.2,.7,.2,1) .22s forwards;
+}
+
+/* 4 — CTA buttons: single-pass shimmer sweep on hover */
+.btn--primary{ position:relative; overflow:hidden; isolation:isolate; }
+.btn--primary::before{
+  content:"";
+  position:absolute;
+  top:0; left:0;
+  width:60%; height:100%;
+  background:linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(242,238,226,.22) 50%,
+    transparent 100%
+  );
+  transform:translateX(-130%) skewX(-14deg);
+  pointer-events:none;
+  z-index:0;
+}
+.btn--primary > *{ position:relative; z-index:1; }
+@keyframes cta-shimmer{
+  to { transform:translateX(230%) skewX(-14deg); }
+}
+.btn--primary:hover::before{
+  animation:cta-shimmer .9s cubic-bezier(.2,.7,.2,1) forwards;
+}
+
+/* 5 — References list: stagger fade-up as the section enters */
+@keyframes ref-rise{
+  from { transform:translateY(8px); opacity:0; }
+  to   { transform:translateY(0);   opacity:1; }
+}
+.refs.reveal li{ opacity:0; }
+.refs.reveal.in li{
+  animation:ref-rise .54s cubic-bezier(.2,.7,.2,1) both;
+}
+.refs.reveal.in li:nth-child(1) { animation-delay:.04s; }
+.refs.reveal.in li:nth-child(2) { animation-delay:.10s; }
+.refs.reveal.in li:nth-child(3) { animation-delay:.16s; }
+.refs.reveal.in li:nth-child(4) { animation-delay:.22s; }
+.refs.reveal.in li:nth-child(5) { animation-delay:.28s; }
+.refs.reveal.in li:nth-child(6) { animation-delay:.34s; }
+.refs.reveal.in li:nth-child(7) { animation-delay:.40s; }
+.refs.reveal.in li:nth-child(8) { animation-delay:.46s; }
+.refs.reveal.in li:nth-child(9) { animation-delay:.52s; }
+.refs.reveal.in li:nth-child(10){ animation-delay:.58s; }
+.refs.reveal.in li:nth-child(11){ animation-delay:.64s; }
+.refs.reveal.in li:nth-child(12){ animation-delay:.70s; }
+
+/* 6 — Diamond ornaments rotate-in as they enter the viewport */
+.ornament.reveal .ornament__sigil,
+.foot__rule.reveal svg{
+  transform:rotate(-90deg) scale(.6);
+  transform-origin:center center;
+  transition:transform .76s cubic-bezier(.2,.7,.2,1);
+}
+.ornament.reveal.in .ornament__sigil,
+.foot__rule.reveal.in svg{
+  transform:rotate(0) scale(1);
+}
+
+/* 7 — Reduced-motion guard: snap everything to the end state */
+@media (prefers-reduced-motion: reduce){
+  .s-head__title::after{ transform:scaleX(1); transition:none; }
+  .reveal.in .eyebrow__sigil{ animation:none; }
+  .equation .label{ opacity:1; }
+  .equation.reveal.in .label{ animation:none; }
+  .btn--primary::before{ display:none; }
+  .refs.reveal li{ opacity:1; }
+  .refs.reveal.in li{ animation:none; }
+  .ornament.reveal .ornament__sigil,
+  .foot__rule.reveal svg{
+    transform:none; transition:none;
+  }
 }
 </style>
 </head>
@@ -3066,11 +3190,6 @@ html[data-theme="dark"] .cursor-dot{
         Read the paper <span class="arrow">→</span>
       </a>
     </div>
-    <button class="nav__hamburger" id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
   </div>
 </nav>
 
@@ -3261,27 +3380,17 @@ html[data-theme="dark"] .cursor-dot{
         — homogeneity, isotropy, consistent composition — turns out to be extraordinarily
         restrictive.<sup class="cite"><a href="#ref-3">3</a><a href="#ref-6">,6</a><a href="#ref-7">,7</a><a href="#ref-5">,5</a></sup>
         These properties allow exactly one family of transformation rules, governed by a
-        single undetermined number $\kappa$:
+        single undetermined number $\kappa$.
       </p>
 
-      <div class="equation">
-        <span class="label">Boost Family</span>
-        $$
-        \begin{aligned}
-          t' &= \gamma\,(t - \kappa\, v\, x), \\[4pt]
-          x' &= \gamma\,(x - v\, t), \\[4pt]
-          \gamma &= \frac{1}{\sqrt{1-\kappa\, v^2}}.
-        \end{aligned}
-        $$
-      </div>
-
       <p style="max-width:62ch;">
-        The second equation is intuitive: the platform sees your position shifted by the
-        train's motion. The first is where the physics lives. The term $\kappa\, v\, x$
-        mixes space into time — what counts as <em>"now"</em> depends on where you are,
-        and $\kappa$ controls the strength of this mixing. As $v$ approaches
-        $1/\sqrt{\kappa}$ (when $\kappa > 0$), $\gamma$ diverges. A speed limit appears.
-        When $\kappa = 0$, the mixing vanishes; time is absolute and we recover Newton.
+        The transformation has two effects. The platform sees your position shifted by
+        the train's motion — intuitive enough. The deeper effect is a term proportional
+        to $\kappa\, v\, x$ that mixes space into time: what counts as <em>"now"</em>
+        depends on where you are, and $\kappa$ controls the strength of this mixing.
+        As $v$ approaches $1/\sqrt{\kappa}$ (when $\kappa > 0$), the time-dilation
+        factor diverges. A speed limit appears. When $\kappa = 0$, the mixing vanishes;
+        time is absolute and we recover Newton.
       </p>
     </div>
 
@@ -3455,7 +3564,7 @@ html[data-theme="dark"] .cursor-dot{
           Rotations don't commute. Whether the <em>boosts</em> share that property depends
           on $\kappa$. The rules are:
         </p>
-        <div class="equation">
+        <div class="equation reveal">
           <span class="label">Lie brackets</span>
           $$
           [J_i, J_j] = \epsilon_{ijk}\,J_k, \qquad
@@ -3468,7 +3577,7 @@ html[data-theme="dark"] .cursor-dot{
           The Killing form is the algebra's own diagnostic of how much each generator
           reshuffles the others:
         </p>
-        <div class="equation">
+        <div class="equation reveal">
           <span class="label">Killing form</span>
           $$ B(X, Y) = \mathrm{tr}\big(\mathrm{ad}_X \circ \mathrm{ad}_Y\big). $$
         </div>
@@ -3480,7 +3589,7 @@ html[data-theme="dark"] .cursor-dot{
           diagonal matrix. The rotations always register $-4$. The boosts register
           $4\kappa$ — and their value depends entirely on $\kappa$.
         </p>
-        <div class="equation">
+        <div class="equation reveal">
           $$
           B \;=\; \mathrm{diag}\big(\underbrace{-4,\,-4,\,-4}_{\text{rotations}},\;\;
           \underbrace{4\kappa,\;4\kappa,\;4\kappa}_{\text{boosts}}\big).
@@ -3672,7 +3781,7 @@ html[data-theme="dark"] .cursor-dot{
             and the only quantity all observers agree on is the spacetime interval —
             a single number that combines space and time inseparably.
           </p>
-          <div class="equation">
+          <div class="equation reveal">
             <span class="label">Minkowski metric</span>
             $$ ds^2 = c^2\,dt^2 - dx^2 - dy^2 - dz^2, \qquad \kappa = 1/c^2. $$
           </div>
@@ -4427,7 +4536,7 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
 <footer class="foot">
   <div class="foot__inner">
 
-    <div class="foot__rule" aria-hidden="true">
+    <div class="foot__rule reveal" aria-hidden="true">
       <div class="line"></div>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <rect x="8" y="1" width="9" height="9" transform="rotate(45 8 8)" stroke="#F2EEE2" stroke-width="0.8" fill="none"/>
@@ -4483,7 +4592,7 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
       </div>
 
       <a class="madeby" href="https://ii.inc/web/ii-agent" target="_blank" rel="noreferrer" aria-label="Made by II-Agent">
-        <img class="madeby__img" src="https://op.ii.inc/madeby.png" alt="Made by II-Agent" loading="lazy" />
+        <img class="madeby__img" src="https://op.ii.inc/madeby.png" alt="Made by II-Agent" loading="lazy" decoding="async" />
       </a>
     </div>
 
@@ -4491,6 +4600,11 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
 </footer>
 
 <script>
+/* Defer the entire interactive-lab + notebook + scrollspy bootstrap until
+   after HTML parsing finishes. All elements queried below are defined
+   earlier in the document, so this is safe and unblocks the parser for
+   the remaining ~1700 lines of HTML. */
+document.addEventListener('DOMContentLoaded', () => {
 /* ------------------------------------------------------------------
    Pinned-nav state
    ------------------------------------------------------------------ */
@@ -5520,45 +5634,9 @@ function buildKfMiniCells(){
     btn.disabled = false;
   });
 })();
-</script>
 
-<!-- ============================================================
-     MOBILE NAV OVERLAY
-============================================================== -->
-<div class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true" role="dialog" aria-modal="true">
-  <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close navigation">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
-    Close
-  </button>
-  <div class="mobile-nav__inner">
-    <div class="mobile-nav__heading">One Postulate · Navigation</div>
-    <nav class="mobile-nav__links" aria-label="Sections">
-      <a href="#postulate"><span>A principle of symmetry</span><span class="mnav-sigil" aria-hidden="true">⊕ I</span></a>
-      <a href="#determines"><span>Three universes</span><span class="mnav-sigil" aria-hidden="true">◎ II</span></a>
-      <a href="#killing"><span>The Killing form</span><span class="mnav-sigil" aria-hidden="true">✦ III</span></a>
-      <a href="#verdicts"><span>Three verdicts</span><span class="mnav-sigil" aria-hidden="true">◈ IV</span></a>
-      <a href="#lab"><span>Interactive lab</span><span class="mnav-sigil" aria-hidden="true">⊛ V</span></a>
-      <a href="#proof"><span>The proof, executable</span><span class="mnav-sigil" aria-hidden="true">VI</span></a>
-      <a href="#references"><span>References</span><span class="mnav-sigil" aria-hidden="true">↗</span></a>
-    </nav>
-    <div class="mobile-nav__cta">
-      <button class="theme-toggle theme-toggle--mobile" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
-        <span class="theme-toggle__lbl theme-toggle__lbl--dark" aria-hidden="true">Dark</span>
-        <span class="theme-toggle__track" aria-hidden="true">
-          <span class="theme-toggle__thumb">
-            <svg class="theme-toggle__icon theme-toggle__icon--dark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/></svg>
-            <svg class="theme-toggle__icon theme-toggle__icon--light" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/></svg>
-          </span>
-        </span>
-        <span class="theme-toggle__lbl theme-toggle__lbl--light" aria-hidden="true">Light</span>
-      </button>
-      <a class="btn btn--primary" href="#abstract">Begin reading <span class="arrow">→</span></a>
-    </div>
-  </div>
-</div>
+}); /* end DOMContentLoaded wrapper */
+</script>
 
 <!-- ============================================================
      BACK TO TOP + KEYBOARD TOAST
@@ -5797,6 +5875,56 @@ function buildKfMiniCells(){
 
   const LERP = 0.58;
 
+  /* --- Magnetic snap toward CTAs ---------------------------------- */
+  const MAGNET_SEL   = '.btn--primary, .btn--gold, .kappa-dial button';
+  const MAGNET_RANGE = 64;     /* px */
+  const MAGNET_PULL  = 0.18;   /* fraction toward target at zero distance */
+  let magnets = [];
+  function refreshMagnets(){
+    magnets = Array.from(document.querySelectorAll(MAGNET_SEL));
+  }
+  refreshMagnets();
+  /* Re-cache after layout shifts (resize, font load, lazy reveals). */
+  window.addEventListener('resize', refreshMagnets, { passive:true });
+  setTimeout(refreshMagnets, 1500);
+
+  function applyMagnet(x, y){
+    let bestDx = 0, bestDy = 0, bestPull = 0;
+    for (let i = 0; i < magnets.length; i++){
+      const r = magnets[i].getBoundingClientRect();
+      if (r.width === 0 || r.bottom < -100 || r.top > innerHeight + 100) continue;
+      const tx = r.left + r.width  * 0.5;
+      const ty = r.top  + r.height * 0.5;
+      const dx = tx - x, dy = ty - y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < MAGNET_RANGE){
+        const proximity = 1 - dist / MAGNET_RANGE;     /* 0..1 */
+        const pull      = MAGNET_PULL * proximity;
+        if (pull > bestPull){ bestPull = pull; bestDx = dx; bestDy = dy; }
+      }
+    }
+    return [x + bestDx * bestPull, y + bestDy * bestPull];
+  }
+
+  /* --- Idle pulse: 1.8s of no motion → breathing aura -------------- */
+  let idleTimer = 0;
+  function bumpIdle(){
+    if (idleTimer) clearTimeout(idleTimer);
+    if (dot.classList.contains('is-idle')) dot.classList.remove('is-idle');
+    idleTimer = setTimeout(() => dot.classList.add('is-idle'), 1800);
+  }
+
+  /* --- Click ripple: one-shot accent ring on mousedown ------------- */
+  function spawnRipple(x, y){
+    const r = document.createElement('div');
+    r.className = 'cursor-ripple';
+    r.style.left = x + 'px';
+    r.style.top  = y + 'px';
+    document.body.appendChild(r);
+    /* Cleanup once the .6s animation has played out */
+    setTimeout(() => { if (r.parentNode) r.parentNode.removeChild(r); }, 700);
+  }
+
   /* [selector, state] — first match wins */
   const STATES = [
     ['.btn--gold',                                         'gold'  ],
@@ -5830,12 +5958,27 @@ function buildKfMiniCells(){
     root.style.setProperty('--cursor-presence', next ? '.92' : '0');
   }
 
-  /* RAF loop — lerp position */
+  /* RAF loop — magnetic pull → lerp → velocity squash */
   function tick() {
     requestAnimationFrame(tick);
-    cx += (mx - cx) * LERP;
-    cy += (my - cy) * LERP;
-    dot.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+
+    /* Bend the target toward any nearby magnetic CTA, then ease the dot. */
+    const [tx, ty] = applyMagnet(mx, my);
+    cx += (tx - cx) * LERP;
+    cy += (ty - cy) * LERP;
+
+    /* Subtle squash-and-stretch along motion direction. Capped at ~6%
+       major / 3% minor so it reads as polish, not deformation. */
+    const dx = tx - cx, dy = ty - cy;
+    const speed  = Math.hypot(dx, dy);
+    const sx     = 1 + Math.min(speed * 0.0035, 0.06);
+    const sy     = 1 - Math.min(speed * 0.0017, 0.03);
+    const angle  = speed > 0.2 ? Math.atan2(dy, dx) * 57.2958 : 0;
+
+    dot.style.transform =
+      `translate(${cx}px,${cy}px) translate(-50%,-50%) ` +
+      `rotate(${angle}deg) scale(${sx}, ${sy})`;
+
     root.style.setProperty('--cursor-x', `${Math.round(cx)}px`);
     root.style.setProperty('--cursor-y', `${Math.round(cy)}px`);
   }
@@ -5850,6 +5993,7 @@ function buildKfMiniCells(){
     }
     setVisible(true);
     applyState(detectState(e.target));
+    bumpIdle();
   }, { passive: true });
 
   /* Leave / enter window */
@@ -5870,6 +6014,7 @@ function buildKfMiniCells(){
     root.style.setProperty('--cursor-presence', '1');
     root.style.setProperty('--cursor-press', '1');
     setVisible(true);
+    spawnRipple(e.clientX, e.clientY);
   });
   document.addEventListener('mouseup',   () => {
     dot.classList.remove('s-down');
@@ -5889,56 +6034,8 @@ function buildKfMiniCells(){
 ============================================================== -->
 <script>
 /* ================================================================
-   UX LAYER — hamburger, back-to-top, citation tooltips, keyboard nav
+   UX LAYER — back-to-top, citation tooltips, keyboard nav
    ================================================================ */
-
-/* ---- Mobile hamburger nav ---- */
-(function(){
-  const hamburger = document.getElementById('nav-hamburger');
-  const mobileNav = document.getElementById('mobile-nav');
-  const closeBtn  = document.getElementById('mobile-nav-close');
-  if (!hamburger || !mobileNav) return;
-
-  function openNav(){
-    hamburger.setAttribute('aria-expanded','true');
-    mobileNav.classList.add('is-open');
-    mobileNav.setAttribute('aria-hidden','false');
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => closeBtn && closeBtn.focus(), 50);
-  }
-  function closeNav(){
-    hamburger.setAttribute('aria-expanded','false');
-    mobileNav.classList.remove('is-open');
-    mobileNav.setAttribute('aria-hidden','true');
-    document.body.style.overflow = '';
-    hamburger.focus();
-  }
-
-  hamburger.addEventListener('click', () =>
-    mobileNav.classList.contains('is-open') ? closeNav() : openNav()
-  );
-  closeBtn && closeBtn.addEventListener('click', closeNav);
-
-  /* Close when any link is clicked */
-  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
-
-  /* Escape to close */
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeNav();
-  });
-
-  /* Basic focus trap */
-  mobileNav.addEventListener('keydown', e => {
-    if (e.key !== 'Tab') return;
-    const focusable = Array.from(mobileNav.querySelectorAll('a[href], button:not([disabled])'));
-    const first = focusable[0], last = focusable[focusable.length - 1];
-    if (e.shiftKey && document.activeElement === first){
-      e.preventDefault(); last.focus();
-    } else if (!e.shiftKey && document.activeElement === last){
-      e.preventDefault(); first.focus();
-    }
-  });
-})();
 
 /* ---- Back-to-top button ---- */
 (function(){

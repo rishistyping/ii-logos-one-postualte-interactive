@@ -2218,7 +2218,7 @@ section + section.in{
 
 <style>
 /* ================================================================
-   UX LAYER — mobile nav, back-to-top, tooltips, accessibility
+   UX LAYER — back-to-top, tooltips, accessibility
    ================================================================ */
 
 /* Skip-to-content link (screen-readers + keyboard users) */
@@ -2242,130 +2242,6 @@ section + section.in{
 :focus:not(:focus-visible){ outline:none; }
 .btn:focus-visible{ outline-offset:4px; }
 a:focus-visible{ border-radius:2px; }
-
-/* ---- Hamburger button ---- */
-.nav__hamburger{
-  display:none;
-  flex-direction:column; justify-content:center; align-items:center;
-  gap:5px; padding:10px;
-  background:none; border:1px solid transparent;
-  border-radius:var(--r-sm);
-  cursor:pointer; z-index:60;
-  width:44px; height:44px; flex-shrink:0;
-  transition:border-color .2s ease;
-}
-.nav__hamburger:hover{ border-color:var(--rule-strong); }
-.nav__hamburger span{
-  display:block;
-  height:1.5px; width:22px;
-  background:var(--primary);
-  border-radius:2px;
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s ease, width .3s ease;
-  transform-origin:center;
-}
-.nav__hamburger[aria-expanded="true"] span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
-.nav__hamburger[aria-expanded="true"] span:nth-child(2){ opacity:0; width:0; }
-.nav__hamburger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
-@media (max-width:880px){ .nav__hamburger{ display:flex; } }
-@media (max-width:520px){
-  .nav .btn--primary{ display:none; }
-}
-
-/* ---- Mobile nav overlay ---- */
-.mobile-nav{
-  position:fixed; inset:0; z-index:55;
-  background:var(--primary);
-  display:flex; flex-direction:column;
-  opacity:0; visibility:hidden; pointer-events:none;
-  transition:opacity .32s ease, visibility .32s ease;
-  overflow-y:auto;
-}
-.mobile-nav.is-open{
-  opacity:1; visibility:visible; pointer-events:all;
-}
-.mobile-nav__inner{
-  display:flex; flex-direction:column; justify-content:center;
-  padding:100px var(--gutter) 80px;
-  min-height:100%; gap:0;
-}
-.mobile-nav__heading{
-  font-family:var(--sans);
-  font-size:10px; letter-spacing:.22em; text-transform:uppercase;
-  color:rgba(242,238,226,.35);
-  margin-bottom:36px;
-  display:flex; align-items:center; gap:12px;
-}
-.mobile-nav__heading::after{
-  content:""; flex:1; height:1px;
-  background:rgba(242,238,226,.10);
-}
-.mobile-nav__links{ display:flex; flex-direction:column; }
-.mobile-nav__links a{
-  font-family:var(--serif-display);
-  font-size:clamp(26px, 7vw, 48px); font-weight:300; line-height:1.1;
-  letter-spacing:-0.01em;
-  color:rgba(242,238,226,.72);
-  text-decoration:none;
-  padding:14px 0;
-  border-bottom:1px solid rgba(242,238,226,.07);
-  display:flex; align-items:baseline; justify-content:space-between;
-  gap:16px;
-  transition:color .25s ease, padding-left .25s cubic-bezier(.2,.7,.2,1);
-  opacity:0;
-}
-.mobile-nav.is-open .mobile-nav__links a{
-  animation:mnav-in .45s cubic-bezier(.2,.7,.2,1) both;
-}
-.mobile-nav.is-open .mobile-nav__links a:nth-child(1){ animation-delay:.06s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(2){ animation-delay:.12s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(3){ animation-delay:.18s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(4){ animation-delay:.24s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(5){ animation-delay:.30s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(6){ animation-delay:.36s; }
-.mobile-nav.is-open .mobile-nav__links a:nth-child(7){ animation-delay:.42s; }
-@keyframes mnav-in{
-  from{ opacity:0; transform:translateX(-20px); }
-  to{ opacity:1; transform:none; }
-}
-.mobile-nav__links a:hover{ color:var(--gold); padding-left:8px; }
-.mobile-nav__links a .mnav-sigil{
-  font-size:.5em; color:rgba(242,238,226,.25);
-  flex-shrink:0; align-self:center;
-  font-style:normal; font-family:var(--serif-caslon);
-}
-.mobile-nav__links a .mnav-arrow{
-  font-size:.45em; color:rgba(242,238,226,.22);
-  flex-shrink:0; align-self:center;
-}
-.mobile-nav__cta{
-  margin-top:48px;
-  display:flex; gap:12px; flex-wrap:wrap;
-  opacity:0;
-  animation:none;
-}
-.mobile-nav.is-open .mobile-nav__cta{
-  animation:mnav-in .4s cubic-bezier(.2,.7,.2,1) .48s both;
-}
-.mobile-nav__cta .btn--primary{
-  background:var(--accent); border-color:var(--accent);
-  font-size:13px; height:48px;
-}
-.mobile-nav__close{
-  position:fixed; top:20px; right:20px;
-  background:rgba(242,238,226,.08);
-  border:1px solid rgba(242,238,226,.14);
-  border-radius:var(--r-full);
-  color:rgba(242,238,226,.65);
-  font-family:var(--sans); font-size:11px; letter-spacing:.12em; text-transform:uppercase;
-  cursor:pointer;
-  padding:8px 16px; gap:6px;
-  display:flex; align-items:center;
-  transition:background .2s ease, color .2s ease;
-  z-index:56;
-}
-.mobile-nav__close:hover{
-  background:rgba(242,238,226,.14); color:var(--inverse);
-}
 
 /* ---- Back-to-top floating button ---- */
 .back-to-top{
@@ -2838,11 +2714,6 @@ a:focus-visible{ border-radius:2px; }
     <a class="btn btn--primary" href="#abstract">
       Read the paper <span class="arrow">→</span>
     </a>
-    <button class="nav__hamburger" id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
   </div>
 </nav>
 
@@ -3033,43 +2904,18 @@ a:focus-visible{ border-radius:2px; }
         — homogeneity, isotropy, consistent composition — turns out to be extraordinarily
         restrictive.<sup class="cite"><a href="#ref-3">3</a><a href="#ref-6">,6</a><a href="#ref-7">,7</a><a href="#ref-5">,5</a></sup>
         These properties allow exactly one family of transformation rules, governed by a
-        single undetermined number <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span>:
+        single undetermined number <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span>.
       </p>
 
-      <div class="equation">
-        <span class="label">Boost Family</span>
-        <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msup><mi>t</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>=</mo><mi>γ</mi><mtext> </mtext><mo stretchy="false">(</mo><mi>t</mi><mo>−</mo><mi>κ</mi><mtext> </mtext><mi>v</mi><mtext> </mtext><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="2em"/><msup><mi>x</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>=</mo><mi>γ</mi><mtext> </mtext><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mi>v</mi><mtext> </mtext><mi>t</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="2em"/><mi>γ</mi><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><mn>1</mn><mo>−</mo><mi>κ</mi><mtext> </mtext><msup><mi>v</mi><mn>2</mn></msup></mrow></msqrt></mfrac><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">t&#x27; = \gamma\,(t - \kappa\, v\, x), \qquad x&#x27; = \gamma\,(x - v\, t), \qquad \gamma = \frac{1}{\sqrt{1-\kappa\, v^2}}.</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8019em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0519em;vertical-align:-0.25em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8019em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace" style="margin-right:2em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2514em;vertical-align:-0.93em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.1966em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9134em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-2.8734em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
-c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
-c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
-c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
-s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
-c69,-144,104.5,-217.7,106.5,-221
-l0 -0
-c5.3,-9.3,12,-14,20,-14
-H400000v40H845.2724
-s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
-c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
-M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1266em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.93em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord">.</span></span></span></span></span>
-      </div>
-
       <p style="max-width:62ch;">
-        The second equation is intuitive: the platform sees your position shifted by the
-        train's motion. The first is where the physics lives. The term <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mtext> </mtext><mi>v</mi><mtext> </mtext><mi>x</mi></mrow><annotation encoding="application/x-tex">\kappa\, v\, x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span></span></span></span>
-        mixes space into time — what counts as <em>"now"</em> depends on where you are,
-        and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span> controls the strength of this mixing. As <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span> approaches
-        <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi mathvariant="normal">/</mi><msqrt><mi>κ</mi></msqrt></mrow><annotation encoding="application/x-tex">1/\sqrt{\kappa}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0503em;vertical-align:-0.25em;"></span><span class="mord">1/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8003em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal">κ</span></span></span><span style="top:-2.7603em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
-c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
-c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
-c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
-s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
-c69,-144,104.5,-217.7,106.5,-221
-l0 -0
-c5.3,-9.3,12,-14,20,-14
-H400000v40H845.2724
-s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
-c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
-M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2397em;"><span></span></span></span></span></span></span></span></span> (when <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa &gt; 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>), <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span></span></span></span> diverges. A speed limit appears.
-        When <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\kappa = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>, the mixing vanishes; time is absolute and we recover Newton.
+        The transformation has two effects. The platform sees your position
+        shifted by the train's motion — intuitive enough. The deeper effect is a
+        term proportional to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mtext> </mtext><mi>v</mi><mtext> </mtext><mi>x</mi></mrow><annotation encoding="application/x-tex">\kappa\, v\, x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">x</span></span></span></span>
+        that mixes space into time: what counts as <em>"now"</em> depends on
+        where you are, and κ controls the strength of this mixing. As v
+        approaches 1/√κ (when κ &gt; 0), the time-dilation factor diverges.
+        A speed limit appears. When κ = 0, the mixing vanishes; time is
+        absolute and we recover Newton.
       </p>
     </div>
 
@@ -5339,34 +5185,6 @@ function buildKfMiniCells(){
 </script>
 
 <!-- ============================================================
-     MOBILE NAV OVERLAY
-============================================================== -->
-<div class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true" role="dialog" aria-modal="true">
-  <button class="mobile-nav__close" id="mobile-nav-close" aria-label="Close navigation">
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
-    Close
-  </button>
-  <div class="mobile-nav__inner">
-    <div class="mobile-nav__heading">One Postulate · Navigation</div>
-    <nav class="mobile-nav__links" aria-label="Sections">
-      <a href="#postulate"><span>A principle of symmetry</span><span class="mnav-sigil">⊕ I</span></a>
-      <a href="#determines"><span>Three universes</span><span class="mnav-sigil">◎ II</span></a>
-      <a href="#killing"><span>The Killing form</span><span class="mnav-sigil">✦ III</span></a>
-      <a href="#verdicts"><span>Three verdicts</span><span class="mnav-sigil">◈ IV</span></a>
-      <a href="#lab"><span>Interactive lab</span><span class="mnav-sigil">⊛ V</span></a>
-      <a href="#proof"><span>The proof, executable</span><span class="mnav-sigil">VI</span></a>
-      <a href="#references"><span>References</span><span class="mnav-sigil">↗</span></a>
-    </nav>
-    <div class="mobile-nav__cta">
-      <a class="btn btn--primary" href="#abstract">Begin reading <span class="arrow">→</span></a>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================
      BACK TO TOP + KEYBOARD TOAST
 ============================================================== -->
 <button class="back-to-top" id="back-to-top" aria-label="Back to top">
@@ -5669,56 +5487,8 @@ function buildKfMiniCells(){
 ============================================================== -->
 <script>
 /* ================================================================
-   UX LAYER — hamburger, back-to-top, citation tooltips, keyboard nav
+   UX LAYER — back-to-top, citation tooltips, keyboard nav
    ================================================================ */
-
-/* ---- Mobile hamburger nav ---- */
-(function(){
-  const hamburger = document.getElementById('nav-hamburger');
-  const mobileNav = document.getElementById('mobile-nav');
-  const closeBtn  = document.getElementById('mobile-nav-close');
-  if (!hamburger || !mobileNav) return;
-
-  function openNav(){
-    hamburger.setAttribute('aria-expanded','true');
-    mobileNav.classList.add('is-open');
-    mobileNav.setAttribute('aria-hidden','false');
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => closeBtn && closeBtn.focus(), 50);
-  }
-  function closeNav(){
-    hamburger.setAttribute('aria-expanded','false');
-    mobileNav.classList.remove('is-open');
-    mobileNav.setAttribute('aria-hidden','true');
-    document.body.style.overflow = '';
-    hamburger.focus();
-  }
-
-  hamburger.addEventListener('click', () =>
-    mobileNav.classList.contains('is-open') ? closeNav() : openNav()
-  );
-  closeBtn && closeBtn.addEventListener('click', closeNav);
-
-  /* Close when any link is clicked */
-  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
-
-  /* Escape to close */
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeNav();
-  });
-
-  /* Basic focus trap */
-  mobileNav.addEventListener('keydown', e => {
-    if (e.key !== 'Tab') return;
-    const focusable = Array.from(mobileNav.querySelectorAll('a[href], button:not([disabled])'));
-    const first = focusable[0], last = focusable[focusable.length - 1];
-    if (e.shiftKey && document.activeElement === first){
-      e.preventDefault(); last.focus();
-    } else if (!e.shiftKey && document.activeElement === last){
-      e.preventDefault(); first.focus();
-    }
-  });
-})();
 
 /* ---- Back-to-top button ---- */
 (function(){
