@@ -56,7 +56,13 @@ curl -X POST http://localhost:8787/chat \
 ```
 
 You should see a JSON response containing `response`, `content`, `message`,
-and the raw Bedrock payload.
+top-level `metrics`/`usage`, and the raw Bedrock payload.
+
+Quick deployment/config check:
+
+```sh
+curl https://op-postulate-chat.rishresearch000.workers.dev/health
+```
 
 ## Files
 
@@ -66,7 +72,9 @@ and the raw Bedrock payload.
 
 ## What it does
 
-- `OPTIONS *` → CORS preflight, allows `https://rishistyping.github.io` and `localhost:8000`.
+- `OPTIONS *` → CORS preflight, allows `https://rishistyping.github.io`, `localhost:8000`, `127.0.0.1:8000`, and local `file://` testing via `Origin: null`.
+- `GET /health` → lightweight config smoke check.
 - `POST /chat` and `POST /fast` → forward `{messages, model?, temperature?, max_tokens?}` to Bedrock Converse and return a JSON envelope. Default model is `us.anthropic.claude-sonnet-4-6`.
+- Requests include Bedrock `performanceConfig.latency = "optimized"` by default and retry without it if a selected model/profile rejects that optimization.
 - Per-IP token bucket: 12 req/min, burst 20. Adjust in `src/index.js` if needed.
-- Caps request body at 256 KB and message count at 40.
+- Caps request body at 256 KB, message count at 40, and output tokens at 4096.
