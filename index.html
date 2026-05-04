@@ -471,112 +471,79 @@ section + section{ border-top:1px solid var(--rule); }
   gap:12px;
 }
 .theme-toggle{
-  --theme-toggle-height:36px;
   appearance:none;
-  border:1px solid var(--theme-toggle-border);
-  border-radius:var(--r-full);
-  background:var(--theme-toggle-bg);
+  border:none;
+  background:transparent;
   color:var(--theme-toggle-fg);
-  height:var(--theme-toggle-height);
   padding:0;
   font:600 10px/1 var(--sans);
-  letter-spacing:.11em;
+  letter-spacing:.12em;
   text-transform:uppercase;
   cursor:pointer;
-  transition:background-color .24s ease, border-color .24s ease, color .24s ease, transform .2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:opacity .2s ease;
 }
-.theme-toggle:hover{ transform:translateY(-1px); }
+.theme-toggle:hover{ opacity:.82; }
 .theme-toggle:focus-visible{
   outline:2px solid var(--focus-ring);
-  outline-offset:3px;
+  outline-offset:4px;
+  border-radius:var(--r-full);
+}
+.theme-toggle__lbl{
+  color:var(--theme-toggle-fg);
+  transition:color .2s ease;
+  user-select:none;
+}
+.theme-toggle[data-theme-state="dark"]  .theme-toggle__lbl--dark,
+.theme-toggle[data-theme-state="light"] .theme-toggle__lbl--light{
+  color:var(--primary);
 }
 .theme-toggle__track{
   position:relative;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  align-items:center;
-  width:116px;
-  height:100%;
-  padding:3px;
-  isolation:isolate;
-}
-.theme-toggle__track::before{
-  content:"";
-  position:absolute;
-  top:3px; bottom:3px; left:3px;
-  width:calc(50% - 3px);
+  width:52px;
+  height:28px;
+  background:var(--theme-toggle-bg);
+  border:1px solid var(--theme-toggle-border);
   border-radius:var(--r-full);
+  flex-shrink:0;
+  transition:background .24s ease, border-color .24s ease;
+}
+.theme-toggle__thumb{
+  position:absolute;
+  top:3px; left:3px;
+  width:22px; height:22px;
+  border-radius:50%;
   background:var(--theme-toggle-active-bg);
-  box-shadow:0 8px 18px -12px var(--rule-strong);
-  transform:translate3d(0,0,0);
-  transition:transform .24s ease, background-color .24s ease;
-  will-change:transform;
-}
-.theme-toggle[data-theme-state="dark"] .theme-toggle__track::before{
-  transform:translate3d(100%,0,0);
-}
-.theme-toggle__option{
-  position:relative;
-  z-index:1;
+  color:var(--theme-toggle-active-fg);
   display:flex;
   align-items:center;
   justify-content:center;
-  min-width:0;
-  color:var(--theme-toggle-fg);
-  transition:color .2s ease;
+  transition:transform .24s cubic-bezier(.34,1.56,.64,1), background .24s ease;
+  will-change:transform;
+  box-shadow:0 1px 4px rgba(0,0,0,.18);
 }
-.theme-toggle[data-theme-state="light"] .theme-toggle__option--light,
-.theme-toggle[data-theme-state="dark"] .theme-toggle__option--dark{
-  color:var(--theme-toggle-active-fg);
+.theme-toggle[data-theme-state="light"] .theme-toggle__thumb{
+  transform:translateX(24px);
 }
+.theme-toggle__icon{ width:11px; height:11px; display:block; }
+.theme-toggle__icon--light{ display:none; }
+.theme-toggle[data-theme-state="light"] .theme-toggle__icon--dark{ display:none; }
+.theme-toggle[data-theme-state="light"] .theme-toggle__icon--light{ display:block; }
 .mobile-nav .theme-toggle{
   --theme-toggle-bg:rgba(242,238,226,.08);
   --theme-toggle-border:rgba(242,238,226,.18);
   --theme-toggle-fg:rgba(242,238,226,.72);
   --theme-toggle-active-bg:var(--deep-ink);
   --theme-toggle-active-fg:var(--deep-surface);
-  height:48px;
+  gap:12px;
 }
-.mobile-nav .theme-toggle__track{ width:132px; }
+.mobile-nav .theme-toggle__track{ width:60px; height:32px; }
+.mobile-nav .theme-toggle__thumb{ width:26px; height:26px; }
+.mobile-nav .theme-toggle[data-theme-state="light"] .theme-toggle__thumb{ transform:translateX(28px); }
 @media (max-width:520px){
-  .nav__actions .theme-toggle,
-  .nav__actions .cursor-toggle{ display:none; }
-}
-
-/* ── Cursor preference toggle: lets users restore native pointer ── */
-.cursor-toggle{
-  appearance:none;
-  border:1px solid var(--theme-toggle-border);
-  border-radius:var(--r-full);
-  background:var(--theme-toggle-bg);
-  color:var(--theme-toggle-fg);
-  width:36px; height:36px;
-  padding:0;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:background-color .24s ease, border-color .24s ease, color .24s ease, transform .2s ease;
-}
-.cursor-toggle:hover{ transform:translateY(-1px); }
-.cursor-toggle:focus-visible{
-  outline:2px solid var(--focus-ring);
-  outline-offset:3px;
-}
-.cursor-toggle svg{ width:16px; height:16px; display:block; }
-.cursor-toggle .icon-native{ display:none; }
-.cursor-toggle[aria-pressed="true"]{
-  background:var(--theme-toggle-active-bg);
-  color:var(--theme-toggle-active-fg);
-  border-color:var(--theme-toggle-active-bg);
-}
-.cursor-toggle[aria-pressed="true"] .icon-stylized{ display:none; }
-.cursor-toggle[aria-pressed="true"] .icon-native{ display:block; }
-.mobile-nav .cursor-toggle{
-  --theme-toggle-bg:rgba(242,238,226,.08);
-  --theme-toggle-border:rgba(242,238,226,.18);
-  --theme-toggle-fg:rgba(242,238,226,.72);
-  width:48px; height:48px;
+  .nav__actions .theme-toggle{ display:none; }
 }
 
 /* When user opts out, restore native pointer everywhere */
@@ -592,9 +559,7 @@ section + section{ border-top:1px solid var(--rule); }
 
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle,
-  .theme-toggle__track::before,
-  .theme-toggle__option,
-  .cursor-toggle { transition: none !important; }
+  .theme-toggle__thumb { transition: none !important; }
 }
 
 /* ------------------------------------------------------------------
@@ -1727,6 +1692,32 @@ input[type="range"].l-slider::-moz-range-thumb{
 .cell__btn .spin{ display:inline-block; animation:spin 1s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
+/* Inline status pill next to Run button */
+.cell__code-toolbar .actions{ align-items:center; }
+.cell__status{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--sans);
+  font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--secondary);
+  opacity:0;
+  transition:opacity .22s ease, color .22s ease;
+  margin-right:2px; min-height:18px;
+  pointer-events:none; user-select:none;
+}
+.cell__status[data-status]:not([data-status=""]){ opacity:1; }
+.cell__status::before{
+  content:""; width:6px; height:6px; border-radius:50%;
+  background:currentColor; flex:none;
+}
+.cell__status[data-status="running"]{ color:var(--gold); }
+.cell__status[data-status="running"]::before{ animation:pulse 1s infinite; }
+.cell__status[data-status="ok"]{ color:var(--accent); }
+.cell__status[data-status="fail"]{ color:#a4453a; }
+@media (prefers-reduced-motion: reduce){
+  .cell__status[data-status="running"]::before{ animation:none; }
+}
+
 .cell__code pre{
   margin:0; padding:18px 22px;
   font-family:"Geist Mono", ui-monospace, monospace;
@@ -1750,15 +1741,31 @@ input[type="range"].l-slider::-moz-range-thumb{
 .tok-fn{ color:var(--token-builtin); }
 
 .cell__output{
-  padding:22px 24px;
   background:var(--surface);
-  min-height:60px;
+  display:grid; grid-template-rows:0fr;
+  opacity:0;
+  padding:0 24px;
+  overflow:hidden;
+  transition:grid-template-rows .38s cubic-bezier(.4,0,.2,1),
+             opacity .28s ease,
+             padding .28s ease;
+}
+.cell__output > *{ min-height:0; }
+.cell__output.is-open{
+  grid-template-rows:1fr;
+  opacity:1;
+  padding:22px 24px;
+}
+.cell__output-inner{
   display:flex; flex-direction:column; gap:14px;
+  min-height:0;
   font-family:var(--serif-body);
   font-size:15px;
   color:var(--primary);
 }
-.cell__output:empty{ display:none; }
+@media (prefers-reduced-motion: reduce){
+  .cell__output{ transition:none; }
+}
 .cell__output .out-row{
   display:grid; grid-template-columns: 200px 1fr; gap:18px;
   padding:8px 0;
@@ -3045,24 +3052,15 @@ html[data-theme="dark"] .cursor-dot{
       <a href="#references">Refs</a>
     </div>
     <div class="nav__actions">
-      <button class="cursor-toggle" type="button" data-cursor-toggle aria-label="Switch to native cursor" aria-pressed="false" title="Switch to native cursor">
-        <span class="icon-stylized" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
-            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/>
-          </svg>
-        </span>
-        <span class="icon-native" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none">
-            <path d="M3 2 L13 8 L8.5 9 L9.5 13 L7.5 13.5 L6.5 9.5 L4 12 Z" fill="currentColor"/>
-          </svg>
-        </span>
-      </button>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="theme-toggle__lbl theme-toggle__lbl--dark" aria-hidden="true">Dark</span>
         <span class="theme-toggle__track" aria-hidden="true">
-          <span class="theme-toggle__option theme-toggle__option--light">Light</span>
-          <span class="theme-toggle__option theme-toggle__option--dark">Dark</span>
+          <span class="theme-toggle__thumb">
+            <svg class="theme-toggle__icon theme-toggle__icon--dark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/></svg>
+            <svg class="theme-toggle__icon theme-toggle__icon--light" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/></svg>
+          </span>
         </span>
+        <span class="theme-toggle__lbl theme-toggle__lbl--light" aria-hidden="true">Light</span>
       </button>
       <a class="btn btn--primary" href="#abstract">
         Read the paper <span class="arrow">→</span>
@@ -3268,7 +3266,13 @@ html[data-theme="dark"] .cursor-dot{
 
       <div class="equation">
         <span class="label">Boost Family</span>
-        $$ t' = \gamma\,(t - \kappa\, v\, x), \qquad x' = \gamma\,(x - v\, t), \qquad \gamma = \frac{1}{\sqrt{1-\kappa\, v^2}}. $$
+        $$
+        \begin{aligned}
+          t' &= \gamma\,(t - \kappa\, v\, x), \\[4pt]
+          x' &= \gamma\,(x - v\, t), \\[4pt]
+          \gamma &= \frac{1}{\sqrt{1-\kappa\, v^2}}.
+        \end{aligned}
+        $$
       </div>
 
       <p style="max-width:62ch;">
@@ -3991,6 +3995,7 @@ html[data-theme="dark"] .cursor-dot{
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4042,6 +4047,7 @@ show(<span class="tok-str">"[K1, K2]"</span>, bracket(<span class="tok-num">3</s
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4075,6 +4081,7 @@ show(<span class="tok-str">"ad(K1)  — boost, contains κ"</span>, ad(<span cla
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4108,6 +4115,7 @@ show(<span class="tok-str">"Non-degenerate ⇔ det(B) ≠ 0"</span>, factor(B.de
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4149,6 +4157,7 @@ show(<span class="tok-str">"Boost sub-block at κ=0 (rank ↓)"</span>, B_zer[<s
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4191,6 +4200,7 @@ show(<span class="tok-str">"Predicted invariant speed"</span>, <span class="tok-
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4251,6 +4261,7 @@ show(<span class="tok-str">"  κ=0 → metric collapses to dt² alone"</span>,
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4944,7 +4955,32 @@ async function ensurePyodide(){
   return py;
 }
 
-function clearOutput(outEl){ outEl.innerHTML = ''; }
+function clearOutput(outEl){
+  outEl.innerHTML = '';
+  const inner = document.createElement('div');
+  inner.className = 'cell__output-inner';
+  outEl.appendChild(inner);
+  return inner;
+}
+function outputInner(outEl){
+  return outEl.querySelector('.cell__output-inner') || clearOutput(outEl);
+}
+// Slide the output panel closed, then clear contents. Returns a Promise
+// that resolves once the DOM has been wiped (caller may then re-open).
+function resetOutputAnimated(outEl){
+  if (!outEl.classList.contains('is-open')){
+    clearOutput(outEl);
+    return Promise.resolve();
+  }
+  outEl.classList.remove('is-open');
+  return new Promise(resolve => {
+    setTimeout(() => {
+      // If a re-run already reopened the panel, don't wipe its new content.
+      if (!outEl.classList.contains('is-open')) clearOutput(outEl);
+      resolve();
+    }, 220);
+  });
+}
 
 // Escape characters that could break our innerHTML interpolations.
 function htmlEscape(s){
@@ -4981,7 +5017,7 @@ function appendOutputRow(outEl, kind, label, value){
   }
   row.appendChild(lab);
   row.appendChild(val);
-  outEl.appendChild(row);
+  outputInner(outEl).appendChild(row);
 }
 
 function appendOutputError(outEl, msg){
@@ -5003,7 +5039,7 @@ function appendOutputError(outEl, msg){
   val.appendChild(pre);
   row.appendChild(lab);
   row.appendChild(val);
-  outEl.appendChild(row);
+  outputInner(outEl).appendChild(row);
 }
 
 // Strip our syntax-highlight spans so we get clean Python source.
@@ -5027,35 +5063,71 @@ function extractCode(preEl){
   return clone.textContent;
 }
 
+function setCellStatus(cellEl, state, text){
+  const pill = cellEl.querySelector('.cell__status');
+  if (!pill) return;
+  pill.dataset.status = state || '';
+  pill.textContent = text || '';
+}
+
+function buildLiveStdoutRow(outEl){
+  const inner = outputInner(outEl);
+  const row = document.createElement('div');
+  row.className = 'out-row out-row--live';
+  const lab = document.createElement('div');
+  lab.className = 'out-label';
+  lab.textContent = 'stdout';
+  const val = document.createElement('div');
+  val.className = 'out-value';
+  const pre = document.createElement('pre');
+  pre.className = 'text';
+  pre.textContent = '';
+  val.appendChild(pre);
+  row.appendChild(lab);
+  row.appendChild(val);
+  inner.appendChild(row);
+  return { row, pre };
+}
+
 async function runCell(cellEl){
   const codeEl = cellEl.querySelector('.cell__code pre');
   const outEl  = cellEl.querySelector('.cell__output');
   const runBtn = cellEl.querySelector('.cell__btn--run');
-  clearOutput(outEl);
 
-  // Pending row built with DOM nodes (no innerHTML interpolation)
-  const pendingRow = document.createElement('div');
-  pendingRow.className = 'out-row';
-  const pLab = document.createElement('div');
-  pLab.className = 'out-label';
-  pLab.textContent = 'Status';
-  const pVal = document.createElement('div');
-  pVal.className = 'out-value out-pending';
-  pVal.textContent = 'Loading SymPy and executing…';
-  pendingRow.appendChild(pLab);
-  pendingRow.appendChild(pVal);
-  outEl.appendChild(pendingRow);
+  await resetOutputAnimated(outEl);
+  outEl.classList.add('is-open');
+
+  const { row: liveRow, pre: livePre } = buildLiveStdoutRow(outEl);
+
+  setCellStatus(cellEl, 'running', 'Running…');
+  const t0 = performance.now();
 
   const oldLabel = runBtn.innerHTML;
   runBtn.disabled = true;
   runBtn.innerHTML = '<span class="spin">◜</span> Running';
 
+  let py = null;
   try {
-    const py = await ensurePyodide();
+    py = await ensurePyodide();
     const code = extractCode(codeEl);
 
-    // Run user code. Any Python exception becomes a JS PythonError.
-    py.runPython(code);
+    // Stream stdout/stderr to the live row so prints appear as Python emits them.
+    const onChunk = (txt) => {
+      livePre.textContent += String(txt);
+    };
+    py.setStdout({ batched: onChunk });
+    py.setStderr({ batched: onChunk });
+
+    try {
+      // runPythonAsync lets microtasks flush between Python `await` points,
+      // so explicit `await asyncio.sleep(0)` in user code yields visible
+      // streaming. Pure synchronous SymPy code runs the same as runPython.
+      await py.runPythonAsync(code);
+    } finally {
+      // Restore Pyodide's default stdout/stderr (console).
+      py.setStdout({});
+      py.setStderr({});
+    }
 
     // Pull structured outputs. Defend against _outputs being missing
     // (e.g. setup script didn't run) by recreating it on demand.
@@ -5081,17 +5153,29 @@ async function runCell(cellEl){
       throw new Error('Could not parse cell outputs: ' + parseErr.message);
     }
 
-    clearOutput(outEl);
+    // If nothing was streamed, drop the empty stdout row to keep the panel tidy.
+    if (livePre.textContent.length === 0) liveRow.remove();
+
     if (!Array.isArray(outputs) || outputs.length === 0){
-      appendOutputRow(outEl, 'text', 'Result', '(no output — cell ran without calling show())');
+      // No structured outputs and no streamed text → show a friendly placeholder.
+      if (livePre.textContent.length === 0){
+        appendOutputRow(outEl, 'text', 'Result', '(no output — cell ran without calling show())');
+      }
     } else {
       for (const o of outputs){
         appendOutputRow(outEl, o && o.kind, o && o.label, o && o.value);
       }
     }
+
+    const ms = performance.now() - t0;
+    const secs = (ms / 1000).toFixed(ms < 1000 ? 2 : 1);
+    setCellStatus(cellEl, 'ok', `Ran in ${secs}s`);
   } catch (err) {
-    clearOutput(outEl);
+    if (py){
+      try { py.setStdout({}); py.setStderr({}); } catch(_){}
+    }
     appendOutputError(outEl, (err && err.message) ? err.message : String(err));
+    setCellStatus(cellEl, 'fail', 'Error');
     setNbStatus('error', 'A cell threw an error — see output.');
   } finally {
     runBtn.disabled = false;
@@ -5112,8 +5196,9 @@ document.querySelectorAll('.cell').forEach(cell => {
       else if (act === 'reset'){
         pre.innerHTML = cell.dataset.originalHtml;
         const out = cell.querySelector('.cell__output');
-        clearOutput(out);
+        resetOutputAnimated(out);
         cell.classList.remove('is-ok','is-fail','is-running');
+        setCellStatus(cell, '', '');
       }
     });
   });
@@ -5145,6 +5230,7 @@ async function runCellWithStatus(cellEl){
 function addKillingFormMini(cellEl){
   const out = cellEl.querySelector('.cell__output');
   if (!out || out.querySelector('.kf-mini')) return;
+  const inner = outputInner(out);
 
   const wrap = document.createElement('div');
   wrap.style.gridColumn = '1 / -1';
@@ -5165,7 +5251,7 @@ function addKillingFormMini(cellEl){
   row.className = 'out-row';
   row.style.gridTemplateColumns = '1fr';
   row.appendChild(wrap);
-  out.appendChild(row);
+  inner.appendChild(row);
 }
 function buildKfMiniCells(){
   let html = '';
@@ -5459,24 +5545,15 @@ function buildKfMiniCells(){
       <a href="#references"><span>References</span><span class="mnav-sigil" aria-hidden="true">↗</span></a>
     </nav>
     <div class="mobile-nav__cta">
-      <button class="cursor-toggle" type="button" data-cursor-toggle aria-label="Switch to native cursor" aria-pressed="false" title="Switch to native cursor">
-        <span class="icon-stylized" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
-            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/>
-          </svg>
-        </span>
-        <span class="icon-native" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none">
-            <path d="M3 2 L13 8 L8.5 9 L9.5 13 L7.5 13.5 L6.5 9.5 L4 12 Z" fill="currentColor"/>
-          </svg>
-        </span>
-      </button>
       <button class="theme-toggle theme-toggle--mobile" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="theme-toggle__lbl theme-toggle__lbl--dark" aria-hidden="true">Dark</span>
         <span class="theme-toggle__track" aria-hidden="true">
-          <span class="theme-toggle__option theme-toggle__option--light">Light</span>
-          <span class="theme-toggle__option theme-toggle__option--dark">Dark</span>
+          <span class="theme-toggle__thumb">
+            <svg class="theme-toggle__icon theme-toggle__icon--dark" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/></svg>
+            <svg class="theme-toggle__icon theme-toggle__icon--light" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/></svg>
+          </span>
         </span>
+        <span class="theme-toggle__lbl theme-toggle__lbl--light" aria-hidden="true">Light</span>
       </button>
       <a class="btn btn--primary" href="#abstract">Begin reading <span class="arrow">→</span></a>
     </div>
