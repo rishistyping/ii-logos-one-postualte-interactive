@@ -1692,6 +1692,32 @@ input[type="range"].l-slider::-moz-range-thumb{
 .cell__btn .spin{ display:inline-block; animation:spin 1s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
+/* Inline status pill next to Run button */
+.cell__code-toolbar .actions{ align-items:center; }
+.cell__status{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--sans);
+  font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--secondary);
+  opacity:0;
+  transition:opacity .22s ease, color .22s ease;
+  margin-right:2px; min-height:18px;
+  pointer-events:none; user-select:none;
+}
+.cell__status[data-status]:not([data-status=""]){ opacity:1; }
+.cell__status::before{
+  content:""; width:6px; height:6px; border-radius:50%;
+  background:currentColor; flex:none;
+}
+.cell__status[data-status="running"]{ color:var(--gold); }
+.cell__status[data-status="running"]::before{ animation:pulse 1s infinite; }
+.cell__status[data-status="ok"]{ color:var(--accent); }
+.cell__status[data-status="fail"]{ color:#a4453a; }
+@media (prefers-reduced-motion: reduce){
+  .cell__status[data-status="running"]::before{ animation:none; }
+}
+
 .cell__code pre{
   margin:0; padding:18px 22px;
   font-family:"Geist Mono", ui-monospace, monospace;
@@ -1715,15 +1741,31 @@ input[type="range"].l-slider::-moz-range-thumb{
 .tok-fn{ color:var(--token-builtin); }
 
 .cell__output{
-  padding:22px 24px;
   background:var(--surface);
-  min-height:60px;
+  display:grid; grid-template-rows:0fr;
+  opacity:0;
+  padding:0 24px;
+  overflow:hidden;
+  transition:grid-template-rows .38s cubic-bezier(.4,0,.2,1),
+             opacity .28s ease,
+             padding .28s ease;
+}
+.cell__output > *{ min-height:0; }
+.cell__output.is-open{
+  grid-template-rows:1fr;
+  opacity:1;
+  padding:22px 24px;
+}
+.cell__output-inner{
   display:flex; flex-direction:column; gap:14px;
+  min-height:0;
   font-family:var(--serif-body);
   font-size:15px;
   color:var(--primary);
 }
-.cell__output:empty{ display:none; }
+@media (prefers-reduced-motion: reduce){
+  .cell__output{ transition:none; }
+}
 .cell__output .out-row{
   display:grid; grid-template-columns: 200px 1fr; gap:18px;
   padding:8px 0;
@@ -3953,6 +3995,7 @@ html[data-theme="dark"] .cursor-dot{
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4004,6 +4047,7 @@ show(<span class="tok-str">"[K1, K2]"</span>, bracket(<span class="tok-num">3</s
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4037,6 +4081,7 @@ show(<span class="tok-str">"ad(K1)  — boost, contains κ"</span>, ad(<span cla
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4070,6 +4115,7 @@ show(<span class="tok-str">"Non-degenerate ⇔ det(B) ≠ 0"</span>, factor(B.de
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4111,6 +4157,7 @@ show(<span class="tok-str">"Boost sub-block at κ=0 (rank ↓)"</span>, B_zer[<s
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4153,6 +4200,7 @@ show(<span class="tok-str">"Predicted invariant speed"</span>, <span class="tok-
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4213,6 +4261,7 @@ show(<span class="tok-str">"  κ=0 → metric collapses to dt² alone"</span>,
           <div class="cell__code-toolbar">
             <span class="lang">python · sympy</span>
             <div class="actions">
+              <span class="cell__status" data-status="" aria-live="polite" aria-atomic="true"></span>
               <button class="cell__btn" data-act="reset">Reset</button>
               <button class="cell__btn cell__btn--run" data-act="run">▷ Run</button>
             </div>
@@ -4906,7 +4955,32 @@ async function ensurePyodide(){
   return py;
 }
 
-function clearOutput(outEl){ outEl.innerHTML = ''; }
+function clearOutput(outEl){
+  outEl.innerHTML = '';
+  const inner = document.createElement('div');
+  inner.className = 'cell__output-inner';
+  outEl.appendChild(inner);
+  return inner;
+}
+function outputInner(outEl){
+  return outEl.querySelector('.cell__output-inner') || clearOutput(outEl);
+}
+// Slide the output panel closed, then clear contents. Returns a Promise
+// that resolves once the DOM has been wiped (caller may then re-open).
+function resetOutputAnimated(outEl){
+  if (!outEl.classList.contains('is-open')){
+    clearOutput(outEl);
+    return Promise.resolve();
+  }
+  outEl.classList.remove('is-open');
+  return new Promise(resolve => {
+    setTimeout(() => {
+      // If a re-run already reopened the panel, don't wipe its new content.
+      if (!outEl.classList.contains('is-open')) clearOutput(outEl);
+      resolve();
+    }, 220);
+  });
+}
 
 // Escape characters that could break our innerHTML interpolations.
 function htmlEscape(s){
@@ -4943,7 +5017,7 @@ function appendOutputRow(outEl, kind, label, value){
   }
   row.appendChild(lab);
   row.appendChild(val);
-  outEl.appendChild(row);
+  outputInner(outEl).appendChild(row);
 }
 
 function appendOutputError(outEl, msg){
@@ -4965,7 +5039,7 @@ function appendOutputError(outEl, msg){
   val.appendChild(pre);
   row.appendChild(lab);
   row.appendChild(val);
-  outEl.appendChild(row);
+  outputInner(outEl).appendChild(row);
 }
 
 // Strip our syntax-highlight spans so we get clean Python source.
@@ -4989,35 +5063,71 @@ function extractCode(preEl){
   return clone.textContent;
 }
 
+function setCellStatus(cellEl, state, text){
+  const pill = cellEl.querySelector('.cell__status');
+  if (!pill) return;
+  pill.dataset.status = state || '';
+  pill.textContent = text || '';
+}
+
+function buildLiveStdoutRow(outEl){
+  const inner = outputInner(outEl);
+  const row = document.createElement('div');
+  row.className = 'out-row out-row--live';
+  const lab = document.createElement('div');
+  lab.className = 'out-label';
+  lab.textContent = 'stdout';
+  const val = document.createElement('div');
+  val.className = 'out-value';
+  const pre = document.createElement('pre');
+  pre.className = 'text';
+  pre.textContent = '';
+  val.appendChild(pre);
+  row.appendChild(lab);
+  row.appendChild(val);
+  inner.appendChild(row);
+  return { row, pre };
+}
+
 async function runCell(cellEl){
   const codeEl = cellEl.querySelector('.cell__code pre');
   const outEl  = cellEl.querySelector('.cell__output');
   const runBtn = cellEl.querySelector('.cell__btn--run');
-  clearOutput(outEl);
 
-  // Pending row built with DOM nodes (no innerHTML interpolation)
-  const pendingRow = document.createElement('div');
-  pendingRow.className = 'out-row';
-  const pLab = document.createElement('div');
-  pLab.className = 'out-label';
-  pLab.textContent = 'Status';
-  const pVal = document.createElement('div');
-  pVal.className = 'out-value out-pending';
-  pVal.textContent = 'Loading SymPy and executing…';
-  pendingRow.appendChild(pLab);
-  pendingRow.appendChild(pVal);
-  outEl.appendChild(pendingRow);
+  await resetOutputAnimated(outEl);
+  outEl.classList.add('is-open');
+
+  const { row: liveRow, pre: livePre } = buildLiveStdoutRow(outEl);
+
+  setCellStatus(cellEl, 'running', 'Running…');
+  const t0 = performance.now();
 
   const oldLabel = runBtn.innerHTML;
   runBtn.disabled = true;
   runBtn.innerHTML = '<span class="spin">◜</span> Running';
 
+  let py = null;
   try {
-    const py = await ensurePyodide();
+    py = await ensurePyodide();
     const code = extractCode(codeEl);
 
-    // Run user code. Any Python exception becomes a JS PythonError.
-    py.runPython(code);
+    // Stream stdout/stderr to the live row so prints appear as Python emits them.
+    const onChunk = (txt) => {
+      livePre.textContent += String(txt);
+    };
+    py.setStdout({ batched: onChunk });
+    py.setStderr({ batched: onChunk });
+
+    try {
+      // runPythonAsync lets microtasks flush between Python `await` points,
+      // so explicit `await asyncio.sleep(0)` in user code yields visible
+      // streaming. Pure synchronous SymPy code runs the same as runPython.
+      await py.runPythonAsync(code);
+    } finally {
+      // Restore Pyodide's default stdout/stderr (console).
+      py.setStdout({});
+      py.setStderr({});
+    }
 
     // Pull structured outputs. Defend against _outputs being missing
     // (e.g. setup script didn't run) by recreating it on demand.
@@ -5043,17 +5153,29 @@ async function runCell(cellEl){
       throw new Error('Could not parse cell outputs: ' + parseErr.message);
     }
 
-    clearOutput(outEl);
+    // If nothing was streamed, drop the empty stdout row to keep the panel tidy.
+    if (livePre.textContent.length === 0) liveRow.remove();
+
     if (!Array.isArray(outputs) || outputs.length === 0){
-      appendOutputRow(outEl, 'text', 'Result', '(no output — cell ran without calling show())');
+      // No structured outputs and no streamed text → show a friendly placeholder.
+      if (livePre.textContent.length === 0){
+        appendOutputRow(outEl, 'text', 'Result', '(no output — cell ran without calling show())');
+      }
     } else {
       for (const o of outputs){
         appendOutputRow(outEl, o && o.kind, o && o.label, o && o.value);
       }
     }
+
+    const ms = performance.now() - t0;
+    const secs = (ms / 1000).toFixed(ms < 1000 ? 2 : 1);
+    setCellStatus(cellEl, 'ok', `Ran in ${secs}s`);
   } catch (err) {
-    clearOutput(outEl);
+    if (py){
+      try { py.setStdout({}); py.setStderr({}); } catch(_){}
+    }
     appendOutputError(outEl, (err && err.message) ? err.message : String(err));
+    setCellStatus(cellEl, 'fail', 'Error');
     setNbStatus('error', 'A cell threw an error — see output.');
   } finally {
     runBtn.disabled = false;
@@ -5074,8 +5196,9 @@ document.querySelectorAll('.cell').forEach(cell => {
       else if (act === 'reset'){
         pre.innerHTML = cell.dataset.originalHtml;
         const out = cell.querySelector('.cell__output');
-        clearOutput(out);
+        resetOutputAnimated(out);
         cell.classList.remove('is-ok','is-fail','is-running');
+        setCellStatus(cell, '', '');
       }
     });
   });
@@ -5107,6 +5230,7 @@ async function runCellWithStatus(cellEl){
 function addKillingFormMini(cellEl){
   const out = cellEl.querySelector('.cell__output');
   if (!out || out.querySelector('.kf-mini')) return;
+  const inner = outputInner(out);
 
   const wrap = document.createElement('div');
   wrap.style.gridColumn = '1 / -1';
@@ -5127,7 +5251,7 @@ function addKillingFormMini(cellEl){
   row.className = 'out-row';
   row.style.gridTemplateColumns = '1fr';
   row.appendChild(wrap);
-  out.appendChild(row);
+  inner.appendChild(row);
 }
 function buildKfMiniCells(){
   let html = '';
