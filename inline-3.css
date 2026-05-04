@@ -266,6 +266,7 @@ a:focus-visible{ border-radius:2px; }
   width: 10px; height: 10px;
   border-radius: 50%;
   background: var(--primary);
+  box-shadow: 0 0 6px 2px rgba(15,35,63,.55), 0 0 18px 4px rgba(15,35,63,.28);
   pointer-events: none;
   z-index: 9999;
   will-change: transform;
@@ -275,6 +276,7 @@ a:focus-visible{ border-radius:2px; }
     width  .28s cubic-bezier(.34,1.56,.64,1),
     height .28s cubic-bezier(.34,1.56,.64,1),
     background .22s ease,
+    box-shadow .22s ease,
     opacity .18s ease;
 }
 
@@ -282,12 +284,14 @@ a:focus-visible{ border-radius:2px; }
 .cursor-dot.s-link {
   width: 16px; height: 16px;
   background: var(--accent);
+  box-shadow: 0 0 8px 3px rgba(47,149,166,.65), 0 0 24px 6px rgba(47,149,166,.30);
 }
 
 /* button — accent, bigger */
 .cursor-dot.s-btn {
   width: 22px; height: 22px;
   background: var(--accent);
+  box-shadow: 0 0 10px 4px rgba(47,149,166,.60), 0 0 28px 8px rgba(47,149,166,.25);
   opacity: .82;
 }
 
@@ -295,6 +299,7 @@ a:focus-visible{ border-radius:2px; }
 .cursor-dot.s-gold {
   width: 22px; height: 22px;
   background: var(--gold);
+  box-shadow: 0 0 10px 4px rgba(212,175,55,.65), 0 0 28px 8px rgba(212,175,55,.28);
   opacity: .85;
 }
 
@@ -302,6 +307,7 @@ a:focus-visible{ border-radius:2px; }
 .cursor-dot.s-kappa {
   width: 18px; height: 18px;
   background: var(--primary);
+  box-shadow: 0 0 8px 3px rgba(15,35,63,.55), 0 0 22px 6px rgba(15,35,63,.25);
   opacity: .75;
 }
 
@@ -309,12 +315,14 @@ a:focus-visible{ border-radius:2px; }
 .cursor-dot.s-text {
   width: 5px; height: 5px;
   background: var(--accent);
+  box-shadow: 0 0 5px 2px rgba(47,149,166,.55), 0 0 14px 4px rgba(47,149,166,.22);
 }
 
 /* slider / grab */
 .cursor-dot.s-grab {
   width: 14px; height: 14px;
   background: var(--accent);
+  box-shadow: 0 0 7px 3px rgba(47,149,166,.55), 0 0 20px 5px rgba(47,149,166,.22);
   opacity: .7;
 }
 
@@ -322,6 +330,7 @@ a:focus-visible{ border-radius:2px; }
 .cursor-dot.s-lab {
   width: 12px; height: 12px;
   background: var(--accent);
+  box-shadow: 0 0 7px 3px rgba(47,149,166,.50), 0 0 18px 5px rgba(47,149,166,.20);
   opacity: .65;
 }
 
@@ -329,6 +338,7 @@ a:focus-visible{ border-radius:2px; }
 .cursor-dot.s-down {
   width: 6px; height: 6px;
   background: var(--accent);
+  box-shadow: 0 0 5px 2px rgba(47,149,166,.70), 0 0 14px 4px rgba(47,149,166,.30);
   opacity: .9;
 }
 
@@ -529,7 +539,7 @@ a:focus-visible{ border-radius:2px; }
   .marquee-track { animation: none; }
   #grain { animation: none; display: none; }
   .s-head.reveal { clip-path: none; }
-  .cursor-dot { transition: none; }
+  .cursor-dot { transition: none; box-shadow: none; }
 }
 
 /* ---- Mobile hero responsive tightening ---- */
