@@ -1690,7 +1690,7 @@ input[type="range"].l-slider::-moz-range-thumb{
 }
 .cell__code{
   position:relative;
-  background: #FBF8EE;
+  background:var(--code-surface);
   border-top:1px solid var(--rule);
   border-bottom:1px solid var(--rule);
 }
@@ -1698,7 +1698,7 @@ input[type="range"].l-slider::-moz-range-thumb{
   display:flex; justify-content:space-between; align-items:center;
   padding:10px 18px;
   border-bottom:1px solid var(--rule);
-  background:rgba(15,35,63,.03);
+  background:var(--code-toolbar);
 }
 .cell__code-toolbar .lang{
   font-family:"Geist Mono", monospace;
@@ -1739,7 +1739,7 @@ input[type="range"].l-slider::-moz-range-thumb{
 }
 .cell__code pre[contenteditable="true"]:focus{
   outline:none;
-  background:rgba(47,149,166,.04);
+  background:var(--diagram-accent-wash);
 }
 /* simple syntax tinting via spans */
 .tok-kw{ color:var(--token-keyword); }
@@ -1747,7 +1747,7 @@ input[type="range"].l-slider::-moz-range-thumb{
 .tok-num{ color:var(--token-number); }
 .tok-str{ color:var(--token-string); }
 .tok-com{ color:var(--secondary); font-style:italic; }
-.tok-fn{ color:#0F233F; }
+.tok-fn{ color:var(--token-builtin); }
 
 .cell__output{
   padding:22px 24px;
