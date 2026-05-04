@@ -7236,7 +7236,9 @@ input.addEventListener('input', () => {
   input.style.height = Math.min(input.scrollHeight, 120) + 'px';
 });
 input.addEventListener('keydown', e => {
-  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') form.requestSubmit();
+  if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+  e.preventDefault();
+  if (!busy && input.value.trim() && hasChatBackend()) form.requestSubmit();
 });
 
 form.addEventListener('submit', e => {
