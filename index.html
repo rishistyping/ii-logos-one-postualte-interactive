@@ -257,6 +257,7 @@ html[data-theme="dark"]{
 *,*::before,*::after{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 html{
+  overflow-x:hidden;
   scroll-behavior:smooth;
   /* Anchor jumps land below the 80px sticky nav, not under it */
   scroll-padding-top:96px;
@@ -665,6 +666,7 @@ section + section{ border-top:1px solid var(--rule); }
   line-height:0.94;
   letter-spacing:-0.035em;
   margin:0 0 28px;
+  overflow-wrap:break-word;
 }
 .hero h1 .accent-italic{
   font-style:italic; font-weight:400;
@@ -3255,7 +3257,8 @@ html[data-theme="dark"] .cursor-dot{
 /* ── 2. MARQUEE TICKER ── */
 .marquee-strip {
   width: 100%;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   background: var(--surface);
