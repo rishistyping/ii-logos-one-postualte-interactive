@@ -266,7 +266,7 @@ body{
 }
 /* Kill the 300ms double-tap zoom delay on interactive controls */
 button, a.btn, .theme-toggle, .kappa-dial button, .cell__btn,
-.nb-runall__btn, .back-to-top, input[type="range"]{
+.nb-runall__btn, .chat-fab, input[type="range"]{
   touch-action:manipulation;
 }
 body{
@@ -2356,7 +2356,7 @@ section + section.in{
 
 <style>
 /* ================================================================
-   UX LAYER — back-to-top, tooltips, accessibility
+   UX LAYER — chat fab, tooltips, accessibility
    ================================================================ */
 
 /* Skip-to-content link (screen-readers + keyboard users) */
@@ -2381,28 +2381,180 @@ section + section.in{
 .btn:focus-visible{ outline-offset:4px; }
 a:focus-visible{ border-radius:2px; }
 
-/* ---- Back-to-top floating button ---- */
-.back-to-top{
+/* ---- Chat-with-paper floating button ---- */
+.chat-fab{
   position:fixed; bottom:32px; right:32px; z-index:80;
-  width:44px; height:44px; border-radius:var(--r-full);
+  width:56px; height:56px; border-radius:var(--r-full);
   background:var(--primary);
   color:var(--inverse);
   border:none; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
-  box-shadow:0 4px 20px -8px rgba(15,35,63,.50), 0 0 0 1px rgba(15,35,63,.06);
-  opacity:0; visibility:hidden;
-  transform:translateY(14px) scale(.9);
-  transition:opacity .35s ease, visibility .35s ease, transform .35s cubic-bezier(.34,1.56,.64,1), background .2s ease, box-shadow .2s ease;
+  box-shadow:0 6px 24px -10px rgba(15,35,63,.55), 0 0 0 1px rgba(15,35,63,.06);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), background .2s ease, box-shadow .2s ease;
 }
-.back-to-top.is-visible{
-  opacity:1; visibility:visible; transform:none;
-}
-.back-to-top:hover{
+.chat-fab:hover{
   background:var(--primary-hover);
-  transform:translateY(-2px);
-  box-shadow:0 10px 32px -10px rgba(15,35,63,.55);
+  transform:translateY(-2px) scale(1.04);
+  box-shadow:0 14px 40px -12px rgba(15,35,63,.55), 0 0 0 1px var(--accent);
 }
-@media (max-width:480px){ .back-to-top{ bottom:20px; right:16px; } }
+.chat-fab[aria-expanded="true"]{
+  background:var(--accent);
+  transform:scale(.94);
+  box-shadow:0 4px 16px -6px rgba(47,149,166,.6);
+}
+@media (max-width:480px){ .chat-fab{ bottom:20px; right:16px; width:52px; height:52px; } }
+
+/* ---- Chat drawer (right side, full height) ---- */
+.chat-drawer{
+  position:fixed; top:0; right:0; bottom:0; z-index:90;
+  width:clamp(360px, 36vw, 480px);
+  background:var(--surface);
+  color:var(--primary);
+  border-left:1px solid var(--rule-strong);
+  display:flex; flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .42s cubic-bezier(.2,.7,.2,1);
+  box-shadow:-12px 0 48px -24px rgba(15,35,63,.32);
+}
+.chat-drawer.is-open{ transform:translateX(0); }
+@media (max-width:560px){ .chat-drawer{ width:100vw; border-left:none; } }
+
+.chat-drawer__head{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:12px;
+  padding:20px 22px 16px;
+  border-bottom:1px solid var(--rule);
+  flex-shrink:0;
+}
+.chat-drawer__eyebrow{
+  font-family:var(--sans);
+  font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--secondary);
+  margin-bottom:4px;
+}
+.chat-drawer__title{
+  font-family:var(--serif-caslon);
+  font-size:22px; font-weight:400; line-height:1.1;
+  color:var(--primary);
+  margin:0;
+}
+.chat-drawer__close{
+  width:32px; height:32px; border-radius:50%;
+  background:transparent;
+  border:1px solid var(--rule-strong);
+  color:var(--secondary);
+  font-family:var(--sans);
+  font-size:20px; line-height:1;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.chat-drawer__close:hover{
+  background:var(--surface-elevated);
+  color:var(--primary);
+  border-color:var(--primary);
+}
+
+.chat-drawer__status{
+  padding:14px 22px;
+  border-bottom:1px solid var(--rule);
+  background:var(--surface-elevated);
+  flex-shrink:0;
+}
+.chat-drawer__status[hidden]{ display:none; }
+.chat-drawer__progress{
+  height:3px; border-radius:2px; overflow:hidden;
+  background:var(--rule);
+  margin-bottom:8px;
+}
+.chat-drawer__progress-bar{
+  display:block; height:100%; width:0%;
+  background:linear-gradient(90deg, var(--accent), var(--sky));
+  transition:width .25s ease;
+}
+.chat-drawer__status-text{
+  font-family:var(--serif-body);
+  font-size:13px; line-height:1.45;
+  color:var(--secondary);
+  margin:0;
+}
+
+.chat-drawer__messages{
+  list-style:none;
+  margin:0; padding:18px 22px;
+  flex:1; overflow-y:auto;
+  display:flex; flex-direction:column; gap:14px;
+  scroll-behavior:smooth;
+}
+.chat-msg{
+  font-family:var(--serif-body);
+  font-size:14.5px; line-height:1.6;
+  padding:12px 14px; border-radius:var(--r-sm);
+  white-space:pre-wrap; word-wrap:break-word;
+  max-width:100%;
+}
+.chat-msg--user{
+  background:var(--surface-elevated);
+  color:var(--primary);
+  align-self:flex-end;
+  max-width:88%;
+}
+.chat-msg--assistant{
+  background:transparent;
+  color:var(--primary);
+  border-left:2px solid var(--accent);
+  padding-left:14px;
+  border-radius:0;
+}
+.chat-msg--review{
+  border-left-color:var(--gold);
+}
+
+.chat-drawer__form{
+  display:flex; align-items:flex-end; gap:8px;
+  padding:14px 18px 18px;
+  border-top:1px solid var(--rule);
+  flex-shrink:0;
+}
+#chat-input{
+  flex:1;
+  resize:none;
+  font-family:var(--serif-body);
+  font-size:14px; line-height:1.5;
+  padding:10px 12px;
+  border-radius:var(--r-sm);
+  border:1px solid var(--rule-strong);
+  background:var(--surface);
+  color:var(--primary);
+  min-height:44px; max-height:120px;
+  transition:border-color .15s ease;
+}
+#chat-input:focus{
+  outline:none;
+  border-color:var(--accent);
+}
+#chat-send{
+  width:44px; height:44px; border-radius:50%;
+  background:var(--primary);
+  color:var(--inverse);
+  border:none;
+  font-family:var(--sans);
+  font-size:18px; line-height:1;
+  cursor:pointer;
+  flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s ease, opacity .15s ease;
+}
+#chat-send:hover:not(:disabled){ background:var(--primary-hover); }
+#chat-send:disabled{ opacity:.4; cursor:not-allowed; }
+
+@media (prefers-reduced-motion: reduce){
+  .chat-fab{ transition:none; }
+  .chat-drawer{ transition:none; }
+  .chat-drawer__progress-bar{ transition:none; }
+  .chat-drawer__messages{ scroll-behavior:auto; }
+}
 
 /* ---- Citation tooltip ---- */
 .cite-tooltip{
@@ -5609,13 +5761,43 @@ function buildKfMiniCells(){
 </script>
 
 <!-- ============================================================
-     BACK TO TOP + KEYBOARD TOAST
+     CHAT-WITH-PAPER FAB + DRAWER + KEYBOARD TOAST
 ============================================================== -->
-<button class="back-to-top" id="back-to-top" aria-label="Back to top">
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path d="M8 13V3M3 7l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<button class="chat-fab" id="chat-fab" aria-label="Chat with the paper" aria-controls="chat-drawer" aria-expanded="false">
+  <svg viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
+    <!-- Wireframe head silhouette -->
+    <path d="M16 4c5 0 9 4 9 9v6c0 4-3 7-7 7h-4c-4 0-7-3-7-7v-6c0-5 4-9 9-9z"/>
+    <!-- Low-poly facet lines -->
+    <path d="M7 16h18M9 12h14M9 20h14M16 4v22M11 7l5 4 5-4M11 25l5-4 5 4" opacity=".5" stroke-width="0.7"/>
+    <!-- Glowing eye accent -->
+    <path d="M11 16h-3M24 16h-3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="16" cy="16" r="1.6" fill="var(--accent)" stroke="none"/>
   </svg>
 </button>
+
+<aside class="chat-drawer" id="chat-drawer" aria-hidden="true" aria-labelledby="chat-drawer-title">
+  <header class="chat-drawer__head">
+    <div>
+      <div class="chat-drawer__eyebrow">Chat with</div>
+      <h3 id="chat-drawer-title" class="chat-drawer__title">One Postulate</h3>
+    </div>
+    <button type="button" class="chat-drawer__close" id="chat-drawer-close" aria-label="Close chat">×</button>
+  </header>
+
+  <div class="chat-drawer__status" id="chat-status" hidden>
+    <div class="chat-drawer__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+      <span class="chat-drawer__progress-bar" id="chat-progress-bar"></span>
+    </div>
+    <p class="chat-drawer__status-text" id="chat-status-text">Loading model — this only happens once per browser.</p>
+  </div>
+
+  <ol class="chat-drawer__messages" id="chat-messages" aria-live="polite"></ol>
+
+  <form class="chat-drawer__form" id="chat-form" autocomplete="off">
+    <textarea id="chat-input" rows="1" placeholder="Ask about the paper…" aria-label="Your question"></textarea>
+    <button type="submit" id="chat-send" disabled aria-label="Send">↵</button>
+  </form>
+</aside>
 
 <div class="kbd-toast" id="kbd-toast" role="status" aria-live="polite"></div>
 
@@ -6004,23 +6186,8 @@ function buildKfMiniCells(){
 ============================================================== -->
 <script>
 /* ================================================================
-   UX LAYER — back-to-top, citation tooltips, keyboard nav
+   UX LAYER — chat fab, citation tooltips, keyboard nav
    ================================================================ */
-
-/* ---- Back-to-top button ---- */
-(function(){
-  const btn = document.getElementById('back-to-top');
-  if (!btn) return;
-  let vis = false;
-  window.addEventListener('scroll', () => {
-    const should = window.scrollY > window.innerHeight * 0.4;
-    if (should !== vis){
-      vis = should;
-      btn.classList.toggle('is-visible', vis);
-    }
-  }, { passive:true });
-  btn.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
-})();
 
 /* ---- Citation tooltips ---- */
 (function(){
@@ -6308,6 +6475,243 @@ function buildKfMiniCells(){
 
   apply(getSaved(), false);
 })();
+</script>
+
+<!-- ============================================================
+     CHAT WITH THE PAPER — in-browser LLM via @mlc-ai/web-llm
+     Loads on first drawer-open. Runs locally via WebGPU.
+============================================================== -->
+<script type="module">
+const fab    = document.getElementById('chat-fab');
+const drawer = document.getElementById('chat-drawer');
+const closeBtn = document.getElementById('chat-drawer-close');
+const form   = document.getElementById('chat-form');
+const input  = document.getElementById('chat-input');
+const send   = document.getElementById('chat-send');
+const list   = document.getElementById('chat-messages');
+const status = document.getElementById('chat-status');
+const sText  = document.getElementById('chat-status-text');
+const sBar   = document.getElementById('chat-progress-bar');
+
+const MODEL_ID = 'Llama-3.2-1B-Instruct-q4f16_1-MLC';
+
+let engine = null, paperText = '', booted = false, busy = false;
+
+async function fetchPaper(){
+  if (paperText) return paperText;
+  const r = await fetch('paper/one-postulate.txt');
+  paperText = await r.text();
+  return paperText;
+}
+
+/* Master review prompt — primes the model on first open. */
+const MASTER_PROMPT = [
+  'We are going to do an exhaustive review of this paper.',
+  'First state the goal of this paper.',
+  'Then in detail describe its methodology.',
+  'Do you accept the methodology as a valid one.',
+  'If so, step by step go through the proof tree checking for accuracy',
+  'and if it adheres to the methodology, rating out of 10.',
+  'If there are no math errors and it follows the methodology you cannot',
+  'subtract points without good reason. State the specific reason.',
+  'Compare it to a normal physics paper grading.',
+  'You can make a note of any presentation issues and suggest precise',
+  'fixes, but not dock points.',
+  '',
+  'CRITICAL RULE: Before rating any step below 7, you must quote the',
+  'exact sentence from the paper that contains the error. Copy it',
+  "verbatim. If you cannot find the sentence, reread the surrounding",
+  'paragraph and check whether the paper already addresses your',
+  'objection. If the paper explicitly addresses it, you must explain why',
+  "the paper's response is insufficient rather than repeating an",
+  'objection the paper has already answered.',
+  '',
+  "CRITICAL RULE: Before concluding that a section's argument fails,",
+  'list every argument the paper makes in that section. Engage with each',
+  'one individually. Do not dismiss a section based on one argument if',
+  'the section contains multiple independent arguments.',
+  '',
+  'CRITICAL RULE: If you claim the paper conflates X with Y, quote the',
+  'sentence where the conflation occurs. If instead the paper explicitly',
+  'distinguishes X from Y, you must acknowledge this and revise your',
+  'assessment.',
+  '',
+  'If there appears to be an issue double check against the paper and',
+  'logic before moving on.',
+  '',
+  'When completed do one final check.',
+  '',
+  'Then review and do a rating on whether the paper succeeds in its',
+  'stated goal according to the methodology.'
+].join('\n');
+
+function buildSystemPrompt(text){
+  return [
+    'You are a rigorous physics paper reviewer. Your task is laid out',
+    'below. The full paper text follows after the instructions; treat it',
+    'as the authoritative source. Quote verbatim when you cite a passage.',
+    '',
+    MASTER_PROMPT,
+    '',
+    '===== PAPER =====',
+    text,
+    '===== END PAPER ====='
+  ].join('\n');
+}
+
+function appendMessage(role, content){
+  const li = document.createElement('li');
+  li.className = 'chat-msg chat-msg--' + role;
+  li.textContent = content;
+  list.appendChild(li);
+  list.scrollTop = list.scrollHeight;
+  return li;
+}
+
+let systemMessage = null;
+
+async function boot(){
+  if (booted) return engine;
+  booted = true;
+
+  if (!('gpu' in navigator)){
+    status.hidden = false;
+    sBar.style.width = '0%';
+    sText.textContent = 'WebGPU is required to run the local model. Try Chrome or Edge 113+ on a desktop with a modern GPU.';
+    return null;
+  }
+
+  try {
+    status.hidden = false;
+    sText.textContent = 'Loading web-llm runtime…';
+    const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm');
+
+    sText.textContent = 'Fetching paper text…';
+    const text = await fetchPaper();
+
+    sText.textContent = 'Preparing model — first run downloads ~700 MB and caches it locally.';
+    engine = await CreateMLCEngine(MODEL_ID, {
+      initProgressCallback: (p) => {
+        if (p && p.text) sText.textContent = p.text;
+        if (p && typeof p.progress === 'number') sBar.style.width = (p.progress * 100).toFixed(1) + '%';
+      }
+    });
+
+    systemMessage = { role: 'system', content: buildSystemPrompt(text) };
+    status.hidden = true;
+    send.disabled = !input.value.trim();
+
+    /* Auto-kick the master review on first ready. */
+    await runReview();
+    return engine;
+  } catch (err){
+    status.hidden = false;
+    sBar.style.width = '0%';
+    sText.textContent = 'Could not start the model: ' + (err && err.message ? err.message : err);
+    booted = false;  /* allow retry on next open */
+    return null;
+  }
+}
+
+async function runReview(){
+  busy = true;
+  send.disabled = true;
+  const out = appendMessage('assistant', '');
+  out.classList.add('chat-msg--review');
+  try {
+    const stream = await engine.chat.completions.create({
+      messages: [
+        systemMessage,
+        { role: 'user', content: 'Please begin the review now.' }
+      ],
+      stream: true,
+      temperature: 0.3,
+      max_tokens: 2048
+    });
+    for await (const chunk of stream){
+      const delta = chunk.choices?.[0]?.delta?.content || '';
+      if (delta){ out.textContent += delta; list.scrollTop = list.scrollHeight; }
+    }
+  } catch (err){
+    out.textContent = '⚠ ' + (err && err.message ? err.message : err);
+  } finally {
+    busy = false;
+    send.disabled = !input.value.trim();
+  }
+}
+
+async function ask(prompt){
+  if (busy || !engine) return;
+  busy = true;
+  send.disabled = true;
+  appendMessage('user', prompt);
+  const out = appendMessage('assistant', '');
+  try {
+    /* Reconstruct conversation history from DOM for stateless engines. */
+    const history = [...list.querySelectorAll('.chat-msg')]
+      .slice(0, -1)  /* drop the empty assistant placeholder */
+      .map(el => ({
+        role: el.classList.contains('chat-msg--user') ? 'user' : 'assistant',
+        content: el.textContent
+      }));
+    const stream = await engine.chat.completions.create({
+      messages: [systemMessage, ...history],
+      stream: true,
+      temperature: 0.4,
+      max_tokens: 1024
+    });
+    for await (const chunk of stream){
+      const delta = chunk.choices?.[0]?.delta?.content || '';
+      if (delta){ out.textContent += delta; list.scrollTop = list.scrollHeight; }
+    }
+  } catch (err){
+    out.textContent = '⚠ ' + (err && err.message ? err.message : err);
+  } finally {
+    busy = false;
+    send.disabled = !input.value.trim();
+  }
+}
+
+function openDrawer(){
+  drawer.classList.add('is-open');
+  drawer.setAttribute('aria-hidden', 'false');
+  fab.setAttribute('aria-expanded', 'true');
+  boot();
+}
+function closeDrawer(){
+  drawer.classList.remove('is-open');
+  drawer.setAttribute('aria-hidden', 'true');
+  fab.setAttribute('aria-expanded', 'false');
+}
+
+fab.addEventListener('click', () => {
+  if (drawer.classList.contains('is-open')) closeDrawer();
+  else openDrawer();
+});
+closeBtn.addEventListener('click', closeDrawer);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && drawer.classList.contains('is-open')) closeDrawer();
+});
+
+input.addEventListener('input', () => {
+  send.disabled = busy || !input.value.trim() || !engine;
+  /* Auto-grow textarea */
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+});
+input.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') form.requestSubmit();
+});
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const v = input.value.trim();
+  if (!v || busy || !engine) return;
+  input.value = '';
+  input.style.height = 'auto';
+  ask(v);
+});
 </script>
 </body>
 </html>
