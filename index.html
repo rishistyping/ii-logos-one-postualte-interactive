@@ -667,7 +667,17 @@ section + section{ border-top:1px solid var(--rule); }
   margin:0 0 28px;
 }
 .hero h1 .accent-italic{
-  font-style:italic; color:var(--accent); font-weight:400;
+  font-style:italic; font-weight:400;
+  background:linear-gradient(90deg, var(--accent) 0%, var(--gold) 42%, var(--accent) 70%, var(--accent) 100%);
+  background-size:260% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer-sweep 4.2s linear infinite 1.4s;
+}
+@keyframes shimmer-sweep{
+  from{ background-position:240% center; }
+  to  { background-position:-80% center; }
 }
 .hero h1 .small{
   display:block;
@@ -2211,16 +2221,59 @@ input[type="range"].l-slider::-moz-range-thumb{
   to{ transform:scale(4); opacity:0; }
 }
 
-/* Universe cards — 3-D tilt polish */
+/* Universe cards — 3-D tilt polish + CardSpotlight (Aceternity) */
 .universe{
   transition:background .3s ease, transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease;
   will-change:transform;
+  --spot-x:50%; --spot-y:50%;
+  isolation:isolate;
 }
 @media (hover:hover) and (pointer:fine){
   .universe:hover{
     transform:translateY(-4px) rotateX(1.5deg);
     box-shadow:0 20px 50px -28px rgba(15,35,63,.30);
   }
+}
+.universe__spotlight{
+  position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:radial-gradient(320px circle at var(--spot-x) var(--spot-y), rgba(47,149,166,.14) 0%, transparent 68%);
+  opacity:0; transition:opacity .35s ease; z-index:0;
+}
+.universe:hover .universe__spotlight{ opacity:1; }
+html[data-theme="dark"] .universe__spotlight{
+  background:radial-gradient(320px circle at var(--spot-x) var(--spot-y), rgba(116,201,211,.10) 0%, transparent 68%);
+}
+
+/* Hero ambient aurora drift */
+.hero::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(560px 380px at 76% 16%, rgba(131,161,204,.11), transparent 68%),
+    radial-gradient(420px 310px at 13% 82%, rgba(47,149,166,.08), transparent 70%);
+  animation:hero-aurora 28s ease-in-out infinite;
+}
+@keyframes hero-aurora{
+  0%,100%{ transform:translate(0,0) scale(1); opacity:.85; }
+  32%{ transform:translate(-2%,2%) scale(1.07); opacity:1; }
+  66%{ transform:translate(2%,-2%) scale(.96); opacity:.70; }
+}
+
+/* Equation bloom on scroll reveal */
+@keyframes eq-bloom{
+  0%  { box-shadow:0 0 0 0 rgba(47,149,166,0); }
+  42% { box-shadow:0 0 28px -4px rgba(47,149,166,.26), 0 0 0 1px rgba(47,149,166,.20); }
+  100%{ box-shadow:0 0 18px -6px rgba(47,149,166,.11), 0 0 0 1px rgba(47,149,166,.11); }
+}
+@keyframes eq-bloom-dark{
+  0%  { box-shadow:0 0 0 0 rgba(116,201,211,0); }
+  42% { box-shadow:0 0 28px -4px rgba(116,201,211,.18), 0 0 0 1px rgba(116,201,211,.16); }
+  100%{ box-shadow:0 0 18px -6px rgba(116,201,211,.09), 0 0 0 1px rgba(116,201,211,.09); }
+}
+.equation.eq-visible{
+  animation:eq-bloom 1.8s cubic-bezier(.2,.7,.2,1) forwards;
+}
+html[data-theme="dark"] .equation.eq-visible{
+  animation:eq-bloom-dark 1.8s cubic-bezier(.2,.7,.2,1) forwards;
 }
 
 /* Kappa-dial buttons — spring press */
@@ -2440,6 +2493,9 @@ section + section.in{
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
   .hero h1 .word,.hero h1 .small{ opacity:1; transform:none; animation:none; }
+  .hero h1 .accent-italic{ animation:none; -webkit-text-fill-color:unset; background:none; color:var(--accent); }
+  .hero::before{ animation:none; }
+  .equation.eq-visible{ animation:none; }
 }
 </style>
 
@@ -5956,21 +6012,47 @@ function buildKfMiniCells(){
   });
 })();
 
-/* ---- Universe cards — perspective tilt on mouse move ---- */
+/* ---- Universe cards — perspective tilt + CardSpotlight (Aceternity) ---- */
 (function(){
   document.querySelectorAll('.universe').forEach(card => {
+    /* inject spotlight layer */
+    const spot = document.createElement('div');
+    spot.className = 'universe__spotlight';
+    card.insertBefore(spot, card.firstChild);
+
     card.addEventListener('mousemove', e => {
       const rect = card.getBoundingClientRect();
-      const cx   = rect.left + rect.width  / 2;
-      const cy   = rect.top  + rect.height / 2;
-      const dx   = (e.clientX - cx) / (rect.width  / 2);
-      const dy   = (e.clientY - cy) / (rect.height / 2);
+      /* spotlight position */
+      card.style.setProperty('--spot-x', ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%');
+      card.style.setProperty('--spot-y', ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%');
+      /* 3-D tilt */
+      const cx = rect.left + rect.width  / 2;
+      const cy = rect.top  + rect.height / 2;
+      const dx = (e.clientX - cx) / (rect.width  / 2);
+      const dy = (e.clientY - cy) / (rect.height / 2);
       card.style.transform = `translateY(-4px) rotateY(${dx * 4}deg) rotateX(${-dy * 3}deg)`;
     });
     card.addEventListener('mouseleave', () => {
       card.style.transform = '';
+      card.style.setProperty('--spot-x', '50%');
+      card.style.setProperty('--spot-y', '50%');
     });
   });
+})();
+
+/* ---- Equation bloom on scroll reveal ---- */
+(function(){
+  const eqs = document.querySelectorAll('.equation');
+  if (!eqs.length) return;
+  const eo = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        e.target.classList.add('eq-visible');
+        eo.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.35 });
+  eqs.forEach(eq => eo.observe(eq));
 })();
 
 /* ==================================================================
