@@ -62,6 +62,8 @@
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"></noscript>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 
 <!-- Pyodide for executable SymPy proofs (loaded lazily on first Run) -->
 <script>
@@ -186,6 +188,7 @@
   --gutter:48px;
   --gutter-wide:80px;
   --section:80px;
+  --chat-drawer-width:clamp(360px, 36vw, 480px);
 
   --r-sm:8px; --r-md:12px; --r-lg:20px; --r-xl:30px; --r-full:9999px;
 }
@@ -2407,7 +2410,7 @@ a:focus-visible{ border-radius:2px; }
 /* ---- Chat drawer (right side, full height) ---- */
 .chat-drawer{
   position:fixed; top:0; right:0; bottom:0; z-index:90;
-  width:clamp(360px, 36vw, 480px);
+  width:min(var(--chat-drawer-width, clamp(360px, 36vw, 480px)), 92vw);
   background:var(--surface);
   color:var(--primary);
   border-left:1px solid var(--rule-strong);
@@ -2417,7 +2420,10 @@ a:focus-visible{ border-radius:2px; }
   box-shadow:-12px 0 48px -24px rgba(15,35,63,.32);
 }
 .chat-drawer.is-open{ transform:translateX(0); }
-@media (max-width:560px){ .chat-drawer{ width:100vw; border-left:none; } }
+@media (max-width:560px){
+  .chat-drawer{ width:100vw; border-left:none; }
+  .chat-drawer__resize{ display:none; }
+}
 
 .chat-drawer__head{
   display:flex; align-items:flex-start; justify-content:space-between;
@@ -2425,6 +2431,10 @@ a:focus-visible{ border-radius:2px; }
   padding:20px 22px 16px;
   border-bottom:1px solid var(--rule);
   flex-shrink:0;
+}
+.chat-drawer__head-main{
+  min-width:0;
+  flex:1;
 }
 .chat-drawer__eyebrow{
   font-family:var(--sans);
@@ -2437,6 +2447,37 @@ a:focus-visible{ border-radius:2px; }
   font-size:22px; font-weight:400; line-height:1.1;
   color:var(--primary);
   margin:0;
+}
+.chat-drawer__resize{
+  position:absolute;
+  left:-16px; top:50%;
+  width:32px; height:220px;
+  transform:translateY(-50%);
+  display:flex; align-items:center; justify-content:center;
+  z-index:2;
+}
+.chat-drawer__resize::before{
+  content:"";
+  width:5px; height:112px;
+  border-radius:999px;
+  background:linear-gradient(180deg, var(--rule-strong), var(--accent), var(--rule-strong));
+  box-shadow:0 0 0 1px var(--surface), 0 8px 24px -12px rgba(15,35,63,.45);
+  opacity:.72;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.chat-drawer__resize:hover::before,
+.chat-drawer__resize:focus-within::before{
+  opacity:1;
+  transform:scaleX(1.35);
+}
+#chat-size{
+  position:absolute;
+  width:220px;
+  height:32px;
+  transform:rotate(-90deg);
+  accent-color:var(--accent);
+  cursor:ew-resize;
+  opacity:.01;
 }
 .chat-drawer__close{
   width:32px; height:32px; border-radius:50%;
@@ -2491,8 +2532,57 @@ a:focus-visible{ border-radius:2px; }
   font-family:var(--serif-body);
   font-size:14.5px; line-height:1.6;
   padding:12px 14px; border-radius:var(--r-sm);
-  white-space:pre-wrap; word-wrap:break-word;
+  white-space:normal; word-wrap:break-word;
   max-width:100%;
+}
+.chat-msg > :first-child{ margin-top:0; }
+.chat-msg > :last-child{ margin-bottom:0; }
+.chat-msg p{ margin:.55em 0; }
+.chat-msg ul,
+.chat-msg ol{ margin:.55em 0 .55em 1.25em; padding:0; }
+.chat-msg li{ margin:.25em 0; }
+.chat-msg blockquote{
+  margin:.65em 0;
+  padding:.1em 0 .1em .85em;
+  border-left:1px solid var(--rule-strong);
+  color:var(--secondary);
+}
+.chat-msg code{
+  font-family:"Geist Mono", ui-monospace, monospace;
+  font-size:.92em;
+  padding:.1em .28em;
+  border-radius:4px;
+  background:var(--code-toolbar);
+}
+.chat-msg pre{
+  margin:.7em 0;
+  padding:10px 12px;
+  overflow:auto;
+  border:1px solid var(--rule);
+  border-radius:var(--r-sm);
+  background:var(--code-surface);
+}
+.chat-msg pre code{
+  padding:0;
+  border-radius:0;
+  background:transparent;
+}
+.chat-msg table{
+  width:100%;
+  margin:.75em 0;
+  border-collapse:collapse;
+  font-size:.94em;
+}
+.chat-msg th,
+.chat-msg td{
+  padding:.38em .5em;
+  border:1px solid var(--rule);
+  vertical-align:top;
+}
+.chat-msg .katex-display{
+  margin:.7em 0;
+  overflow-x:auto;
+  overflow-y:hidden;
 }
 .chat-msg--user{
   background:var(--surface-elevated);
@@ -3696,16 +3786,8 @@ html[data-theme="dark"] .cursor-dot{
         </p>
         <p>
           Rotations don't commute. Whether the <em>boosts</em> share that property depends
-          on $\kappa$. The rules are:
+          on $\kappa$.
         </p>
-        <div class="equation">
-          <span class="label">Lie brackets</span>
-          $$
-          [J_i, J_j] = \epsilon_{ijk}\,J_k, \qquad
-          [J_i, K_j] = \epsilon_{ijk}\,K_k, \qquad
-          [K_i, K_j] = -\kappa\,\epsilon_{ijk}\,J_k.
-          $$
-        </div>
         <p>
           When $\kappa = 0$, boosts commute and the link to rotation is severed.
           The Killing form is the algebra's own diagnostic of how much each generator
@@ -5788,8 +5870,11 @@ function buildKfMiniCells(){
 </button>
 
 <aside class="chat-drawer" id="chat-drawer" aria-hidden="true" aria-labelledby="chat-drawer-title">
+  <div class="chat-drawer__resize">
+    <input type="range" id="chat-size" min="360" max="760" step="20" value="480" aria-label="Resize chat window" />
+  </div>
   <header class="chat-drawer__head">
-    <div>
+    <div class="chat-drawer__head-main">
       <div class="chat-drawer__eyebrow">Chat with</div>
       <h3 id="chat-drawer-title" class="chat-drawer__title">One Postulate</h3>
     </div>
@@ -6490,8 +6575,7 @@ function buildKfMiniCells(){
 </script>
 
 <!-- ============================================================
-     CHAT WITH THE PAPER — in-browser LLM via @mlc-ai/web-llm
-     Loads on first drawer-open. Runs locally via WebGPU.
+     CHAT WITH THE PAPER — cloud-first, with local web-llm fallback
 ============================================================== -->
 <script type="module">
 const fab    = document.getElementById('chat-fab');
@@ -6504,19 +6588,23 @@ const list   = document.getElementById('chat-messages');
 const status = document.getElementById('chat-status');
 const sText  = document.getElementById('chat-status-text');
 const sBar   = document.getElementById('chat-progress-bar');
+const sizeSlider = document.getElementById('chat-size');
 
 const MODEL_ID = 'Llama-3.2-1B-Instruct-q4f16_1-MLC';
 
-/* Cloud chat path. The Cloudflare Worker (see worker/) proxies to OpenRouter
-   and holds the API key. Leave empty to disable the cloud path entirely;
+/* Cloud chat path. The Cloudflare Worker (see worker/) proxies to Bedrock
+   Sonnet and holds the bearer token. Leave empty to disable the cloud path entirely;
    the chat will fall through to web-llm. After deploying the Worker, set
    this to its URL (e.g. 'https://op-postulate-chat.<your-subdomain>.workers.dev/chat'). */
 const CHAT_API_URL = 'https://op-postulate-chat.rishresearch000.workers.dev/chat';
-const CLOUD_MODEL  = 'openai/gpt-oss-120b';
+const CLOUD_MODEL  = 'claude-sonnet-4-6';
+const CHAT_WIDTH_KEY = 'ii-chat-width';
+const CHAT_WIDTH_MIN = 360;
+const CHAT_WIDTH_MAX = 760;
+const CHAT_WIDTH_DEFAULT = 480;
 
 let engine = null, paperText = '', busy = false;
-let bootPromise = null;       /* memoised: model load + system-prompt seed */
-let reviewStarted = false;    /* runs once on first drawer open */
+let bootPromise = null;       /* memoised: local fallback model load */
 
 async function fetchPaper(){
   if (paperText) return paperText;
@@ -6525,7 +6613,7 @@ async function fetchPaper(){
   return paperText;
 }
 
-/* Master review prompt — primes the model on first open. */
+/* Master review prompt — used for the first explicit review flow. */
 const MASTER_PROMPT = [
   'We are going to do an exhaustive review of this paper.',
   'First state the goal of this paper.',
@@ -6566,7 +6654,7 @@ const MASTER_PROMPT = [
   'stated goal according to the methodology.'
 ].join('\n');
 
-function buildSystemPrompt(text){
+function buildReviewSystemPrompt(text){
   return [
     'You are a rigorous physics paper reviewer. Your task is laid out',
     'below. The full paper text follows after the instructions; treat it',
@@ -6580,20 +6668,156 @@ function buildSystemPrompt(text){
   ].join('\n');
 }
 
+function buildQaSystemPrompt(text){
+  return [
+    'You are a precise Q&A assistant for this paper. Answer the user\'s',
+    'specific question directly and concisely, using the paper below as',
+    'the authoritative source.',
+    '',
+    'Default to focused answers. Do not launch into an exhaustive review,',
+    'rating, proof-tree audit, or full paper critique unless the user',
+    'explicitly asks to begin, continue, rate, or review the paper.',
+    'When citing the paper, quote short passages verbatim only when useful.',
+    'If the answer is not in the paper, say so clearly.',
+    '',
+    '===== PAPER =====',
+    text,
+    '===== END PAPER ====='
+  ].join('\n');
+}
+
+function escapeHtml(value){
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function protectMathSegments(markdown){
+  const segments = [];
+  const stash = match => {
+    const token = `@@CHAT_MATH_${segments.length}@@`;
+    segments.push(match);
+    return token;
+  };
+  let text = String(markdown || '');
+  text = text.replace(/\$\$[\s\S]+?\$\$/g, stash);
+  text = text.replace(/\\\[[\s\S]+?\\\]/g, stash);
+  text = text.replace(/\\\([\s\S]+?\\\)/g, stash);
+  text = text.replace(/\$[^\s$](?:[\s\S]*?[^\s\\$])?\$/g, stash);
+  return { text, segments };
+}
+
+function fallbackMarkdown(markdown){
+  return String(markdown || '')
+    .split(/\n{2,}/)
+    .map(part => `<p>${escapeHtml(part).replace(/\n/g, '<br>')}</p>`)
+    .join('');
+}
+
+function renderMarkdown(markdown){
+  const protectedMath = protectMathSegments(markdown);
+  const parsed = window.marked && window.DOMPurify
+    ? window.marked.parse(protectedMath.text, { gfm: true, breaks: false })
+    : fallbackMarkdown(protectedMath.text);
+  const clean = window.DOMPurify
+    ? window.DOMPurify.sanitize(parsed)
+    : parsed;
+  return clean.replace(/@@CHAT_MATH_(\d+)@@/g, (_, index) => {
+    return escapeHtml(protectedMath.segments[Number(index)] || '');
+  });
+}
+
+function renderChatMessage(el){
+  const raw = el.dataset.rawContent || '';
+  el.innerHTML = renderMarkdown(raw);
+  el.querySelectorAll('a[href]').forEach(link => {
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+  });
+  if (window.renderMathInElement) renderMathInElement(el, window._katexOpts);
+}
+
 function appendMessage(role, content){
   const li = document.createElement('li');
   li.className = 'chat-msg chat-msg--' + role;
-  li.textContent = content;
+  li.dataset.rawContent = content;
+  renderChatMessage(li);
   list.appendChild(li);
   list.scrollTop = list.scrollHeight;
   return li;
 }
 
-let systemMessage = null;
+let reviewSystemMessage = null;
+let qaSystemMessage = null;
+let paperContextPromise = null;
 
-/* Loads the model + paper context. Memoised — kicked off eagerly on
-   page load, awaited again on first drawer-open. The master review is
-   not started here; that only fires the first time the drawer opens. */
+function cachePaperContext(text){
+  reviewSystemMessage = { role: 'system', content: buildReviewSystemPrompt(text) };
+  qaSystemMessage = { role: 'system', content: buildQaSystemPrompt(text) };
+  return { reviewSystemMessage, qaSystemMessage };
+}
+
+function preloadPaperContext(){
+  if (reviewSystemMessage && qaSystemMessage) {
+    return Promise.resolve({ reviewSystemMessage, qaSystemMessage });
+  }
+  if (paperContextPromise) return paperContextPromise;
+  paperContextPromise = fetchPaper()
+    .then(cachePaperContext)
+    .catch(err => {
+      paperContextPromise = null;
+      throw err;
+    });
+  return paperContextPromise;
+}
+
+async function ensureReviewSystemMessage(){
+  const context = await preloadPaperContext();
+  return context.reviewSystemMessage;
+}
+
+async function ensureQaSystemMessage(){
+  const context = await preloadPaperContext();
+  return context.qaSystemMessage;
+}
+
+function hasChatBackend(){
+  return Boolean(CHAT_API_URL) || Boolean(engine);
+}
+
+function syncSendState(){
+  send.disabled = busy || !input.value.trim() || !hasChatBackend();
+}
+
+function clampChatWidth(value){
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed)) return CHAT_WIDTH_DEFAULT;
+  return Math.min(CHAT_WIDTH_MAX, Math.max(CHAT_WIDTH_MIN, parsed));
+}
+
+function applyChatWidth(value, persist = false){
+  const width = clampChatWidth(value);
+  document.documentElement.style.setProperty('--chat-drawer-width', width + 'px');
+  if (sizeSlider) sizeSlider.value = String(width);
+  if (persist) {
+    try { localStorage.setItem(CHAT_WIDTH_KEY, String(width)); } catch(_) {}
+  }
+}
+
+function initChatWidthControl(){
+  let saved = null;
+  try { saved = localStorage.getItem(CHAT_WIDTH_KEY); } catch(_) {}
+  applyChatWidth(saved || CHAT_WIDTH_DEFAULT);
+  if (!sizeSlider) return;
+  sizeSlider.addEventListener('input', () => applyChatWidth(sizeSlider.value, true));
+  sizeSlider.addEventListener('change', () => applyChatWidth(sizeSlider.value, true));
+}
+
+/* Loads the local fallback model. The cloud API path does not use this;
+   streamChat() calls boot() only after cloud fails or is disabled. */
 function boot(){
   if (bootPromise) return bootPromise;
   bootPromise = (async () => {
@@ -6608,8 +6832,8 @@ function boot(){
       sText.textContent = 'Loading web-llm runtime…';
       const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm');
 
-      sText.textContent = 'Fetching paper text…';
-      const text = await fetchPaper();
+      sText.textContent = 'Preparing paper context…';
+      await preloadPaperContext();
 
       sText.textContent = 'Preparing model — first run downloads ~700 MB and caches it locally.';
       engine = await CreateMLCEngine(MODEL_ID, {
@@ -6619,10 +6843,9 @@ function boot(){
         }
       });
 
-      systemMessage = { role: 'system', content: buildSystemPrompt(text) };
       status.hidden = true;
       fab.classList.add('chat-fab--ready');
-      send.disabled = !input.value.trim();
+      syncSendState();
       return engine;
     } catch (err){
       status.hidden = false;
@@ -6660,13 +6883,14 @@ async function* sseDeltas(response){
   }
 }
 
-/* Try the cloud API (Worker → OpenRouter); throw to trigger fallback.
+/* Try the cloud API (Worker → Bedrock); throw to trigger fallback.
    Handles two response shapes:
-     - text/event-stream  (Worker forwards OpenRouter's SSE deltas)
-     - application/json   ({response|content|message, raw} envelope) */
+     - text/event-stream  (legacy streaming Worker response)
+     - application/json   (Bedrock {response|content|message, raw} envelope) */
 async function* chatViaApi(messages, opts = {}){
-  if (!CHAT_API_URL) throw new Error('cloud-disabled');
-  const r = await fetch(CHAT_API_URL, {
+  const apiUrl = CHAT_API_URL;
+  if (!apiUrl) throw new Error('cloud-disabled');
+  const r = await fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -6685,9 +6909,8 @@ async function* chatViaApi(messages, opts = {}){
     yield* sseDeltas(r);
     return;
   }
-  /* JSON envelope. Walk a few likely paths to find the content; if the
-     model returned only its reasoning trace (e.g. gpt-oss with too-low
-     max_tokens), surface that rather than nothing. */
+  /* JSON envelope. Walk a few likely paths to find the content if a
+     provider returns a non-streaming response. */
   const data = await r.json();
   const choice = data.raw?.choices?.[0] || data.choices?.[0] || {};
   const msg    = choice.message || {};
@@ -6700,14 +6923,6 @@ async function* chatViaApi(messages, opts = {}){
     '';
   if (!text) throw new Error('cloud-empty-response');
   yield text;
-}
-
-/* Lazy paper-text + system-message ensure for the API path. */
-async function ensureSystemMessage(){
-  if (systemMessage) return systemMessage;
-  const text = await fetchPaper();
-  systemMessage = { role: 'system', content: buildSystemPrompt(text) };
-  return systemMessage;
 }
 
 /* Try cloud first, fall back to web-llm on any error. Yields content
@@ -6733,17 +6948,21 @@ async function* streamChat(messages, opts){
    silent during non-streaming JSON responses. */
 async function fillFromStream(out, gen){
   let firstChunk = true;
+  let raw = '';
   for await (const delta of gen){
     if (firstChunk){
-      out.textContent = '';
+      out.dataset.rawContent = '';
       out.classList.remove('chat-msg--pending');
       firstChunk = false;
     }
-    out.textContent += delta;
+    raw += delta;
+    out.dataset.rawContent = raw;
+    renderChatMessage(out);
     list.scrollTop = list.scrollHeight;
   }
   if (firstChunk){
-    out.textContent = '⚠ The model returned no content. Try again with a longer max_tokens.';
+    out.dataset.rawContent = '⚠ The model returned no content. Try again with a longer max_tokens.';
+    renderChatMessage(out);
     out.classList.remove('chat-msg--pending');
   }
 }
@@ -6754,15 +6973,16 @@ async function runReview(){
   const out = appendMessage('assistant', 'Thinking…');
   out.classList.add('chat-msg--review', 'chat-msg--pending');
   try {
-    const sys = await ensureSystemMessage();
+    const sys = await ensureReviewSystemMessage();
     const messages = [sys, { role: 'user', content: 'Please begin the review now.' }];
     await fillFromStream(out, streamChat(messages, { temperature: 0.3, max_tokens: 4096 }));
   } catch (err){
-    out.textContent = '⚠ ' + (err && err.message ? err.message : err);
+    out.dataset.rawContent = '⚠ ' + (err && err.message ? err.message : err);
+    renderChatMessage(out);
     out.classList.remove('chat-msg--pending');
   } finally {
     busy = false;
-    send.disabled = !input.value.trim();
+    syncSendState();
   }
 }
 
@@ -6774,22 +6994,25 @@ async function ask(prompt){
   const out = appendMessage('assistant', 'Thinking…');
   out.classList.add('chat-msg--pending');
   try {
-    const sys = await ensureSystemMessage();
-    /* Reconstruct conversation history from DOM. */
+    const sys = await ensureQaSystemMessage();
+    /* Reconstruct focused Q&A history from DOM. The auto-review is
+       deliberately excluded so it does not steer later direct questions. */
     const history = [...list.querySelectorAll('.chat-msg')]
       .slice(0, -1)  /* drop the in-flight pending bubble */
+      .filter(el => !el.classList.contains('chat-msg--review'))
       .map(el => ({
         role: el.classList.contains('chat-msg--user') ? 'user' : 'assistant',
-        content: el.textContent
+        content: el.dataset.rawContent || el.textContent
       }));
     const messages = [sys, ...history];
     await fillFromStream(out, streamChat(messages, { temperature: 0.4, max_tokens: 1536 }));
   } catch (err){
-    out.textContent = '⚠ ' + (err && err.message ? err.message : err);
+    out.dataset.rawContent = '⚠ ' + (err && err.message ? err.message : err);
+    renderChatMessage(out);
     out.classList.remove('chat-msg--pending');
   } finally {
     busy = false;
-    send.disabled = !input.value.trim();
+    syncSendState();
   }
 }
 
@@ -6797,12 +7020,8 @@ function openDrawer(){
   drawer.classList.add('is-open');
   drawer.setAttribute('aria-hidden', 'false');
   fab.setAttribute('aria-expanded', 'true');
-  /* Eager preload (started at script load) is awaited here. The master
-     review fires on the first drawer-open after the model is ready. */
-  if (!reviewStarted){
-    reviewStarted = true;
-    boot().then(() => runReview()).catch(() => { /* status text already shown */ });
-  }
+  /* Opening the drawer is passive: no model request runs until the user
+     submits a question. Paper context still preloads after page load. */
 }
 function closeDrawer(){
   drawer.classList.remove('is-open');
@@ -6821,7 +7040,7 @@ document.addEventListener('keydown', e => {
 });
 
 input.addEventListener('input', () => {
-  send.disabled = busy || !input.value.trim() || !engine;
+  syncSendState();
   /* Auto-grow textarea */
   input.style.height = 'auto';
   input.style.height = Math.min(input.scrollHeight, 120) + 'px';
@@ -6833,15 +7052,17 @@ input.addEventListener('keydown', e => {
 form.addEventListener('submit', e => {
   e.preventDefault();
   const v = input.value.trim();
-  if (!v || busy || !engine) return;
+  if (!v || busy || !hasChatBackend()) return;
   input.value = '';
   input.style.height = 'auto';
   ask(v);
 });
 
-/* No eager preload: the cloud API path is instant when configured.
-   web-llm only boots if the API path fails or is not configured (see
-   streamChat below). */
+/* Prebuild paper-backed system prompts on page load without calling a model.
+   This initializes the master review prompt and Q&A prompt before chat use;
+   web-llm only boots if cloud fails or is disabled after a user submits. */
+initChatWidthControl();
+preloadPaperContext().catch(() => {});
 </script>
 </body>
 </html>

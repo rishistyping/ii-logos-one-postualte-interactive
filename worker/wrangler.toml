@@ -3,7 +3,13 @@ main = "src/index.js"
 compatibility_date = "2025-01-01"
 workers_dev = true
 
-# The OpenRouter API key is provided as a secret, NOT here.
-# Run once after `wrangler login`:
-#   wrangler secret put OPENROUTER_API_KEY
-# (paste the key when prompted; never commit it.)
+[vars]
+BEDROCK_REGION = "us-east-1"
+BEDROCK_MODEL_ID = "us.anthropic.claude-sonnet-4-6"
+
+# The Bedrock bearer token is provided as a secret, NOT here.
+# ANTHROPIC_API_KEY is still accepted as a legacy secret name by the Worker,
+# but AWS_BEARER_TOKEN_BEDROCK is preferred for new deploys.
+# Run after `wrangler login`:
+#   wrangler secret put AWS_BEARER_TOKEN_BEDROCK
+# (paste the Bedrock bearer token when prompted; never commit it.)
