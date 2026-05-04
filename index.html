@@ -2724,27 +2724,7 @@ html[data-theme="dark"] .cursor-dot{
 /* hidden on mouse leave */
 .cursor-dot.cur-hidden { opacity: 0 !important; }
 
-/* ── Cursor polish: idle pulse, click ripple, smooth state vars ── */
-
-/* Smoothly interpolate between cursor states (not just snap CSS vars).
-   Works in Chromium and Safari; Firefox falls back to instant change. */
-@property --cursor-aura-size    { syntax: '<length>'; inherits: true; initial-value: 58px; }
-@property --cursor-ring-size    { syntax: '<length>'; inherits: true; initial-value: 38px; }
-@property --cursor-aura-opacity { syntax: '<number>'; inherits: true; initial-value: 0.42; }
-@property --cursor-ring-opacity { syntax: '<number>'; inherits: true; initial-value: 0.48; }
-.cursor-dot::before,
-.cursor-dot::after{
-  transition:
-    --cursor-aura-size    .32s cubic-bezier(.22,1,.36,1),
-    --cursor-ring-size    .32s cubic-bezier(.22,1,.36,1),
-    --cursor-aura-opacity .22s ease,
-    --cursor-ring-opacity .22s ease,
-    width  .32s cubic-bezier(.22,1,.36,1),
-    height .32s cubic-bezier(.22,1,.36,1),
-    opacity .22s ease,
-    transform .22s ease,
-    filter .22s ease;
-}
+/* ── Cursor polish: idle pulse + click ripple ── */
 
 /* Idle pulse — gentle 1.04 breath on the aura after 1.8s of no motion */
 @keyframes cursor-idle-pulse{
@@ -3041,16 +3021,6 @@ html[data-theme="dark"] .cursor-dot{
 }
 .reveal.in .eyebrow__sigil{
   animation:sigil-pulse .56s cubic-bezier(.2,.7,.2,1) .15s both;
-}
-
-/* 3 — Equation label slides in from the right after the equation reveals */
-@keyframes label-slide{
-  from { transform:translateX(8px); opacity:0; }
-  to   { transform:translateX(0);   opacity:1; }
-}
-.equation .label{ opacity:0; }
-.equation.reveal.in .label{
-  animation:label-slide .5s cubic-bezier(.2,.7,.2,1) .22s forwards;
 }
 
 /* 4 — CTA buttons: single-pass shimmer sweep on hover */
@@ -3564,7 +3534,7 @@ html[data-theme="dark"] .cursor-dot{
           Rotations don't commute. Whether the <em>boosts</em> share that property depends
           on $\kappa$. The rules are:
         </p>
-        <div class="equation reveal">
+        <div class="equation">
           <span class="label">Lie brackets</span>
           $$
           [J_i, J_j] = \epsilon_{ijk}\,J_k, \qquad
@@ -3577,7 +3547,7 @@ html[data-theme="dark"] .cursor-dot{
           The Killing form is the algebra's own diagnostic of how much each generator
           reshuffles the others:
         </p>
-        <div class="equation reveal">
+        <div class="equation">
           <span class="label">Killing form</span>
           $$ B(X, Y) = \mathrm{tr}\big(\mathrm{ad}_X \circ \mathrm{ad}_Y\big). $$
         </div>
@@ -3589,7 +3559,7 @@ html[data-theme="dark"] .cursor-dot{
           diagonal matrix. The rotations always register $-4$. The boosts register
           $4\kappa$ — and their value depends entirely on $\kappa$.
         </p>
-        <div class="equation reveal">
+        <div class="equation">
           $$
           B \;=\; \mathrm{diag}\big(\underbrace{-4,\,-4,\,-4}_{\text{rotations}},\;\;
           \underbrace{4\kappa,\;4\kappa,\;4\kappa}_{\text{boosts}}\big).
@@ -3781,7 +3751,7 @@ html[data-theme="dark"] .cursor-dot{
             and the only quantity all observers agree on is the spacetime interval —
             a single number that combines space and time inseparably.
           </p>
-          <div class="equation reveal">
+          <div class="equation">
             <span class="label">Minkowski metric</span>
             $$ ds^2 = c^2\,dt^2 - dx^2 - dy^2 - dz^2, \qquad \kappa = 1/c^2. $$
           </div>
