@@ -136,6 +136,16 @@
   --token-string:#5E7B3A;
   --danger:#a4453a;
   color-scheme:light;
+  --cursor-core:var(--primary);
+  --cursor-stroke:rgba(15,35,63,.18);
+  --cursor-aura:rgba(47,149,166,.34);
+  --cursor-ring:rgba(47,149,166,.58);
+  --cursor-field:rgba(47,149,166,.20);
+  --cursor-field-gold:rgba(201,169,110,.16);
+  --cursor-x:50vw;
+  --cursor-y:50vh;
+  --cursor-presence:0;
+  --cursor-press:0;
 
   --serif-caslon:"Libre Caslon Text", "Cormorant Garamond", ui-serif, Georgia, serif;
   --serif-display:"Cormorant Garamond", ui-serif, Georgia, serif;
@@ -197,6 +207,12 @@ html[data-theme="dark"]{
   --token-string:#B8D991;
   --danger:#F09A8B;
   color-scheme:dark;
+  --cursor-core:#F2EEE2;
+  --cursor-stroke:rgba(242,238,226,.34);
+  --cursor-aura:rgba(116,201,211,.48);
+  --cursor-ring:rgba(116,201,211,.72);
+  --cursor-field:rgba(116,201,211,.30);
+  --cursor-field-gold:rgba(216,184,117,.18);
 }
 
 @media (min-width:1100px){ :root{ --gutter:80px; } }
@@ -2486,83 +2502,173 @@ a:focus-visible{ border-radius:2px; }
 }
 
 /* ================================================================
-   ADAPTIVE CUSTOM CURSOR — single solid circle
+   ADAPTIVE CUSTOM CURSOR — luminous orb with aura + field
    ================================================================ */
 
-@media (pointer: fine) {
+@media (pointer:fine){
   html, body, *, *::before, *::after { cursor: none !important; }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:58;
+    pointer-events:none;
+    opacity:var(--cursor-presence);
+    background:
+      radial-gradient(circle 24px at var(--cursor-x) var(--cursor-y), var(--cursor-ring), transparent 76%),
+      radial-gradient(circle 220px at var(--cursor-x) var(--cursor-y), var(--cursor-field), transparent 66%),
+      radial-gradient(circle 480px at var(--cursor-x) var(--cursor-y), var(--cursor-field-gold), transparent 74%);
+    mix-blend-mode:multiply;
+    filter:saturate(118%);
+    transition:opacity .18s ease;
+  }
+  html[data-theme="dark"] body::after{ mix-blend-mode:screen; }
 }
 
 .cursor-dot {
   position: fixed;
   top: 0; left: 0;
-  width: 10px; height: 10px;
+  width: 14px; height: 14px;
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--cursor-core);
+  border:1px solid var(--cursor-stroke);
+  box-shadow:
+    0 0 0 1px rgba(242,238,226,.10),
+    0 0 24px var(--cursor-aura),
+    0 0 64px rgba(47,149,166,.12);
+  isolation:isolate;
   pointer-events: none;
   z-index: 9999;
   will-change: transform;
   backface-visibility: hidden;
-  /* No transform transition — JS RAF drives transform directly */
   transition:
     width  .28s cubic-bezier(.34,1.56,.64,1),
     height .28s cubic-bezier(.34,1.56,.64,1),
     background .22s ease,
+    border-color .22s ease,
+    box-shadow .22s ease,
     opacity .18s ease;
 }
 
-/* link — accent, slightly larger */
-.cursor-dot.s-link {
-  width: 16px; height: 16px;
-  background: var(--accent);
+.cursor-dot::before,
+.cursor-dot::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  border-radius:50%;
+  pointer-events:none;
+  transform:translate(-50%,-50%) scale(1);
+  transition:
+    width .32s cubic-bezier(.22,1,.36,1),
+    height .32s cubic-bezier(.22,1,.36,1),
+    opacity .22s ease,
+    transform .22s ease,
+    filter .22s ease;
+}
+.cursor-dot::before{
+  z-index:-2;
+  width:var(--cursor-aura-size,58px);
+  height:var(--cursor-aura-size,58px);
+  background:radial-gradient(circle, var(--cursor-aura) 0 18%, transparent 70%);
+  filter:blur(4px);
+  opacity:var(--cursor-aura-opacity,.42);
+}
+.cursor-dot::after{
+  z-index:-1;
+  width:var(--cursor-ring-size,38px);
+  height:var(--cursor-ring-size,38px);
+  border:1px solid var(--cursor-ring);
+  box-shadow:0 0 28px var(--cursor-aura);
+  opacity:var(--cursor-ring-opacity,.48);
 }
 
-/* button — accent, bigger */
+.cursor-dot.s-link {
+  width: 18px; height: 18px;
+  background: var(--accent);
+  --cursor-aura-size:74px;
+  --cursor-ring-size:46px;
+  --cursor-aura-opacity:.50;
+  --cursor-ring-opacity:.56;
+}
+
 .cursor-dot.s-btn {
-  width: 22px; height: 22px;
+  width: 26px; height: 26px;
   background: var(--accent);
   opacity: .82;
+  --cursor-aura-size:92px;
+  --cursor-ring-size:62px;
+  --cursor-aura-opacity:.58;
+  --cursor-ring-opacity:.64;
 }
 
-/* gold button */
 .cursor-dot.s-gold {
-  width: 22px; height: 22px;
+  width: 26px; height: 26px;
   background: var(--gold);
   opacity: .85;
+  --cursor-aura-size:96px;
+  --cursor-ring-size:64px;
+  --cursor-aura-opacity:.60;
+  --cursor-ring-opacity:.66;
+  --cursor-aura:rgba(201,169,110,.48);
+  --cursor-ring:rgba(201,169,110,.72);
 }
 
-/* kappa dial */
 .cursor-dot.s-kappa {
-  width: 18px; height: 18px;
-  background: var(--primary);
+  width: 24px; height: 24px;
+  background: var(--cursor-core);
   opacity: .75;
+  --cursor-aura-size:90px;
+  --cursor-ring-size:58px;
+  --cursor-aura-opacity:.52;
+  --cursor-ring-opacity:.62;
 }
 
-/* text/prose — small accent dot */
 .cursor-dot.s-text {
-  width: 5px; height: 5px;
+  width: 8px; height: 8px;
   background: var(--accent);
+  --cursor-aura-size:48px;
+  --cursor-ring-size:28px;
+  --cursor-aura-opacity:.32;
+  --cursor-ring-opacity:.32;
 }
 
-/* slider / grab */
 .cursor-dot.s-grab {
-  width: 14px; height: 14px;
+  width: 22px; height: 22px;
   background: var(--accent);
   opacity: .7;
+  --cursor-aura-size:86px;
+  --cursor-ring-size:58px;
+  --cursor-aura-opacity:.54;
+  --cursor-ring-opacity:.62;
 }
 
-/* lab / interactive diagram */
 .cursor-dot.s-lab {
-  width: 12px; height: 12px;
-  background: var(--accent);
-  opacity: .65;
+  width: 22px; height: 22px;
+  opacity: .78;
+  --cursor-aura-size:112px;
+  --cursor-ring-size:72px;
+  --cursor-aura-opacity:.64;
+  --cursor-ring-opacity:.68;
 }
 
-/* press / mousedown — squish */
 .cursor-dot.s-down {
-  width: 6px; height: 6px;
+  width: 8px; height: 8px;
   background: var(--accent);
   opacity: .9;
+  --cursor-aura-size:126px;
+  --cursor-ring-size:82px;
+  --cursor-aura-opacity:.72;
+  --cursor-ring-opacity:.78;
+}
+.cursor-dot.s-down::before{ filter:blur(2px); }
+.cursor-dot.s-down::after{ transform:translate(-50%,-50%) scale(.82); }
+
+html[data-theme="dark"] .cursor-dot{
+  box-shadow:
+    0 0 0 1px rgba(7,21,39,.22),
+    0 0 28px var(--cursor-aura),
+    0 0 84px rgba(116,201,211,.18);
 }
 
 /* hidden on mouse leave */
@@ -2570,8 +2676,9 @@ a:focus-visible{ border-radius:2px; }
 
 /* touch devices — restore native */
 @media (pointer: coarse) {
+  body::after{ display:none !important; }
   .cursor-dot { display: none !important; }
-  html, body, * { cursor: auto !important; }
+  html, body, *, *::before, *::after { cursor:auto !important; }
 }
 
 /* ================================================================
@@ -2761,8 +2868,11 @@ a:focus-visible{ border-radius:2px; }
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
   #grain { animation: none; display: none; }
+  body::after{ display:none !important; }
   .s-head.reveal { clip-path: none; }
   .cursor-dot { transition: none; }
+  .cursor-dot { display:none !important; }
+  html, body, *, *::before, *::after { cursor:auto !important; }
 }
 
 /* ---- Mobile hero responsive tightening ---- */
@@ -5504,11 +5614,13 @@ function buildKfMiniCells(){
   const dot = document.getElementById('cursor-dot');
   if (!dot) return;
 
+  const root = document.documentElement;
   let mx = -300, my = -300;  /* raw mouse */
   let cx = -300, cy = -300;  /* current dot position (lerp) */
   let curState = '';
+  let visible = false;
 
-  const LERP = 0.72;
+  const LERP = 0.58;
 
   /* [selector, state] — first match wins */
   const STATES = [
@@ -5537,12 +5649,20 @@ function buildKfMiniCells(){
     if (st) dot.classList.add('s-' + st);
   }
 
+  function setVisible(next){
+    if (visible === next) return;
+    visible = next;
+    root.style.setProperty('--cursor-presence', next ? '.92' : '0');
+  }
+
   /* RAF loop — lerp position */
   function tick() {
     requestAnimationFrame(tick);
     cx += (mx - cx) * LERP;
     cy += (my - cy) * LERP;
     dot.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+    root.style.setProperty('--cursor-x', `${Math.round(cx)}px`);
+    root.style.setProperty('--cursor-y', `${Math.round(cy)}px`);
   }
   requestAnimationFrame(tick);
 
@@ -5553,17 +5673,33 @@ function buildKfMiniCells(){
     if (dot.classList.contains('cur-hidden')) {
       dot.classList.remove('cur-hidden');
     }
+    setVisible(true);
     applyState(detectState(e.target));
   }, { passive: true });
 
   /* Leave / enter window */
-  document.addEventListener('mouseleave', () => dot.classList.add('cur-hidden'));
-  document.addEventListener('mouseenter', () => dot.classList.remove('cur-hidden'));
+  document.addEventListener('mouseleave', () => {
+    dot.classList.add('cur-hidden');
+    setVisible(false);
+  });
+  document.addEventListener('mouseenter', () => {
+    dot.classList.remove('cur-hidden');
+    setVisible(true);
+  });
 
   /* Press feedback */
-  document.addEventListener('mousedown', () => dot.classList.add('s-down'));
+  document.addEventListener('mousedown', e => {
+    mx = e.clientX;
+    my = e.clientY;
+    dot.classList.add('s-down');
+    root.style.setProperty('--cursor-presence', '1');
+    root.style.setProperty('--cursor-press', '1');
+    setVisible(true);
+  });
   document.addEventListener('mouseup',   () => {
     dot.classList.remove('s-down');
+    root.style.setProperty('--cursor-press', '0');
+    setVisible(true);
     applyState(curState);
   });
 
