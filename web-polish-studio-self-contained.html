@@ -279,9 +279,11 @@
 <script>
   // We do NOT load Pyodide eagerly — it's ~10MB. Instead, we lazy-load on first user interaction.
   window.__pyodideReady = null;
+  window.__pyodideResolved = false;
   window.__pyodideIndex = 'https://cdn.jsdelivr.net/pyodide/v0.27.0/full/';
   window.loadPyodideLazily = function() {
     if (window.__pyodideReady) return window.__pyodideReady;
+    window.__pyodideResolved = false;
     window.__pyodideReady = new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = window.__pyodideIndex + 'pyodide.js';
@@ -315,10 +317,19 @@
             '    _outputs = []',
             ''
           ].join('\n'));
+          window.__pyodideResolved = true;
           resolve(py);
-        } catch (e) { reject(e); }
+        } catch (e) {
+          window.__pyodideReady = null;
+          window.__pyodideResolved = false;
+          reject(e);
+        }
       };
-      s.onerror = () => reject(new Error('Failed to load Pyodide. Check your network connection or content blockers.'));
+      s.onerror = () => {
+        window.__pyodideReady = null;
+        window.__pyodideResolved = false;
+        reject(new Error('Failed to load Pyodide. Check your network connection or content blockers.'));
+      };
       document.head.appendChild(s);
     });
     return window.__pyodideReady;
@@ -6012,9 +6023,9 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
       </p>
       <p style="font-family:var(--serif-body); font-style:italic; font-size:16px; line-height:1.6; color:var(--secondary); max-width:60ch; margin:0 0 8px;">
         Every cell is editable. Change a sign, swap a generator, supply a different
-        <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span> — the proof updates with you. The Pyodide runtime (~10 MB) loads
-        once on first <em style="color:var(--accent); font-style:italic">Run</em>
-        and is cached thereafter.
+        <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">κ</span></span></span></span> — the proof updates with you. The Pyodide runtime (~10 MB) warms
+        as this proof nears the viewport, or loads on first
+        <em style="color:var(--accent); font-style:italic">Run</em>, and is cached thereafter.
       </p>
     </div>
 
@@ -7646,19 +7657,11 @@ function setNbStatus(state, msg, version){
   if (version) nbVersion.innerHTML = `<code>${version}</code>`;
 }
 
-async function ensurePyodide(){
-  if (window.__pyodideReady) return window.__pyodideReady;
-  setNbStatus('loading', 'Loading the symbolic engine — one-time, about 10 MB.');
-  let py;
-  try {
-    py = await window.loadPyodideLazily();
-  } catch (e) {
-    setNbStatus('error', 'Could not load Pyodide. Check your network connection or any content blocker, then refresh.');
-    throw e;
-  }
-  // Read the version safely. Using a triple-quoted block avoids whatever
-  // single-line semicolon-expression quirks runPython() returns on some
-  // Pyodide versions, and ensures we always get a real JS string back.
+let pyodideVersionShown = false;
+
+async function markPyodideReady(py, message){
+  if (!py) return py;
+  if (pyodideVersionShown) return py;
   let ver = '';
   try {
     const raw = runPythonShared(py, [
@@ -7668,9 +7671,80 @@ async function ensurePyodide(){
     ver = (raw && typeof raw.toString === 'function') ? String(raw) : '';
     if (raw && typeof raw.destroy === 'function') raw.destroy();
   } catch(_) { ver = ''; }
-  setNbStatus('ready', '<strong style="color:var(--primary)">Ready.</strong> SymPy is live. Edit a cell or run the spine.', ver);
+  pyodideVersionShown = true;
+  setNbStatus('ready', message, ver);
   return py;
 }
+
+async function ensurePyodide(){
+  const existing = !!window.__pyodideReady;
+  setNbStatus('loading', existing && !window.__pyodideResolved
+    ? 'Finishing the symbolic engine warmup.'
+    : 'Loading the symbolic engine — one-time, about 10 MB.');
+  let py;
+  try {
+    py = await window.loadPyodideLazily();
+  } catch (e) {
+    setNbStatus('error', 'Could not load Pyodide. Check your network connection or any content blocker, then refresh.');
+    throw e;
+  }
+  return markPyodideReady(py, '<strong style="color:var(--primary)">Ready.</strong> SymPy is live. Edit a cell or run the spine.');
+}
+
+function pyodideWarmupAllowed(){
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const saveData = !!(connection && connection.saveData);
+  const reduceMotionPref = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tinyMemory = navigator.deviceMemory && navigator.deviceMemory < 2;
+  return !saveData && !reduceMotionPref && !tinyMemory;
+}
+
+function beginPyodideWarmup(reason){
+  if (!window.loadPyodideLazily || window.__pyodideReady || window.__pyodideWarmupStarted || !pyodideWarmupAllowed()) return;
+  window.__pyodideWarmupStarted = reason || 'near-proof';
+  setNbStatus('loading', 'Warming the symbolic engine in the background.');
+  window.loadPyodideLazily()
+    .then(py => markPyodideReady(py, '<strong style="color:var(--primary)">Warm.</strong> SymPy is ready before you press Run.'))
+    .catch(() => {
+      window.__pyodideWarmupStarted = false;
+      setNbStatus('', 'SymPy interpreter — <code>sympy</code> via Pyodide. <strong style="color:var(--primary)">Ready.</strong> Run a cell to wake the proof (~10 MB, one-time).');
+    });
+}
+
+function wirePyodideWarmup(){
+  const proof = document.getElementById('proof');
+  if (!proof || !pyodideWarmupAllowed()) return;
+  const scheduleWarmup = reason => {
+    const run = () => beginPyodideWarmup(reason);
+    if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout:1200 });
+    else setTimeout(run, 450);
+  };
+  document.querySelectorAll('a[href="#proof"]').forEach(link => {
+    link.addEventListener('pointerenter', () => scheduleWarmup('proof-link'), { once:true, passive:true });
+    link.addEventListener('focus', () => scheduleWarmup('proof-link'), { once:true });
+    link.addEventListener('touchstart', () => scheduleWarmup('proof-link'), { once:true, passive:true });
+  });
+  if (location.hash === '#proof') scheduleWarmup('hash-proof');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      io.disconnect();
+      scheduleWarmup('near-proof');
+    }, { rootMargin:'1200px 0px 900px 0px', threshold:0.01 });
+    io.observe(proof);
+    return;
+  }
+  const onScroll = () => {
+    if (proof.getBoundingClientRect().top > window.innerHeight + 1200) return;
+    window.removeEventListener('scroll', onScroll);
+    scheduleWarmup('scroll-proof');
+  };
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wirePyodideWarmup);
+else wirePyodideWarmup();
 
 function runPythonShared(py, code){
   return (py && py.globals)
