@@ -33,6 +33,10 @@
   const theme = isValid(saved) ? saved : (systemDark ? 'dark' : 'light');
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
+  // Cursor preference: 'off' = native; default = stylized
+  try {
+    if (localStorage.getItem('ii-cursor') === 'off') root.dataset.cursor = 'off';
+  } catch(_) {}
 })();
 </script>
 
@@ -45,8 +49,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- KaTeX for rendering equations -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<!-- KaTeX for rendering equations: math is below the fold, so promote stylesheet
+     after first paint to avoid render-blocking -->
+<link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"></noscript>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 
@@ -533,12 +539,62 @@ section + section{ border-top:1px solid var(--rule); }
 }
 .mobile-nav .theme-toggle__track{ width:132px; }
 @media (max-width:520px){
-  .nav__actions .theme-toggle{ display:none; }
+  .nav__actions .theme-toggle,
+  .nav__actions .cursor-toggle{ display:none; }
 }
+
+/* ── Cursor preference toggle: lets users restore native pointer ── */
+.cursor-toggle{
+  appearance:none;
+  border:1px solid var(--theme-toggle-border);
+  border-radius:var(--r-full);
+  background:var(--theme-toggle-bg);
+  color:var(--theme-toggle-fg);
+  width:36px; height:36px;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:background-color .24s ease, border-color .24s ease, color .24s ease, transform .2s ease;
+}
+.cursor-toggle:hover{ transform:translateY(-1px); }
+.cursor-toggle:focus-visible{
+  outline:2px solid var(--focus-ring);
+  outline-offset:3px;
+}
+.cursor-toggle svg{ width:16px; height:16px; display:block; }
+.cursor-toggle .icon-native{ display:none; }
+.cursor-toggle[aria-pressed="true"]{
+  background:var(--theme-toggle-active-bg);
+  color:var(--theme-toggle-active-fg);
+  border-color:var(--theme-toggle-active-bg);
+}
+.cursor-toggle[aria-pressed="true"] .icon-stylized{ display:none; }
+.cursor-toggle[aria-pressed="true"] .icon-native{ display:block; }
+.mobile-nav .cursor-toggle{
+  --theme-toggle-bg:rgba(242,238,226,.08);
+  --theme-toggle-border:rgba(242,238,226,.18);
+  --theme-toggle-fg:rgba(242,238,226,.72);
+  width:48px; height:48px;
+}
+
+/* When user opts out, restore native pointer everywhere */
+@media (pointer:fine){
+  html[data-cursor="off"],
+  html[data-cursor="off"] body,
+  html[data-cursor="off"] body *,
+  html[data-cursor="off"] body *::before,
+  html[data-cursor="off"] body *::after{ cursor:auto !important; }
+  html[data-cursor="off"] body::after{ display:none !important; }
+  html[data-cursor="off"] .cursor-dot{ display:none !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle,
   .theme-toggle__track::before,
-  .theme-toggle__option { transition: none !important; }
+  .theme-toggle__option,
+  .cursor-toggle { transition: none !important; }
 }
 
 /* ------------------------------------------------------------------
@@ -2989,6 +3045,19 @@ html[data-theme="dark"] .cursor-dot{
       <a href="#references">Refs</a>
     </div>
     <div class="nav__actions">
+      <button class="cursor-toggle" type="button" data-cursor-toggle aria-label="Switch to native cursor" aria-pressed="false" title="Switch to native cursor">
+        <span class="icon-stylized" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/>
+          </svg>
+        </span>
+        <span class="icon-native" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M3 2 L13 8 L8.5 9 L9.5 13 L7.5 13.5 L6.5 9.5 L4 12 Z" fill="currentColor"/>
+          </svg>
+        </span>
+      </button>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
         <span class="theme-toggle__track" aria-hidden="true">
           <span class="theme-toggle__option theme-toggle__option--light">Light</span>
@@ -3118,7 +3187,7 @@ html[data-theme="dark"] .cursor-dot{
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">⊕</span><span class="num">I</span><span class="dot"></span><span>The postulate</span></div>
+        <div class="eyebrow"><span class="eyebrow__sigil" aria-hidden="true">⊕</span><span class="num">I</span><span class="dot" aria-hidden="true"></span><span>The postulate</span></div>
         <h2 class="s-head__title" id="postulate-title">A principle of <em>symmetry</em>, and an empirical concession.</h2>
       </div>
       <p class="s-head__sub">
@@ -3177,7 +3246,7 @@ html[data-theme="dark"] .cursor-dot{
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">◎</span><span class="num">II</span><span class="dot"></span><span>What it determines</span></div>
+        <div class="eyebrow"><span class="eyebrow__sigil" aria-hidden="true">◎</span><span class="num">II</span><span class="dot" aria-hidden="true"></span><span>What it determines</span></div>
         <h2 class="s-head__title" id="determines-title">A family of universes, indexed by a single number $\kappa$.</h2>
       </div>
       <p class="s-head__sub">
@@ -3339,7 +3408,7 @@ html[data-theme="dark"] .cursor-dot{
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">✦</span><span class="num">III</span><span class="dot"></span><span>Self-examination</span></div>
+        <div class="eyebrow"><span class="eyebrow__sigil" aria-hidden="true">✦</span><span class="num">III</span><span class="dot" aria-hidden="true"></span><span>Self-examination</span></div>
         <h2 class="s-head__title" id="killing-title">Can the rules <em>examine themselves?</em></h2>
       </div>
       <p class="s-head__sub">
@@ -3479,7 +3548,7 @@ html[data-theme="dark"] .cursor-dot{
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">◈</span><span class="num">IV</span><span class="dot"></span><span>Three verdicts</span></div>
+        <div class="eyebrow"><span class="eyebrow__sigil" aria-hidden="true">◈</span><span class="num">IV</span><span class="dot" aria-hidden="true"></span><span>Three verdicts</span></div>
         <h2 class="s-head__title" id="verdicts-title">The algebra delivers its <em>own</em> verdict — three times.</h2>
       </div>
       <p class="s-head__sub">
@@ -3675,7 +3744,7 @@ html[data-theme="dark"] .cursor-dot{
   <div class="shell shell--guides">
     <div class="s-head reveal">
       <div>
-        <div class="eyebrow"><span class="eyebrow__sigil">⊛</span><span class="num">V</span><span class="dot"></span><span>Interactive lab</span></div>
+        <div class="eyebrow"><span class="eyebrow__sigil" aria-hidden="true">⊛</span><span class="num">V</span><span class="dot" aria-hidden="true"></span><span>Interactive lab</span></div>
         <h2 class="s-head__title" id="lab-title">Turn the <em>κ-dial</em>. Slide the <em>velocity</em>. Watch the geometry.</h2>
       </div>
       <p class="s-head__sub">
@@ -4372,11 +4441,11 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
       <div>
         <div class="foot__col-h">Chapters</div>
         <nav class="foot__nav">
-          <a href="#postulate">⊕ The postulate</a>
-          <a href="#determines">◎ Three universes</a>
-          <a href="#killing">✦ The Killing form</a>
-          <a href="#verdicts">◈ Three verdicts</a>
-          <a href="#lab">⊛ Interactive lab</a>
+          <a href="#postulate"><span aria-hidden="true">⊕ </span>The postulate</a>
+          <a href="#determines"><span aria-hidden="true">◎ </span>Three universes</a>
+          <a href="#killing"><span aria-hidden="true">✦ </span>The Killing form</a>
+          <a href="#verdicts"><span aria-hidden="true">◈ </span>Three verdicts</a>
+          <a href="#lab"><span aria-hidden="true">⊛ </span>Interactive lab</a>
           <a href="#proof">The proof, executable</a>
           <a href="#conclusion">Structure and scale</a>
         </nav>
@@ -5381,15 +5450,28 @@ function buildKfMiniCells(){
   <div class="mobile-nav__inner">
     <div class="mobile-nav__heading">One Postulate · Navigation</div>
     <nav class="mobile-nav__links" aria-label="Sections">
-      <a href="#postulate"><span>A principle of symmetry</span><span class="mnav-sigil">⊕ I</span></a>
-      <a href="#determines"><span>Three universes</span><span class="mnav-sigil">◎ II</span></a>
-      <a href="#killing"><span>The Killing form</span><span class="mnav-sigil">✦ III</span></a>
-      <a href="#verdicts"><span>Three verdicts</span><span class="mnav-sigil">◈ IV</span></a>
-      <a href="#lab"><span>Interactive lab</span><span class="mnav-sigil">⊛ V</span></a>
-      <a href="#proof"><span>The proof, executable</span><span class="mnav-sigil">VI</span></a>
-      <a href="#references"><span>References</span><span class="mnav-sigil">↗</span></a>
+      <a href="#postulate"><span>A principle of symmetry</span><span class="mnav-sigil" aria-hidden="true">⊕ I</span></a>
+      <a href="#determines"><span>Three universes</span><span class="mnav-sigil" aria-hidden="true">◎ II</span></a>
+      <a href="#killing"><span>The Killing form</span><span class="mnav-sigil" aria-hidden="true">✦ III</span></a>
+      <a href="#verdicts"><span>Three verdicts</span><span class="mnav-sigil" aria-hidden="true">◈ IV</span></a>
+      <a href="#lab"><span>Interactive lab</span><span class="mnav-sigil" aria-hidden="true">⊛ V</span></a>
+      <a href="#proof"><span>The proof, executable</span><span class="mnav-sigil" aria-hidden="true">VI</span></a>
+      <a href="#references"><span>References</span><span class="mnav-sigil" aria-hidden="true">↗</span></a>
     </nav>
     <div class="mobile-nav__cta">
+      <button class="cursor-toggle" type="button" data-cursor-toggle aria-label="Switch to native cursor" aria-pressed="false" title="Switch to native cursor">
+        <span class="icon-stylized" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/>
+          </svg>
+        </span>
+        <span class="icon-native" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M3 2 L13 8 L8.5 9 L9.5 13 L7.5 13.5 L6.5 9.5 L4 12 Z" fill="currentColor"/>
+          </svg>
+        </span>
+      </button>
       <button class="theme-toggle theme-toggle--mobile" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
         <span class="theme-toggle__track" aria-hidden="true">
           <span class="theme-toggle__option theme-toggle__option--light">Light</span>
@@ -6039,6 +6121,48 @@ function buildKfMiniCells(){
   }
 
   applyTheme(getSavedTheme() || currentTheme() || systemTheme(), false);
+})();
+
+/* ---- Cursor preference toggle: lets users restore the native pointer ---- */
+(function(){
+  const KEY = 'ii-cursor';
+  const root = document.documentElement;
+  const toggles = Array.from(document.querySelectorAll('[data-cursor-toggle]'));
+  if (!toggles.length) return;
+
+  function getSaved(){
+    try {
+      const value = localStorage.getItem(KEY);
+      return value === 'off' ? 'off' : 'auto';
+    } catch(_) { return 'auto'; }
+  }
+  function setSaved(value){
+    try { localStorage.setItem(KEY, value); } catch(_) {}
+  }
+  function syncToggles(value){
+    const isOff = value === 'off';
+    toggles.forEach(btn => {
+      btn.setAttribute('aria-pressed', String(isOff));
+      btn.setAttribute('aria-label', isOff ? 'Switch to stylized cursor' : 'Switch to native cursor');
+      btn.title = isOff ? 'Switch to stylized cursor' : 'Switch to native cursor';
+    });
+  }
+  function apply(value, persist){
+    const next = value === 'off' ? 'off' : 'auto';
+    if (next === 'off') root.dataset.cursor = 'off';
+    else delete root.dataset.cursor;
+    if (persist) setSaved(next);
+    syncToggles(next);
+  }
+
+  toggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const current = root.dataset.cursor === 'off' ? 'off' : 'auto';
+      apply(current === 'off' ? 'auto' : 'off', true);
+    });
+  });
+
+  apply(getSaved(), false);
 })();
 </script>
 </body>
