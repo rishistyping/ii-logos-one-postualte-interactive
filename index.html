@@ -511,6 +511,7 @@ section + section{ border-top:1px solid var(--rule); }
   .nav__links a:hover::after{ transform:scaleX(1); }
 }
 @media (max-width:880px){ .nav__links{ display:none; } }
+@media (max-width:480px){ .nav__actions .btn--primary{ display:none; } }
 .nav__actions{
   display:flex;
   align-items:center;
@@ -874,6 +875,8 @@ h1 i,  h2 i,  h3 i,  h4 i {
   font-size:1.05em;
   position:relative;
   overflow-x:auto;
+  box-sizing:border-box;
+  max-width:100%;
 }
 .equation .label{
   position:absolute; top:14px; right:18px;
@@ -1391,7 +1394,7 @@ footer.foot{
    KaTeX colour overrides
    ------------------------------------------------------------------ */
 .katex{ color:var(--primary); }
-.equation .katex-display{ margin:0; }
+.equation .katex-display{ margin:0; overflow-x:auto; -webkit-overflow-scrolling:touch; }
 
 /* ------------------------------------------------------------------
    INTERACTIVE LAB — κ Dial + Lorentz explorer
@@ -6134,15 +6137,15 @@ function buildKfMiniCells(){
   <svg viewBox="0 0 100 100" width="32" height="32" aria-hidden="true">
     <defs>
       <mask id="ii-logo-mask">
-        <circle cx="50" cy="50" r="40" fill="white"/>
-        <rect x="26" y="10"  width="48" height="16" fill="black"/>
-        <rect x="26" y="74"  width="48" height="16" fill="black"/>
-        <rect x="10" y="26"  width="16" height="48" fill="black"/>
-        <rect x="74" y="26"  width="16" height="48" fill="black"/>
+        <circle cx="50" cy="50" r="44" fill="white"/>
+        <rect x="35" y="25" width="30" height="10" fill="black"/>
+        <rect x="35" y="65" width="30" height="10" fill="black"/>
+        <rect x="25" y="35" width="10" height="30" fill="black"/>
+        <rect x="65" y="35" width="10" height="30" fill="black"/>
       </mask>
     </defs>
-    <circle cx="50" cy="50" r="40" fill="currentColor" mask="url(#ii-logo-mask)"/>
-    <rect x="34" y="26" width="32" height="48" fill="currentColor"/>
+    <circle cx="50" cy="50" r="44" fill="currentColor" mask="url(#ii-logo-mask)"/>
+    <rect x="35" y="35" width="30" height="30" fill="currentColor"/>
   </svg>
 </button>
 
@@ -6746,6 +6749,17 @@ function buildKfMiniCells(){
   /* Belt-and-suspenders: re-run on window load in case
      content-visibility:auto sections weren't reachable earlier. */
   window.addEventListener('load', renderAll);
+
+  /* Sweep every .equation block explicitly 200 ms after load — catches any
+     timing gap where content-visibility:auto delayed rendering. */
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      if (typeof renderMathInElement !== 'function' || !window._katexOpts) return;
+      document.querySelectorAll('.equation').forEach(function(el) {
+        renderMathInElement(el, window._katexOpts);
+      });
+    }, 200);
+  });
 })();
 </script>
 
