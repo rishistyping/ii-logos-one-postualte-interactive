@@ -681,6 +681,22 @@ section + section{ border-top:1px solid var(--rule); }
   from{ background-position:240% center; }
   to  { background-position:-80% center; }
 }
+/* Shimmer on all accent-coloured em/i inside headings */
+h1 em, h2 em, h3 em, h4 em,
+h1 i,  h2 i,  h3 i,  h4 i {
+  background:linear-gradient(90deg, var(--accent) 0%, var(--gold) 42%, var(--accent) 70%, var(--accent) 100%);
+  background-size:260% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer-sweep 4.2s linear infinite;
+}
+/* Conclusion em stays static gold — not part of the blue accent set */
+.conclusion h2 em {
+  background:none;
+  -webkit-text-fill-color:var(--gold);
+  animation:none;
+}
 .hero h1 .small{
   display:block;
   font-size:0.42em; letter-spacing:-0.02em;
@@ -2498,6 +2514,8 @@ section + section.in{
   .hero h1 .accent-italic{ animation:none; -webkit-text-fill-color:unset; background:none; color:var(--accent); }
   .hero::before{ animation:none; }
   .equation.eq-visible{ animation:none; }
+  h1 em, h2 em, h3 em, h4 em,
+  h1 i,  h2 i,  h3 i,  h4 i { animation:none; -webkit-text-fill-color:var(--accent); background:none; }
 }
 </style>
 
@@ -2532,26 +2550,29 @@ a:focus-visible{ border-radius:2px; }
 .chat-fab{
   position:fixed; bottom:32px; right:32px; z-index:80;
   width:56px; height:56px; border-radius:var(--r-full);
-  background:var(--primary);
-  color:var(--inverse);
-  border:none; cursor:pointer;
+  background:var(--inverse);
+  color:var(--primary);
+  border:1px solid var(--rule-strong); cursor:pointer;
   display:flex; align-items:center; justify-content:center;
-  box-shadow:0 6px 24px -10px rgba(15,35,63,.55), 0 0 0 1px rgba(15,35,63,.06);
-  transition:transform .25s cubic-bezier(.34,1.56,.64,1), background .2s ease, box-shadow .2s ease;
+  box-shadow:0 6px 24px -10px rgba(15,35,63,.32), 0 0 0 1px rgba(15,35,63,.06);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), background .2s ease, box-shadow .2s ease, border-color .2s ease;
   transform-origin:center;
   will-change:transform;
 }
 .chat-fab[aria-expanded="true"]{
   background:var(--accent);
+  color:var(--inverse);
+  border-color:var(--accent);
   transform:scale(.94);
   box-shadow:0 4px 16px -6px rgba(47,149,166,.6);
 }
 .chat-fab:active{ transform:scale(.97); }
 @media (hover:hover) and (pointer:fine){
   .chat-fab:hover{
-    background:var(--primary-hover);
+    background:var(--surface-alt, var(--inverse));
     transform:translateY(-2px) scale(1.04);
-    box-shadow:0 14px 40px -12px rgba(15,35,63,.55), 0 0 0 1px var(--accent);
+    box-shadow:0 14px 40px -12px rgba(15,35,63,.32), 0 0 0 1px var(--accent);
+    border-color:var(--accent);
   }
 }
 @media (max-width:480px){ .chat-fab{ bottom:20px; right:16px; width:52px; height:52px; } }
@@ -6110,14 +6131,18 @@ function buildKfMiniCells(){
      CHAT-WITH-PAPER FAB + DRAWER + KEYBOARD TOAST
 ============================================================== -->
 <button class="chat-fab" id="chat-fab" aria-label="Chat with the paper" aria-controls="chat-drawer" aria-expanded="false">
-  <svg viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
-    <!-- Wireframe head silhouette -->
-    <path d="M16 4c5 0 9 4 9 9v6c0 4-3 7-7 7h-4c-4 0-7-3-7-7v-6c0-5 4-9 9-9z"/>
-    <!-- Low-poly facet lines -->
-    <path d="M7 16h18M9 12h14M9 20h14M16 4v22M11 7l5 4 5-4M11 25l5-4 5 4" opacity=".5" stroke-width="0.7"/>
-    <!-- Glowing eye accent -->
-    <path d="M11 16h-3M24 16h-3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/>
-    <circle cx="16" cy="16" r="1.6" fill="var(--accent)" stroke="none"/>
+  <svg viewBox="0 0 100 100" width="32" height="32" aria-hidden="true">
+    <defs>
+      <mask id="ii-logo-mask">
+        <circle cx="50" cy="50" r="40" fill="white"/>
+        <rect x="26" y="10"  width="48" height="16" fill="black"/>
+        <rect x="26" y="74"  width="48" height="16" fill="black"/>
+        <rect x="10" y="26"  width="16" height="48" fill="black"/>
+        <rect x="74" y="26"  width="16" height="48" fill="black"/>
+      </mask>
+    </defs>
+    <circle cx="50" cy="50" r="40" fill="currentColor" mask="url(#ii-logo-mask)"/>
+    <rect x="34" y="26" width="32" height="48" fill="currentColor"/>
   </svg>
 </button>
 
