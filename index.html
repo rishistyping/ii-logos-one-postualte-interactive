@@ -345,13 +345,6 @@ section{
 }
 section + section{ border-top:1px solid var(--rule); }
 
-/* Skip rendering off-screen sections until near viewport. Each chapter is
-   long enough to dominate paint cost when scrolled past, so let the browser
-   skip layout/paint work for sections not in or near the viewport. */
-#postulate, #determines, #killing, #verdicts, #lab, #proof, #conclusion, #references, .foot {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 1200px;
-}
 
 /* ------------------------------------------------------------------
    Eyebrow — small label above section heads
@@ -3750,7 +3743,7 @@ html[data-theme="dark"] .cursor-dot{
         </p>
         <p>
           We show this was unnecessary. The symmetry principle alone yields a family of
-          possible universes, labelled by a single number $\kappa$. The Killing form — a
+          possible universes, labelled by a single number \(\kappa\). The Killing form — a
           diagnostic built into every set of symmetry rules, introduced by Wilhelm Killing
           in 1888 — sorts them into exactly three kinds: one with no causality, one that
           cannot unify space and time, and one that achieves both and demands a finite
@@ -3810,7 +3803,7 @@ html[data-theme="dark"] .cursor-dot{
         </p>
         <p>
           The second postulate is different in character. It says that light travels at a
-          finite speed $c$ that is the same in all inertial frames. This is not a principle
+          finite speed \(c\) that is the same in all inertial frames. This is not a principle
           of symmetry. It is an observation about a particular physical phenomenon,
           imported into the foundations.
         </p>
@@ -3832,32 +3825,32 @@ html[data-theme="dark"] .cursor-dot{
     <div class="s-head reveal">
       <div>
         <div class="eyebrow"><span class="eyebrow__sigil" aria-hidden="true">◎</span><span class="num">II</span><span class="dot" aria-hidden="true"></span><span>What it determines</span></div>
-        <h2 class="s-head__title" id="determines-title">A family of universes, indexed by a single number $\kappa$.</h2>
+        <h2 class="s-head__title" id="determines-title">A family of universes, indexed by a single number \(\kappa\).</h2>
       </div>
       <p class="s-head__sub">
         Since 1910, derivation after derivation has shown that the relativity principle
         alone allows exactly one family of inertial-frame transformations, parameterised
-        by $\kappa$. Three signs, three universes.
+        by \(\kappa\). Three signs, three universes.
       </p>
     </div>
 
     <div class="prose reveal" style="max-width:none;">
       <p style="max-width:62ch;">
         How do measurements in one inertial frame relate to those in another? If you are on
-        a train moving at speed $v$ relative to the platform, the relativity principle
+        a train moving at speed \(v\) relative to the platform, the relativity principle
         — homogeneity, isotropy, consistent composition — turns out to be extraordinarily
         restrictive.<sup class="cite"><a href="#ref-3">3</a><a href="#ref-6">,6</a><a href="#ref-7">,7</a><a href="#ref-5">,5</a></sup>
         These properties allow exactly one family of transformation rules, governed by a
-        single undetermined number $\kappa$.
+        single undetermined number \(\kappa\).
       </p>
 
       <p style="max-width:62ch;">
         The transformation has two effects. The platform sees your position shifted by
         the train's motion — intuitive enough. The deeper effect is a term proportional
-        to $\kappa\, v\, x$ that mixes space into time: what counts as <em>"now"</em>
-        depends on where you are, and $\kappa$ controls the strength of this mixing.
-        As $v$ approaches $1/\sqrt{\kappa}$ (when $\kappa > 0$), the time-dilation
-        factor diverges. A speed limit appears. When $\kappa = 0$, the mixing vanishes;
+        to \(\kappa\, v\, x\) that mixes space into time: what counts as <em>"now"</em>
+        depends on where you are, and \(\kappa\) controls the strength of this mixing.
+        As \(v\) approaches \(1/\sqrt{\kappa}\) (when \(\kappa > 0\)), the time-dilation
+        factor diverges. A speed limit appears. When \(\kappa = 0\), the mixing vanishes;
         time is absolute and we recover Newton.
       </p>
     </div>
@@ -4024,36 +4017,36 @@ html[data-theme="dark"] .cursor-dot{
       <div class="prose">
         <p>
           Every set of symmetry rules is built from elementary operations called generators.
-          For the symmetry of motion there are six: three rotations $J_1, J_2, J_3$, and
-          three boosts $K_1, K_2, K_3$. A rotation relates your laboratory to one pointing
+          For the symmetry of motion there are six: three rotations \(J_1, J_2, J_3\), and
+          three boosts \(K_1, K_2, K_3\). A rotation relates your laboratory to one pointing
           a different way. A boost relates it to one moving past you.
         </p>
         <p>
           Rotations don't commute. Whether the <em>boosts</em> share that property depends
-          on $\kappa$.
+          on \(\kappa\).
         </p>
         <p>
-          When $\kappa = 0$, boosts commute and the link to rotation is severed.
+          When \(\kappa = 0\), boosts commute and the link to rotation is severed.
           The Killing form is the algebra's own diagnostic of how much each generator
           reshuffles the others:
         </p>
         <div class="equation">
           <span class="label">Killing form</span>
-          $$ B(X, Y) = \mathrm{tr}\big(\mathrm{ad}_X \circ \mathrm{ad}_Y\big). $$
+          \[ B(X, Y) = \mathrm{tr}\big(\mathrm{ad}_X \circ \mathrm{ad}_Y\big). \]
         </div>
       </div>
 
       <div class="prose">
         <p>
           Tracking how each generator reshuffles the other five and summing yields a
-          diagonal matrix. The rotations always register $-4$. The boosts register
-          $4\kappa$ — and their value depends entirely on $\kappa$.
+          diagonal matrix. The rotations always register \(-4\). The boosts register
+          \(4\kappa\) — and their value depends entirely on \(\kappa\).
         </p>
         <div class="equation">
-          $$
+          \[
           B \;=\; \mathrm{diag}\big(\underbrace{-4,\,-4,\,-4}_{\text{rotations}},\;\;
           \underbrace{4\kappa,\;4\kappa,\;4\kappa}_{\text{boosts}}\big).
-          $$
+          \]
         </div>
         <p>
           When the Killing form returns a non-zero value, the algebra <em>"sees"</em>
@@ -4063,7 +4056,7 @@ html[data-theme="dark"] .cursor-dot{
         <p>
           The sign carries further information. Negative values mean periodic, compact
           transformations (cosine-like, returning to start). Positive values mean
-          non-compact ones (hyperbolic, growing without bound). The value $4\kappa$
+          non-compact ones (hyperbolic, growing without bound). The value \(4\kappa\)
           on the boosts now sorts the three universes — by itself, with no appeal
           to experiment.
         </p>
@@ -4076,8 +4069,8 @@ html[data-theme="dark"] .cursor-dot{
         <h4>The diagnostic, in one diagram.</h4>
         <p>
           Rotations are <em>always</em> non-degenerate. The boosts are non-degenerate
-          when $\kappa &gt; 0$, vanish when $\kappa = 0$, and flip periodic when
-          $\kappa &lt; 0$. The fate of physical reality reads off the diagonal.
+          when \(\kappa &gt; 0\), vanish when \(\kappa = 0\), and flip periodic when
+          \(\kappa &lt; 0\). The fate of physical reality reads off the diagonal.
         </p>
       </div>
       <div class="killing__viz">
@@ -4141,7 +4134,7 @@ html[data-theme="dark"] .cursor-dot{
         <div class="verdict__body prose">
           <h3>No <em>causal structure</em>.</h3>
           <p>
-            When $\kappa$ is negative, the Killing form is non-zero on both rotations
+            When \(\kappa\) is negative, the Killing form is non-zero on both rotations
             and boosts. The algebra has no blind spots. But the sign on the boosts is
             now negative — the same sign as on rotations. Both are periodic. Both
             generate closed orbits.
@@ -4164,7 +4157,7 @@ html[data-theme="dark"] .cursor-dot{
         <div class="verdict__body prose">
           <h3>The algebra goes <em>blind</em>.</h3>
           <p>
-            When $\kappa = 0$, the Killing form returns zero on every boost generator.
+            When \(\kappa = 0\), the Killing form returns zero on every boost generator.
             The self-test comes back blank for exactly the operations the relativity
             postulate is about — the boosts that connect one inertial frame to another.
           </p>
@@ -4172,7 +4165,7 @@ html[data-theme="dark"] .cursor-dot{
             <em>"The same laws in all frames"</em> can be read in two ways: same form,
             or same content. The Galilean algebra preserves form but not content.
             Two observers can adopt different ratios of space units to time units and
-            both satisfy every bracket relation. They agree that $F = ma$. They
+            both satisfy every bracket relation. They agree that \(F = ma\). They
             disagree on what a metre is worth relative to a second.
           </p>
           <p>
@@ -4230,20 +4223,20 @@ html[data-theme="dark"] .cursor-dot{
         <div class="verdict__body prose">
           <h3>Everything is <em>determined</em>.</h3>
           <p>
-            When $\kappa$ is positive, the Killing form returns $-4$ on the rotations and
-            $4\kappa$ on the boosts. <strong>Every generator is visible. No direction is
+            When \(\kappa\) is positive, the Killing form returns \(-4\) on the rotations and
+            \(4\kappa\) on the boosts. <strong>Every generator is visible. No direction is
             blind.</strong>
           </p>
           <p>
             Velocity space acquires a definite geometry, with a fixed ruler. The invariant
-            speed $V = 1/\sqrt{\kappa}$ is finite, real, and the same in all frames.
+            speed \(V = 1/\sqrt{\kappa}\) is finite, real, and the same in all frames.
             Spacetime acquires its own definite geometry: no observer's time is privileged,
             and the only quantity all observers agree on is the spacetime interval —
             a single number that combines space and time inseparably.
           </p>
           <div class="equation">
             <span class="label">Minkowski metric</span>
-            $$ ds^2 = c^2\,dt^2 - dx^2 - dy^2 - dz^2, \qquad \kappa = 1/c^2. $$
+            \[ ds^2 = c^2\,dt^2 - dx^2 - dy^2 - dz^2, \qquad \kappa = 1/c^2. \]
           </div>
           <p>
             <em>That</em> is what unification means. The only invariant quantity mixes
@@ -4270,12 +4263,12 @@ html[data-theme="dark"] .cursor-dot{
         <tbody>
           <tr>
             <th>Killing form on boosts</th>
-            <td class="fail">$4\kappa &lt; 0$</td>
-            <td class="fail">$0$</td>
-            <td class="win col-win">$4\kappa &gt; 0$</td>
+            <td class="fail">\(4\kappa &lt; 0\)</td>
+            <td class="fail">\(0\)</td>
+            <td class="win col-win">\(4\kappa &gt; 0\)</td>
           </tr>
           <tr>
-            <th>Invariant speed $V = 1/\sqrt{\kappa}$</th>
+            <th>Invariant speed \(V = 1/\sqrt{\kappa}\)</th>
             <td class="fail">imaginary</td>
             <td class="fail">undefined</td>
             <td class="win col-win">finite, real</td>
@@ -4283,7 +4276,7 @@ html[data-theme="dark"] .cursor-dot{
           <tr>
             <th>Spacetime metric</th>
             <td class="fail">Euclidean</td>
-            <td class="fail">$dt^2$ only</td>
+            <td class="fail">\(dt^2\) only</td>
             <td class="win col-win">Lorentzian</td>
           </tr>
           <tr>
@@ -4366,7 +4359,7 @@ html[data-theme="dark"] .cursor-dot{
         <p class="lab__panel-sub">
           With κ &gt; 0 fixed, slide the velocity. The Minkowski axes tilt toward the
           lightcone. Time dilates. Lengths contract. Every number below is
-          $\gamma = 1/\sqrt{1 - v^2}$ at work.
+          \(\gamma = 1/\sqrt{1 - v^2}\) at work.
         </p>
 
         <div class="slider-wrap">
@@ -4406,9 +4399,9 @@ html[data-theme="dark"] .cursor-dot{
         <h3 class="lab__panel-title">The <em>composition law</em> — and why nothing exceeds c.</h3>
         <p class="lab__panel-sub">
           Two boosts compose into one. The relativity principle alone forces the
-          composition law, $v_1 \oplus v_2 = (v_1 + v_2)/(1 + \kappa\, v_1 v_2)$.
-          When $\kappa = 0$ this is ordinary addition. When $\kappa &gt; 0$ the
-          denominator caps the sum at $1/\sqrt{\kappa} = c$. Slide both speeds
+          composition law, \(v_1 \oplus v_2 = (v_1 + v_2)/(1 + \kappa\, v_1 v_2)\).
+          When \(\kappa = 0\) this is ordinary addition. When \(\kappa &gt; 0\) the
+          denominator caps the sum at \(1/\sqrt{\kappa} = c\). Slide both speeds
           past 0.9c and watch — Newton's answer is wrong by exactly the amount
           the algebra predicts.
         </p>
@@ -4451,9 +4444,9 @@ html[data-theme="dark"] .cursor-dot{
           </div>
 
           <p class="vadd__verdict">
-            <strong>Note.</strong> The cap at $c$ is not enforced from outside —
+            <strong>Note.</strong> The cap at \(c\) is not enforced from outside —
             it is what the relativity principle's own composition law does on its
-            own. Try $v_1 = v_2 = 0.99$. Newton says 1.98c. The algebra says
+            own. Try \(v_1 = v_2 = 0.99\). Newton says 1.98c. The algebra says
             0.999949c. Experiment confirms the algebra.
           </p>
         </div>
@@ -4463,7 +4456,7 @@ html[data-theme="dark"] .cursor-dot{
     <p class="reveal" style="margin-top:48px; max-width:62ch; font-family:var(--serif-display); font-size:24px; line-height:1.4; color:var(--primary); font-weight:400;">
       Every slider you moved is a consequence of a single algebraic fact:
       <em>the Killing form demands κ &gt; 0</em>. Light plays no special role in the
-      derivation. Its speed is simply the value experiment assigns to $V = 1/\sqrt{\kappa}$.
+      derivation. Its speed is simply the value experiment assigns to \(V = 1/\sqrt{\kappa}\).
     </p>
   </div>
 </section>
@@ -4491,12 +4484,12 @@ html[data-theme="dark"] .cursor-dot{
         <h4>The Killing form, in six steps.</h4>
         <p>
           Press <em>Compute</em>. Each diagonal cell will fill in turn — the trace of
-          $\mathrm{ad}_X \circ \mathrm{ad}_X$ for each generator — followed by the
+          \(\mathrm{ad}_X \circ \mathrm{ad}_X\) for each generator — followed by the
           off-diagonals, which all vanish by symmetry.
         </p>
         <p>
-          The result reads: rotations $J_i$ register $-4$ apiece, boosts $K_i$
-          register $4\kappa$. The whole physical question reduces to the sign of
+          The result reads: rotations \(J_i\) register \(-4\) apiece, boosts \(K_i\)
+          register \(4\kappa\). The whole physical question reduces to the sign of
           one number.
         </p>
         <div class="controls">
@@ -4521,14 +4514,14 @@ html[data-theme="dark"] .cursor-dot{
         Seven SymPy cells reproduce the paper's argument exactly. Cells 1–2 build the
         algebra. Cell 3 computes the Killing form symbolically and finds it diagonal.
         Cell 4 substitutes the three values of κ and reads off the eigenvalue
-        signatures — the three verdicts. Cell 5 solves $V \oplus V = V$ for the
+        signatures — the three verdicts. Cell 5 solves \(V \oplus V = V\) for the
         invariant speed without ever assuming light has a special role. Cell 6 forces
         the metric out of pure boost-invariance, recovering Minkowski. Cell 7 closes
-        with the empirical bridge $\kappa = 1/c^2$.
+        with the empirical bridge \(\kappa = 1/c^2\).
       </p>
       <p style="font-family:var(--serif-body); font-style:italic; font-size:16px; line-height:1.6; color:var(--secondary); max-width:60ch; margin:0 0 8px;">
         Every cell is editable. Change a sign, swap a generator, supply a different
-        $\kappa$ — the proof updates with you. The Pyodide runtime (~10 MB) loads
+        \(\kappa\) — the proof updates with you. The Pyodide runtime (~10 MB) loads
         once on first <em style="color:var(--accent); font-style:italic">Run</em>
         and is cached thereafter.
       </p>
@@ -4556,9 +4549,9 @@ html[data-theme="dark"] .cursor-dot{
           <h4 class="cell__title">The <em>six generators</em> and their brackets.</h4>
         </div>
         <p class="cell__intro">
-          We declare $\kappa$ symbolic, define the bracket function
-          $[\,\cdot\,,\,\cdot\,]$ in a six-dimensional basis ordered $(J_1, J_2, J_3, K_1, K_2, K_3)$,
-          and verify the antisymmetry $[X, Y] = -[Y, X]$ on the boost sector.
+          We declare \(\kappa\) symbolic, define the bracket function
+          \([\,\cdot\,,\,\cdot\,]\) in a six-dimensional basis ordered \((J_1, J_2, J_3, K_1, K_2, K_3)\),
+          and verify the antisymmetry \([X, Y] = -[Y, X]\) on the boost sector.
         </p>
         <div class="cell__code">
           <div class="cell__code-toolbar">
@@ -4608,8 +4601,8 @@ show(<span class="tok-str">"[K1, K2]"</span>, bracket(<span class="tok-num">3</s
           <h4 class="cell__title">Each generator as a <em>6 × 6 reshuffler</em>.</h4>
         </div>
         <p class="cell__intro">
-          The map $\mathrm{ad}_X : Y \mapsto [X, Y]$ is linear, so it has a matrix.
-          Its $j$-th column is just $[X, e_j]$. The κ enters explicitly in the
+          The map \(\mathrm{ad}_X : Y \mapsto [X, Y]\) is linear, so it has a matrix.
+          Its \(j\)-th column is just \([X, e_j]\). The κ enters explicitly in the
           boost-on-boost columns.
         </p>
         <div class="cell__code">
@@ -4639,7 +4632,7 @@ show(<span class="tok-str">"ad(K1)  — boost, contains κ"</span>, ad(<span cla
       <article class="cell" data-cell="3">
         <div class="cell__header">
           <span class="cell__num">Cell 03 · The Killing form</span>
-          <h4 class="cell__title">$B(X,Y) = \mathrm{tr}(\mathrm{ad}_X\circ \mathrm{ad}_Y)$.</h4>
+          <h4 class="cell__title">\(B(X,Y) = \mathrm{tr}(\mathrm{ad}_X\circ \mathrm{ad}_Y)\).</h4>
         </div>
         <p class="cell__intro">
           Loop over all 36 pairs, multiply the adjoint matrices, take the trace.
@@ -4677,7 +4670,7 @@ show(<span class="tok-str">"Non-degenerate ⇔ det(B) ≠ 0"</span>, factor(B.de
           <h4 class="cell__title">Substitute κ. Read off the <em>signature</em>.</h4>
         </div>
         <p class="cell__intro">
-          With $B$ in hand, the three universes are now a one-line substitution
+          With \(B\) in hand, the three universes are now a one-line substitution
           each. The sign of the eigenvalues is the verdict.
         </p>
         <div class="cell__code">
@@ -4715,11 +4708,11 @@ show(<span class="tok-str">"Boost sub-block at κ=0 (rank ↓)"</span>, B_zer[<s
       <article class="cell" data-cell="5">
         <div class="cell__header">
           <span class="cell__num">Cell 05 · The invariant speed</span>
-          <h4 class="cell__title">$V = 1/\sqrt{\kappa}$ — emergent, not <em>imported</em>.</h4>
+          <h4 class="cell__title">\(V = 1/\sqrt{\kappa}\) — emergent, not <em>imported</em>.</h4>
         </div>
         <p class="cell__intro">
-          Compose two boosts via $v_1 \oplus v_2 = (v_1 + v_2)/(1 + \kappa\, v_1 v_2)$
-          and look for the fixed point $V$ such that $V \oplus V = V$. SymPy
+          Compose two boosts via \(v_1 \oplus v_2 = (v_1 + v_2)/(1 + \kappa\, v_1 v_2)\)
+          and look for the fixed point \(V\) such that \(V \oplus V = V\). SymPy
           solves it symbolically — no input of the speed of light required.
         </p>
         <div class="cell__code">
@@ -4758,11 +4751,11 @@ show(<span class="tok-str">"Predicted invariant speed"</span>, <span class="tok-
           <h4 class="cell__title">Minkowski emerges, by <em>boost-invariance alone</em>.</h4>
         </div>
         <p class="cell__intro">
-          Add translations $H, P_1, P_2, P_3$ to the algebra. By Schur's lemma the
+          Add translations \(H, P_1, P_2, P_3\) to the algebra. By Schur's lemma the
           unique rotation-invariant bilinear form on this 4-vector is
-          $q = \mathrm{diag}(A,\, B,\, B,\, B)$. We now demand boost invariance —
-          $q(K_i v, w) + q(v, K_i w) = 0$ — and let SymPy solve for the constraint
-          on $B$. The answer is the same metric that took Einstein an empirical
+          \(q = \mathrm{diag}(A,\, B,\, B,\, B)\). We now demand boost invariance —
+          \(q(K_i v, w) + q(v, K_i w) = 0\) — and let SymPy solve for the constraint
+          on \(B\). The answer is the same metric that took Einstein an empirical
           postulate to obtain.
         </p>
         <div class="cell__code">
@@ -4858,9 +4851,9 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
 
       <p class="prose reveal" style="margin-top:48px; max-width:62ch; font-family:var(--serif-display); font-size:24px; line-height:1.4; color:var(--primary); font-weight:400;">
         Seven cells, one κ. The Killing form is diagonal, the boost block carries
-        $4\kappa$, the only positive case yields a finite invariant speed,
+        \(4\kappa\), the only positive case yields a finite invariant speed,
         boost-invariance alone forces the Minkowski metric, and the substitution
-        $\kappa = 1/c^2$ does the only job experiment ever had to do. <em>The
+        \(\kappa = 1/c^2\) does the only job experiment ever had to do. <em>The
         algebra has examined itself, and Einstein was right after all — with one
         postulate to spare.</em>
       </p>
@@ -4895,7 +4888,7 @@ show(<span class="tok-str">"Calibrated metric  c² · diag(1, −κ, −κ, −�
       <p class="lead">
         A finite invariant speed must exist, and spacetime must be Lorentzian. What the
         argument doesn't determine is the numerical value of that speed. Measuring
-        $c \approx 3 \times 10^8$ m/s fixes $\kappa = 1/c^2$. But this is calibration —
+        \(c \approx 3 \times 10^8\) m/s fixes \(\kappa = 1/c^2\). But this is calibration —
         fitting a number to a framework whose architecture is already determined.
       </p>
       <p class="lead">
@@ -5083,12 +5076,11 @@ const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('in');
-      io.unobserve(e.target);
-      // Re-render math inside this element now that content-visibility:auto
-      // has activated it — formulas in off-screen sections may have been
-      // skipped during the initial renderMathInElement(document.body) pass.
+      // Only unobserve once KaTeX is ready and we've rendered. If the script
+      // hasn't loaded yet, leave the element observed so we re-fire on scroll.
       if (typeof renderMathInElement === 'function' && window._katexOpts) {
         renderMathInElement(e.target, window._katexOpts);
+        io.unobserve(e.target);
       }
     }
   });
@@ -6750,12 +6742,14 @@ function buildKfMiniCells(){
      content-visibility:auto sections weren't reachable earlier. */
   window.addEventListener('load', renderAll);
 
-  /* Sweep every .equation block explicitly 200 ms after load — catches any
-     timing gap where content-visibility:auto delayed rendering. */
+  /* Final sweep 200 ms after load: cover equations, prose paragraphs, headings,
+     and asides — anywhere inline or display math may live. Idempotent: KaTeX
+     skips elements already wrapped in .katex spans. */
   window.addEventListener('load', function() {
     setTimeout(function() {
       if (typeof renderMathInElement !== 'function' || !window._katexOpts) return;
-      document.querySelectorAll('.equation').forEach(function(el) {
+      var sel = '.equation, .prose, .s-head__title, .s-head__sub, h1, h2, h3, h4, .verdict, aside';
+      document.querySelectorAll(sel).forEach(function(el) {
         renderMathInElement(el, window._katexOpts);
       });
     }, 200);
