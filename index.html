@@ -3746,6 +3746,31 @@ html[data-theme="dark"] .cursor-dot{
   .nb-runall__progress{ width:100%; }
 }
 
+/* ---- Mobile heading + lab-readout sizing (375–414px target).
+   Quiets down display type and collapses the κ-stage 2-column
+   readout so prose doesn't bleed past the shell padding. ---- */
+@media (max-width:480px){
+  .k-readout{ grid-template-columns:1fr; gap:4px 0; }
+  .k-readout dd{ margin-bottom:6px; }
+  .conclusion h2{ font-size:clamp(34px, 8.5vw, 48px); max-width:14ch; }
+  .conclusion__epitaph{ font-size:clamp(28px, 8vw, 40px); max-width:14ch; }
+  .universe__title{ font-size:28px; line-height:1.08; }
+  .verdict__body h3{ font-size:clamp(24px, 6vw, 30px); }
+}
+
+/* Defensive: long unbreakable tokens (KaTeX-rendered math, URLs,
+   compound terms) inside any display heading should wrap rather
+   than push the shell past 100vw. */
+.s-head__title,
+.conclusion h2,
+.conclusion__epitaph,
+.universe__title,
+.verdict__body h3,
+.cell__title{
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
 /* ================================================================
    POLISH LAYER — animista-style entry / hover effects
    Layered on top of the existing reveal observer; fires once on
