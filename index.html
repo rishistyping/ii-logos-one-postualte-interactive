@@ -741,6 +741,61 @@ h1 i,  h2 i,  h3 i,  h4 i {
   margin-top:40px;
 }
 
+.hero__prompt-help{
+  margin-top:28px;
+  display:grid;
+  gap:14px;
+  color:var(--secondary);
+  font-family:var(--sans);
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+.hero__prompt-help > span{
+  color:var(--secondary);
+  font-weight:500;
+}
+
+.hero__prompt-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.hero__prompt{
+  border:1px solid var(--rule-strong);
+  border-radius:999px;
+  background:var(--surface);
+  color:var(--primary);
+  height:38px;
+  padding:0 16px;
+  font-family:var(--sans);
+  font-size:11px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  display:inline-flex;
+  align-items:center;
+  cursor:pointer;
+  transition:background .18s ease, border-color .18s ease, transform .18s ease;
+  will-change:transform;
+}
+@media (hover:hover) and (pointer:fine){
+  .hero__prompt:hover{
+    background:var(--surface-elevated);
+    border-color:var(--accent);
+  }
+}
+.hero__prompt:active{ transform:scale(.97); }
+
+.chat-drawer__sub{
+  margin-top:6px;
+  font-family:var(--sans);
+  font-size:11px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--secondary);
+  line-height:1.5;
+}
+
 /* Decorative number — large editorial folio mark */
 .folio{
   position:absolute;
@@ -3974,6 +4029,16 @@ html[data-theme="dark"] .cursor-dot{
       <div class="hero__cta">
         <a class="btn btn--primary" href="#abstract">Begin reading <span class="arrow">→</span></a>
         <a class="btn btn--secondary" href="#references">View references</a>
+        <button class="btn btn--secondary" id="chat-open-btn" type="button">Ask the paper <span class="arrow">→</span></button>
+      </div>
+
+      <div class="hero__prompt-help">
+        <span>Try one question</span>
+        <div class="hero__prompt-list">
+          <button type="button" class="hero__prompt" data-chat-prompt="What is the core claim this paper is trying to prove?">Core claim</button>
+          <button type="button" class="hero__prompt" data-chat-prompt="Why does symmetry alone force a finite invariant speed?">Why finite speed?</button>
+          <button type="button" class="hero__prompt" data-chat-prompt="How is the paper connected to the Killing form?">Killing form</button>
+        </div>
       </div>
 
       <div class="hero__byline">
@@ -6553,6 +6618,7 @@ function buildKfMiniCells(){
     <div class="chat-drawer__head-main">
       <div class="chat-drawer__eyebrow">Chat with</div>
       <h3 id="chat-drawer-title" class="chat-drawer__title">One Postulate</h3>
+      <p class="chat-drawer__sub">Focused Q&A first. Explicit review prompt available.</p>
     </div>
     <button type="button" class="chat-drawer__close" id="chat-drawer-close" aria-label="Close chat">×</button>
   </header>
@@ -7359,6 +7425,8 @@ const status = document.getElementById('chat-status');
 const sText  = document.getElementById('chat-status-text');
 const sBar   = document.getElementById('chat-progress-bar');
 const sizeSlider = document.getElementById('chat-size');
+const chatOpenBtn = document.getElementById('chat-open-btn');
+const heroPromptButtons = Array.from(document.querySelectorAll('.hero__prompt'));
 
 const MODEL_ID = 'Llama-3.2-1B-Instruct-q4f16_1-MLC';
 
@@ -7923,6 +7991,23 @@ fab.addEventListener('click', () => {
   else openDrawer();
 });
 closeBtn.addEventListener('click', closeDrawer);
+if (chatOpenBtn){
+  chatOpenBtn.addEventListener('click', () => openDrawer());
+}
+heroPromptButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const prompt = (btn.dataset.chatPrompt || '').trim();
+    if (!prompt) return;
+    openDrawer();
+    input.value = prompt;
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    syncSendState();
+    setTimeout(() => {
+      try { input.focus({ preventScroll: true }); } catch(_) {}
+    }, 120);
+  });
+});
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && drawer.classList.contains('is-open')) closeDrawer();
